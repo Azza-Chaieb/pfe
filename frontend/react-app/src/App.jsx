@@ -1,15 +1,11 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import Home from './pages/Home';
-import About from './pages/About';
+import Scene from './components/Scene'
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/about" element={<About />} />
-    </Routes>
-  );
+    <div style={{ width: '100vw', height: '100vh' }}>
+      <Scene />
+    </div>
+  )
 }
 
-export default App;
+export default App
