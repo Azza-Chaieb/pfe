@@ -12,10 +12,17 @@
   "pluginOptions": {},
   "attributes": {
     "name": {
-      "type": "string"
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "minLength": 3,
+      "maxLength": 50
     },
     "password": {
-      "type": "text"
+      "type": "text",
+      "required": true,
+      "minLength": 8,
+      "private": true
     }
   }
 }
