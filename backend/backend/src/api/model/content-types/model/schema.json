@@ -1,0 +1,21 @@
+{
+  "kind": "collectionType",
+  "collectionName": "models",
+  "info": {
+    "singularName": "model",
+    "pluralName": "models",
+    "displayName": "Model"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "module_id": {
+      "type": "uid"
+    },
+    "title": {
+      "type": "string"
+    }
+  }
+}

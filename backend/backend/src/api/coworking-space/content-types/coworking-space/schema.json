@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "coworking_spaces",
+  "info": {
+    "singularName": "coworking-space",
+    "pluralName": "coworking-spaces",
+    "displayName": "CoworkingSpace"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "space_cowrking_id": {
+      "type": "uid"
+    },
+    "name": {
+      "type": "text"
+    },
+    "type": {
+      "type": "text"
+    },
+    "description": {
+      "type": "text"
+    }
+  }
+}

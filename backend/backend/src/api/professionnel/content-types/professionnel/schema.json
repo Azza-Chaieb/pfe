@@ -1,0 +1,14 @@
+{
+  "kind": "collectionType",
+  "collectionName": "professionnels",
+  "info": {
+    "singularName": "professionnel",
+    "pluralName": "professionnels",
+    "displayName": "Professionnel"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {}
+}

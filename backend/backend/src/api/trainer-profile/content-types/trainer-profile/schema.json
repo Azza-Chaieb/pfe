@@ -1,0 +1,14 @@
+{
+  "kind": "collectionType",
+  "collectionName": "trainer_profiles",
+  "info": {
+    "singularName": "trainer-profile",
+    "pluralName": "trainer-profiles",
+    "displayName": "trainer_profile"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {}
+}
