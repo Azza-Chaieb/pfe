@@ -2,12 +2,11 @@ import { getMessaging, getToken, onMessage } from "firebase/messaging";
 import { initializeApp } from "firebase/app";
 
 const firebaseConfig = {
-  apiKey: "API_KEY",
-  authDomain: "PROJECT_ID.firebaseapp.com",
-  projectId: "PROJECT_ID",
-  storageBucket: "PROJECT_ID.appspot.com",
-  messagingSenderId: "SENDER_ID",
-  appId: "APP_ID",
+  apiKey: "AIzaSyBLEZXX-86u6I9h1KAGDgRJq5GyUbfRRfI",
+  authDomain: "sunspace-430ae.firebaseapp.com",
+  projectId: "sunspace-430ae",
+  messagingSenderId: "647611390056",
+  appId: "1:647611390056:web:f7dcec652d8bc7836643dd",
 };
 
 const app = initializeApp(firebaseConfig);
@@ -15,8 +14,15 @@ const messaging = getMessaging(app);
 
 // توليد FCM Token
 export const getFcmToken = async () => {
+  const VAPID_KEY = "VAPID_KEY"; // REPLACE WITH YOUR REAL VAPID KEY FROM FIREBASE CONSOLE
+
+  if (VAPID_KEY === "VAPID_KEY") {
+    console.warn("Firebase: VAPID_KEY is missing. Push notifications will not work.");
+    return null;
+  }
+
   try {
-    const currentToken = await getToken(messaging, { vapidKey: "VAPID_KEY" });
+    const currentToken = await getToken(messaging, { vapidKey: VAPID_KEY });
     if (currentToken) {
       console.log("FCM Token:", currentToken);
       return currentToken;

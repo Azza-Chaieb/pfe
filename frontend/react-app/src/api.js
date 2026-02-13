@@ -24,6 +24,15 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+export const register = async (userData) => {
+  try {
+    const response = await api.post('/auth/local/register', userData);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const login = async (identifier, password) => {
   try {
     const response = await api.post('/auth/local', {
@@ -110,6 +119,28 @@ export const updateUser = async (id, data) => {
     return response.data;
   } catch (error) {
     console.error("Error updating user", error);
+    throw error;
+  }
+};
+
+export const uploadFile = async (formData) => {
+  try {
+    const response = await api.post('/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Upload error full details:", error.response?.data || error);
+    throw error;
+  }
+};
+
+export const updateSubProfile = async (endpoint, id, data) => {
+  try {
+    const response = await api.put(`${endpoint}/${id}`, { data });
+    return response.data;
+  } catch (error) {
+    console.error(`Error updating profile at ${endpoint}`, error);
     throw error;
   }
 };

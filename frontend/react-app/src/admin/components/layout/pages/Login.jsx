@@ -17,12 +17,28 @@ const Login = () => {
 
     try {
       const data = await login(identifier, password);
+      console.log('API Login response user:', data.user);
+
       // Store token and user info
       localStorage.setItem('jwt', data.jwt);
       localStorage.setItem('user', JSON.stringify(data.user));
 
-      // Redirect to admin dashboard
-      navigate('/admin');
+      // Redirect based on role
+      // Fallback: If username is "admin", treat as admin even if user_type is incorrect
+      let userType = (data.user.user_type || '').toLowerCase();
+      if (data.user.username?.toLowerCase() === 'admin') {
+        userType = 'admin';
+      }
+
+      console.log('Login redirection logic. user_type determined as:', userType);
+
+      if (userType === 'admin') {
+        console.log('Navigating to /admin');
+        navigate('/admin');
+      } else {
+        console.log('Navigating to /profile');
+        navigate('/profile');
+      }
     } catch (err) {
       console.error('Login error:', err);
       setError('Identifiants invalides ou erreur serveur.');
@@ -125,16 +141,17 @@ const Login = () => {
           <div style={{ marginTop: '1rem', textAlign: 'center' }}>
             <button
               type="button"
-              disabled
+              onClick={() => navigate('/register')}
               style={{
                 background: 'none',
                 border: 'none',
-                color: '#6b7280',
-                cursor: 'not-allowed',
-                textDecoration: 'underline'
+                color: '#2563eb',
+                cursor: 'pointer',
+                textDecoration: 'underline',
+                fontSize: '0.875rem'
               }}
             >
-              Inscription (Désactivé)
+              Vous n'avez pas de compte ? S'inscrire
             </button>
           </div>
         </form>

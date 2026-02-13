@@ -11,7 +11,11 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "specialite": {
+    "specialty": {
+      "type": "string",
+      "required": true
+    },
+    "phone": {
       "type": "string"
     },
     "user": {

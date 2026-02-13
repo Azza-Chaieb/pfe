@@ -24,10 +24,10 @@ const Dashboard = () => {
         ]);
 
         setStats([
-          { title: 'Utilisateurs', value: Math.max(0, statsData.users - 1), change: '', icon: '👥', color: '#3b82f6' },
-          { title: 'Réservations', value: statsData.reservations, change: '', icon: '📅', color: '#10b981' },
-          { title: 'Paiements', value: statsData.payments, change: '', icon: '💰', color: '#8b5cf6' },
-          { title: 'Cours', value: statsData.courses, change: '', icon: '📚', color: '#f59e0b' },
+          { title: 'Utilisateurs', value: Math.max(0, (statsData.users || 0) - 1), change: '', icon: '👥', color: '#3b82f6' },
+          { title: 'Réservations', value: statsData.reservations || 0, change: '', icon: '📅', color: '#10b981' },
+          { title: 'Paiements', value: statsData.payments || 0, change: '', icon: '💰', color: '#8b5cf6' },
+          { title: 'Cours', value: statsData.courses || 0, change: '', icon: '📚', color: '#f59e0b' },
         ]);
 
         if (activityData && activityData.data) {

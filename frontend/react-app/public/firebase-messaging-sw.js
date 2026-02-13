@@ -1,20 +1,4 @@
-<<<<<<< HEAD
 // public/firebase-messaging-sw.js
-// Fichier VIDE pour l'instant - juste pour que Firebase soit content
-console.log('Service Worker Firebase chargé');
-
-// Événements de base
-self.addEventListener('install', (event) => {
-  console.log('Service Worker installé');
-  self.skipWaiting();
-});
-
-self.addEventListener('activate', (event) => {
-  console.log('Service Worker activé');
-});
-
-// Ce fichier est requis par Firebase même s'il ne fait rien
-=======
 importScripts(
   "https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js",
 );
@@ -30,5 +14,16 @@ firebase.initializeApp({
   appId: "1:647611390056:web:f7dcec652d8bc7836643dd",
 });
 
-firebase.messaging();
->>>>>>> d3d36416f680a4a5641a8245a6b36dc5482fa986
+const messaging = firebase.messaging();
+
+// Optional: Background message handler
+messaging.onBackgroundMessage((payload) => {
+  console.log('[firebase-messaging-sw.js] Received background message ', payload);
+  const notificationTitle = payload.notification.title;
+  const notificationOptions = {
+    body: payload.notification.body,
+    icon: '/firebase-logo.png'
+  };
+
+  self.registration.showNotification(notificationTitle, notificationOptions);
+});

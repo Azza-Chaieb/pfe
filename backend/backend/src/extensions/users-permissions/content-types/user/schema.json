@@ -34,6 +34,7 @@
       "type": "password",
       "minLength": 6,
       "configurable": false,
+      "required": true,
       "private": true,
       "searchable": false
     },
@@ -69,6 +70,57 @@
     "phone": {
       "type": "biginteger",
       "required": true
+    },
+    "fullname": {
+      "type": "string"
+    },
+    "user_type": {
+      "type": "enumeration",
+      "enum": [
+        "admin",
+        "trainer",
+        "student",
+        "professional",
+        "association"
+      ]
+    },
+    "etudiant_profil": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::etudiant-profil.etudiant-profil",
+      "mappedBy": "user"
+    },
+    "formateur_profil": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::formateur-profil.formateur-profil",
+      "mappedBy": "user"
+    },
+    "association_profil": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::association-profil.association-profil",
+      "mappedBy": "user"
+    },
+    "professionnel": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::professionnel.professionnel",
+      "mappedBy": "user"
+    },
+    "trainer_profile": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::trainer-profile.trainer-profile",
+      "mappedBy": "user"
+    },
+    "avatar": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
     }
   }
 }
