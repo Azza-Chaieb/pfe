@@ -1,9 +1,13 @@
-import { emailLayout } from './layout';
+import { emailLayout } from "./layout";
 
-export const passwordResetEmail = (userName: string, resetToken: string, expiresIn: string = '1 heure') => {
-    const resetUrl = `http://localhost:5173/reset-password?token=${resetToken}`;
+export const passwordResetEmail = (
+  userName: string,
+  resetToken: string,
+  expiresIn: string = "1 heure",
+) => {
+  const resetUrl = `http://localhost:3000/reset-password?token=${resetToken}`;
 
-    const content = `
+  const content = `
     <div class="header">
       <h1>🔐 Réinitialisation de mot de passe</h1>
     </div>
@@ -34,7 +38,7 @@ export const passwordResetEmail = (userName: string, resetToken: string, expires
     </div>
   `;
 
-    return emailLayout(content, 'Réinitialisez votre mot de passe Sunspace');
+  return emailLayout(content, "Réinitialisez votre mot de passe Sunspace");
 };
 
 export default passwordResetEmail;

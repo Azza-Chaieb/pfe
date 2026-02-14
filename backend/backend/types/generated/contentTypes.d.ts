@@ -822,6 +822,10 @@ export interface ApiSubscriptionSubscription
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
+    user: Schema.Attribute.Relation<
+      "manyToOne",
+      "plugin::users-permissions.user"
+    >;
   };
 }
 
@@ -1404,6 +1408,10 @@ export interface PluginUsersPermissionsUser
     role: Schema.Attribute.Relation<
       "manyToOne",
       "plugin::users-permissions.role"
+    >;
+    subscription: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::subscription.subscription"
     >;
     trainer_profile: Schema.Attribute.Relation<
       "oneToOne",

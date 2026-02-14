@@ -76,13 +76,7 @@
     },
     "user_type": {
       "type": "enumeration",
-      "enum": [
-        "admin",
-        "trainer",
-        "student",
-        "professional",
-        "association"
-      ]
+      "enum": ["admin", "trainer", "student", "professional", "association"]
     },
     "etudiant_profil": {
       "type": "relation",
@@ -118,9 +112,7 @@
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": [
-        "images"
-      ]
+      "allowedTypes": ["images"]
     },
     "emailPreferences": {
       "type": "json",
@@ -131,6 +123,12 @@
         "courses": true,
         "marketing": false
       }
+    },
+    "subscription": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::subscription.subscription",
+      "mappedBy": "user"
     }
   }
 }
