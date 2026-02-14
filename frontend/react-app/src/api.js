@@ -13,6 +13,7 @@ export const {
   updateUser,
   updateSubProfile,
   getSubscriptionDetails,
+  cancelSubscription,
 } = userService;
 export const {
   getContent,

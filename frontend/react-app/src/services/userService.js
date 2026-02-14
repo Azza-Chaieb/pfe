@@ -50,3 +50,15 @@ export const getSubscriptionDetails = async (userId) => {
     throw error;
   }
 };
+
+export const cancelSubscription = async (userId) => {
+  try {
+    const response = await api.put(`/users/${userId}`, {
+      subscription: null,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error canceling subscription", error);
+    throw error;
+  }
+};

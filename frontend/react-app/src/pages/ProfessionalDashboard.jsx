@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getProfessionalBookings, getSubscriptionDetails } from "../api";
+import {
+  getProfessionalBookings,
+  getSubscriptionDetails,
+  cancelSubscription,
+} from "../api";
 
 const ProfessionalDashboard = () => {
   const [user, setUser] = useState(null);
@@ -35,7 +39,25 @@ const ProfessionalDashboard = () => {
     };
 
     fetchDashboardData();
+    fetchDashboardData();
   }, [navigate]);
+
+  const handleCancelSubscription = async () => {
+    if (
+      window.confirm(
+        "Êtes-vous sûr de vouloir annuler votre abonnement ? Cette action est irréversible.",
+      )
+    ) {
+      try {
+        await cancelSubscription(user.id);
+        setSubscription(null);
+        alert("Votre abonnement a été annulé avec succès.");
+      } catch (error) {
+        console.error("Erreur lors de l'annulation", error);
+        alert("Une erreur est survenue lors de la tentative d'annulation.");
+      }
+    }
+  };
 
   if (loading) {
     return (
@@ -52,7 +74,12 @@ const ProfessionalDashboard = () => {
               <h3 className="text-lg font-bold text-gray-800">
                 Mes Réservations
               </h3>
-              <button className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition">
+              <button
+                onClick={() =>
+                  alert("Fonctionnalité de réservation à venir prochainement.")
+                }
+                className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition"
+              >
                 + Nouvelle Réservation
               </button>
             </div>
@@ -114,7 +141,14 @@ const ProfessionalDashboard = () => {
                   <p className="text-gray-500 mb-6">
                     Vous n'avez pas encore réservé d'espace.
                   </p>
-                  <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">
+                  <button
+                    onClick={() =>
+                      alert(
+                        "Fonctionnalité de réservation à venir prochainement.",
+                      )
+                    }
+                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+                  >
                     Réserver un espace
                   </button>
                 </div>
@@ -185,7 +219,10 @@ const ProfessionalDashboard = () => {
                       </li>
                     </ul>
 
-                    <button className="w-full py-3 bg-white border border-red-200 text-red-600 rounded-lg hover:bg-red-50 font-medium transition">
+                    <button
+                      onClick={handleCancelSubscription}
+                      className="w-full py-3 bg-white border border-red-200 text-red-600 rounded-lg hover:bg-red-50 font-medium transition"
+                    >
                       Annuler l'abonnement
                     </button>
                   </div>
@@ -216,7 +253,14 @@ const ProfessionalDashboard = () => {
                     un abonnement adapté à vos besoins.
                   </p>
 
-                  <button className="w-full py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-200 font-bold transition transform hover:-translate-y-1">
+                  <button
+                    onClick={() =>
+                      alert(
+                        "Les offres d'abonnement seront bientôt disponibles.",
+                      )
+                    }
+                    className="w-full py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-200 font-bold transition transform hover:-translate-y-1"
+                  >
                     Voir les offres d'abonnement
                   </button>
                 </div>
