@@ -1,0 +1,46 @@
+import api from "./apiClient";
+
+export const register = async (userData) => {
+  try {
+    const response = await api.post("/auth/local/register", userData);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const login = async (identifier, password) => {
+  try {
+    const response = await api.post("/auth/local", {
+      identifier,
+      password,
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const forgotPassword = async (email) => {
+  try {
+    const response = await api.post("/auth/forgot-password", { email });
+    return response.data;
+  } catch (error) {
+    console.error("Forgot password error", error);
+    throw error;
+  }
+};
+
+export const resetPassword = async (code, password, passwordConfirmation) => {
+  try {
+    const response = await api.post("/auth/reset-password", {
+      code,
+      password,
+      passwordConfirmation,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Reset password error", error);
+    throw error;
+  }
+};

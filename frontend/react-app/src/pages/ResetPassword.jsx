@@ -1,63 +1,96 @@
-// admin/pages/Login.jsx
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { login } from "../../../../api";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { resetPassword } from "../api";
 
-const Login = () => {
-  const [identifier, setIdentifier] = useState("");
+const ResetPassword = () => {
+  const [searchParams] = useSearchParams();
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const token = searchParams.get("token");
+
+  useEffect(() => {
+    if (!token) {
+      setError("Jeton de réinitialisation manquant ou invalide.");
+    }
+  }, [token]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage("");
     setError("");
+
+    if (password !== confirmPassword) {
+      setError("Les mots de passe ne correspondent pas.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Le mot de passe doit contenir au moins 6 caractères.");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const data = await login(identifier, password);
-      console.log("API Login response user:", data.user);
-
-      // Store token and user info
-      localStorage.setItem("jwt", data.jwt);
-      localStorage.setItem("user", JSON.stringify(data.user));
-
-      // Redirect based on role
-      // Fallback: If username is "admin", treat as admin even if user_type is incorrect
-      let userType = (data.user.user_type || "").toLowerCase();
-      if (data.user.username?.toLowerCase() === "admin") {
-        userType = "admin";
-      }
-
-      console.log(
-        "Login redirection logic. user_type determined as:",
-        userType,
-      );
-
-      if (userType === "admin") {
-        console.log("Navigating to /admin");
-        navigate("/admin");
-      } else if (userType === "etudiant" || userType === "student") {
-        console.log("Navigating to /dashboard");
-        navigate("/dashboard");
-      } else if (userType === "formateur" || userType === "trainer") {
-        console.log("Navigating to /trainer/dashboard");
-        navigate("/trainer/dashboard");
-      } else if (userType === "professional" || userType === "pro") {
-        console.log("Navigating to /professional/dashboard");
-        navigate("/professional/dashboard");
-      } else {
-        console.log("Navigating to /profile");
-        navigate("/profile");
-      }
+      await resetPassword(token, password, confirmPassword);
+      setMessage("Votre mot de passe a été réinitialisé avec succès !");
+      setTimeout(() => {
+        navigate("/login");
+      }, 3000);
     } catch (err) {
-      console.error("Login error:", err);
-      setError("Identifiants invalides ou erreur serveur.");
+      console.error("Reset password error:", err);
+      setError("Échec de la réinitialisation. Le lien a peut-être expiré.");
     } finally {
       setLoading(false);
     }
   };
+
+  if (!token) {
+    return (
+      <div
+        className="login-page"
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          background: "#f0f2f5",
+        }}
+      >
+        <div
+          style={{
+            background: "white",
+            padding: "2rem",
+            borderRadius: "8px",
+            boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+            textAlign: "center",
+          }}
+        >
+          <h3 style={{ color: "#dc2626" }}>Lien invalide</h3>
+          <p>Le lien de réinitialisation est manquant.</p>
+          <button
+            onClick={() => navigate("/login")}
+            style={{
+              marginTop: "1rem",
+              padding: "0.5rem 1rem",
+              background: "#2563eb",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
+          >
+            Retour à la connexion
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -86,12 +119,28 @@ const Login = () => {
           style={{ marginBottom: "2rem", textAlign: "center" }}
         >
           <h2 style={{ color: "#1a1a1a", marginBottom: "0.5rem" }}>
-            Connexion Admin
+            Nouveau mot de passe
           </h2>
           <p style={{ color: "#666", margin: 0 }}>
-            Accès réservé aux administrateurs
+            Choisissez un nouveau mot de passe sécurisé
           </p>
         </div>
+
+        {message && (
+          <div
+            style={{
+              background: "#dcfce7",
+              border: "1px solid #22c55e",
+              color: "#15803d",
+              padding: "0.75rem",
+              borderRadius: "0.375rem",
+              marginBottom: "1.5rem",
+              fontSize: "0.875rem",
+            }}
+          >
+            {message}
+          </div>
+        )}
 
         {error && (
           <div
@@ -109,7 +158,7 @@ const Login = () => {
           </div>
         )}
 
-        <form onSubmit={handleLogin} className="login-form">
+        <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group" style={{ marginBottom: "1rem" }}>
             <label
               style={{
@@ -118,13 +167,13 @@ const Login = () => {
                 fontWeight: 500,
               }}
             >
-              Email ou Nom d'utilisateur
+              Nouveau mot de passe
             </label>
             <input
-              type="text"
-              value={identifier}
-              onChange={(e) => setIdentifier(e.target.value)}
-              placeholder="admin@example.com"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Min. 6 caractères"
               required
               style={{
                 width: "100%",
@@ -144,13 +193,13 @@ const Login = () => {
                 fontWeight: 500,
               }}
             >
-              Mot de passe
+              Confirmer le mot de passe
             </label>
             <input
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Répétez le mot de passe"
               required
               style={{
                 width: "100%",
@@ -164,7 +213,6 @@ const Login = () => {
 
           <button
             type="submit"
-            className="login-btn"
             disabled={loading}
             style={{
               width: "100%",
@@ -176,15 +224,16 @@ const Login = () => {
               fontWeight: 600,
               cursor: loading ? "not-allowed" : "pointer",
               transition: "background 0.2s",
+              marginBottom: "1rem",
             }}
           >
-            {loading ? "Chargement..." : "Se connecter"}
+            {loading ? "Modification..." : "Changer le mot de passe"}
           </button>
 
-          <div style={{ marginTop: "1rem", textAlign: "center" }}>
+          <div style={{ textAlign: "center" }}>
             <button
               type="button"
-              onClick={() => navigate("/register")}
+              onClick={() => navigate("/login")}
               style={{
                 background: "none",
                 border: "none",
@@ -194,25 +243,7 @@ const Login = () => {
                 fontSize: "0.875rem",
               }}
             >
-              Vous n'avez pas de compte ? S'inscrire
-            </button>
-
-            <button
-              type="button"
-              onClick={() => navigate("/forgot-password")}
-              style={{
-                background: "none",
-                border: "none",
-                color: "#4b5563",
-                cursor: "pointer",
-                textDecoration: "none",
-                fontSize: "0.875rem",
-                marginTop: "0.5rem",
-                display: "block",
-                width: "100%",
-              }}
-            >
-              Mot de passe oublié ?
+              Annuler
             </button>
           </div>
         </form>
@@ -221,4 +252,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ResetPassword;
