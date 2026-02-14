@@ -27,6 +27,17 @@ const UserDashboard = () => {
         return endpoints[type] || '';
     };
 
+    const getAvatarUrl = (avatar) => {
+        if (!avatar) return null;
+        // Handle Strapi 4/5 variations (object vs array)
+        const asset = Array.isArray(avatar) ? avatar[0] : avatar;
+        const url = asset.url || asset.attributes?.url;
+
+        if (!url) return null;
+        if (url.startsWith('http')) return url;
+        return `http://localhost:1337${url}`;
+    };
+
     const getProfileId = () => {
         const prof = userData.etudiant_profil ||
             userData.formateur_profil ||
@@ -71,6 +82,12 @@ const UserDashboard = () => {
             setEditData({
                 fullname: fullUserData.fullname,
                 phone: fullUserData.phone,
+                emailPreferences: fullUserData.emailPreferences || {
+                    reservations: true,
+                    payments: true,
+                    courses: true,
+                    newsletter: false
+                },
                 ...profileData
             });
             setError(null);
@@ -95,7 +112,7 @@ const UserDashboard = () => {
         </div>
     );
 
-    if (error || !userData) return (
+    if (!userData && (error || loading === false)) return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
             <div className="bg-white p-8 rounded-2xl shadow-xl text-center max-w-md w-full">
                 <p className="text-red-500 mb-4">{error || "Une erreur est survenue."}</p>
@@ -110,11 +127,24 @@ const UserDashboard = () => {
         setEditData(prev => ({ ...prev, [name]: value }));
     };
 
+    const handlePreferenceToggle = (pref) => {
+        setEditData(prev => ({
+            ...prev,
+            emailPreferences: {
+                ...prev.emailPreferences,
+                [pref]: !prev.emailPreferences[pref]
+            }
+        }));
+    };
+
     const handleFileChange = (e) => {
         const file = e.target.files[0];
+        console.log("File selected:", file);
         if (file) {
             setAvatarFile(file);
-            setAvatarPreview(URL.createObjectURL(file));
+            const previewUrl = URL.createObjectURL(file);
+            console.log("Generated preview URL:", previewUrl);
+            setAvatarPreview(previewUrl);
         }
     };
 
@@ -127,17 +157,38 @@ const UserDashboard = () => {
             // 1. Upload Avatar if changed
             let avatarId = userData.avatar?.id;
             if (avatarFile) {
-                const formData = new FormData();
-                formData.append('files', avatarFile);
-                const uploadRes = await uploadFile(formData);
-                avatarId = Array.isArray(uploadRes) ? uploadRes[0].id : uploadRes.id;
+                try {
+                    const formData = new FormData();
+
+                    // Sanitize filename: remove spaces/accents to avoid Windows/Strapi 5 encoding issues
+                    const extension = avatarFile.name.split('.').pop();
+                    const timestamp = Date.now();
+                    const safeName = `avatar_${userData.id}_${timestamp}.${extension}`;
+
+                    const safeFile = new File([avatarFile], safeName, { type: avatarFile.type });
+                    console.log("Uploading file with safe name:", safeName);
+
+                    formData.append('files', safeFile);
+                    const uploadRes = await uploadFile(formData);
+                    avatarId = Array.isArray(uploadRes) ? uploadRes[0].id : uploadRes.id;
+                } catch (uploadErr) {
+                    const errorMsg = uploadErr.response?.data?.error?.message || uploadErr.message || "Erreur inconnue";
+                    const errorDetails = uploadErr.response?.data?.error?.details || {};
+                    console.error("Critical Upload Error Status:", uploadErr.response?.status);
+                    console.error("Critical Upload Error Response Data:", JSON.stringify(uploadErr.response?.data, null, 2));
+
+                    const detailedMsg = uploadErr.response?.data?.error?.message || uploadErr.message || "Erreur inconnue";
+                    setError(`L'image n'a pas pu être téléchargée (Erreur 500). Message: ${detailedMsg}`);
+                    setDebugError(uploadErr.response?.data);
+                }
             }
 
-            // 2. Update User (fullname, phone, avatar)
+            // 2. Update User (fullname, phone, avatar, preferences)
             await updateUser(userData.id, {
                 fullname: editData.fullname,
                 phone: editData.phone,
-                avatar: avatarId
+                avatar: avatarId,
+                emailPreferences: editData.emailPreferences
             });
 
             // 3. Update Specific Profile
@@ -149,7 +200,8 @@ const UserDashboard = () => {
                 const keysToExclude = [
                     'id', 'documentId', 'createdAt', 'updatedAt', 'publishedAt',
                     'published_at', 'created_at', 'updated_at',
-                    'fullname', 'phone', 'user', 'localizations', 'locale'
+                    'fullname', 'phone', 'user', 'localizations', 'locale',
+                    'emailPreferences'
                 ];
                 keysToExclude.forEach(key => delete profilePayload[key]);
 
@@ -166,7 +218,15 @@ const UserDashboard = () => {
             console.error("Save error full details:", err.response?.data || err);
             const errorObj = err.response?.data?.error;
             setDebugError(errorObj);
-            const msg = errorObj?.message || "Erreur lors de la sauvegarde.";
+
+            // Format nice error message
+            let msg = "Erreur lors de la sauvegarde.";
+            if (errorObj?.message) {
+                msg = `Erreur: ${errorObj.message}`;
+                if (errorObj.message.toLowerCase().includes('forbidden')) {
+                    msg = "Erreur: Vous n'avez pas l'autorisation d'effectuer cette modification (Vérifiez les permissions Upload dans Strapi).";
+                }
+            }
             setError(msg);
         } finally {
             setSaving(false);
@@ -210,11 +270,17 @@ const UserDashboard = () => {
                     className="absolute -bottom-16 left-1/2 -translate-x-1/2 md:left-24 md:translate-x-0 w-32 h-32 bg-white rounded-3xl shadow-xl flex items-center justify-center text-4xl border-4 border-white overflow-hidden cursor-pointer group"
                     onClick={() => isEditing && fileInputRef.current.click()}
                 >
-                    {avatarPreview || (userData.avatar ? `http://localhost:1337${userData.avatar.url}` : null) ? (
+                    {avatarPreview ? (
+                        <img src={avatarPreview} alt="Avatar Preview" className="w-full h-full object-cover" />
+                    ) : getAvatarUrl(userData.avatar) ? (
                         <img
-                            src={avatarPreview || `http://localhost:1337${userData.avatar.url}`}
+                            src={getAvatarUrl(userData.avatar)}
                             alt="Avatar"
                             className="w-full h-full object-cover"
+                            onError={(e) => {
+                                console.error("Avatar failed to load:", e.target.src);
+                                e.target.style.display = 'none';
+                            }}
                         />
                     ) : (
                         <span>{userData.user_type === 'student' ? '🎓' : userData.user_type === 'trainer' ? '👨‍🏫' : userData.user_type === 'association' ? '🤝' : '💼'}</span>
@@ -281,13 +347,22 @@ const UserDashboard = () => {
                                     <div className="flex items-center gap-6">
                                         <div
                                             className="w-24 h-24 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden cursor-pointer hover:border-blue-400 transition-colors"
-                                            onClick={() => fileInputRef.current.click()}
+                                            onClick={() => {
+                                                console.log("Clicking file input...");
+                                                fileInputRef.current.click();
+                                            }}
                                         >
-                                            {avatarPreview || (userData.avatar ? `http://localhost:1337${userData.avatar.url}` : null) ? (
+                                            {avatarPreview ? (
+                                                <img src={avatarPreview} alt="Local Preview" className="w-full h-full object-cover" />
+                                            ) : getAvatarUrl(userData.avatar) ? (
                                                 <img
-                                                    src={avatarPreview || `http://localhost:1337${userData.avatar.url}`}
-                                                    alt="Preview"
+                                                    src={getAvatarUrl(userData.avatar)}
+                                                    alt="Server Avatar"
                                                     className="w-full h-full object-cover"
+                                                    onError={(e) => {
+                                                        console.error("Edit box avatar failed to load:", e.target.src);
+                                                        e.target.style.display = 'none';
+                                                    }}
                                                 />
                                             ) : (
                                                 <span className="text-2xl text-slate-300">+</span>
@@ -362,6 +437,37 @@ const UserDashboard = () => {
                                                 <input type="text" name="company" value={editData.company || ''} onChange={handleInputChange} className="w-full px-4 py-3 bg-slate-50 border-transparent rounded-xl focus:bg-white focus:ring-4 focus:ring-blue-50 outline-none transition-all" />
                                             </div>
                                         )}
+                                    </div>
+                                </div>
+
+                                {/* Email Preferences Edit Section */}
+                                <div className="bg-white p-8 rounded-3xl shadow-xl border border-white/60 backdrop-blur-md">
+                                    <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+                                        <span>📧</span> Préférences de messagerie
+                                    </h3>
+                                    <div className="space-y-4">
+                                        {[
+                                            { id: 'reservations', label: 'Confirmations de réservation', icon: '📅' },
+                                            { id: 'payments', label: 'Confirmations de paiement', icon: '💰' },
+                                            { id: 'courses', label: 'Mises à jour des cours', icon: '📚' },
+                                            { id: 'newsletter', label: 'Newsletter & Promotions', icon: '✨' }
+                                        ].map((pref) => (
+                                            <div key={pref.id} className="flex items-center justify-between p-4 bg-slate-50/50 rounded-2xl hover:bg-slate-50 transition-colors">
+                                                <div className="flex items-center gap-3">
+                                                    <span className="text-xl">{pref.icon}</span>
+                                                    <div>
+                                                        <h4 className="font-bold text-slate-700 text-sm">{pref.label}</h4>
+                                                        <p className="text-[10px] text-slate-400 uppercase tracking-wider font-medium">Notification par email</p>
+                                                    </div>
+                                                </div>
+                                                <button
+                                                    onClick={() => handlePreferenceToggle(pref.id)}
+                                                    className={`w-12 h-6 rounded-full transition-all duration-300 relative ${editData.emailPreferences?.[pref.id] ? 'bg-blue-600' : 'bg-slate-300'}`}
+                                                >
+                                                    <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${editData.emailPreferences?.[pref.id] ? 'left-7' : 'left-1'}`} />
+                                                </button>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
 
@@ -464,6 +570,30 @@ const UserDashboard = () => {
                                                 <p className="text-xl font-bold text-gray-800">{profile.company || 'Non spécifiée'}</p>
                                             </div>
                                         )}
+                                    </div>
+                                </div>
+
+                                {/* Email Preferences View Mode */}
+                                <div className="bg-white p-8 rounded-3xl shadow-xl border border-white/60 backdrop-blur-md hover:scale-[1.01] transition-all duration-300">
+                                    <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                                        <span className="p-2 bg-blue-50 text-blue-500 rounded-lg">🔔</span>
+                                        Préférences de notifications
+                                    </h2>
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        {[
+                                            { id: 'reservations', label: 'Réservations', icon: '📅' },
+                                            { id: 'payments', label: 'Paiements', icon: '💰' },
+                                            { id: 'courses', label: 'Cours', icon: '📚' },
+                                            { id: 'newsletter', label: 'Newsletters', icon: '✨' }
+                                        ].map((pref) => (
+                                            <div key={pref.id} className={`p-4 rounded-2xl border-2 transition-all ${userData.emailPreferences?.[pref.id] ? 'bg-blue-50/50 border-blue-100' : 'bg-gray-50 border-transparent opacity-60'}`}>
+                                                <div className="text-2xl mb-2">{pref.icon}</div>
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{pref.label}</p>
+                                                <p className={`text-xs font-bold ${userData.emailPreferences?.[pref.id] ? 'text-blue-600' : 'text-slate-400'}`}>
+                                                    {userData.emailPreferences?.[pref.id] ? 'Activé' : 'Désactivé'}
+                                                </p>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
                             </div>

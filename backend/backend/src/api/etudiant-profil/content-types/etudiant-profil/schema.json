@@ -4,7 +4,7 @@
   "info": {
     "singularName": "etudiant-profil",
     "pluralName": "etudiant-profils",
-    "displayName": "etudiant_profil"
+    "displayName": "student_profile"
   },
   "options": {
     "draftAndPublish": true

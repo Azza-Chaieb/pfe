@@ -514,7 +514,15 @@ export interface ApiCourseCourse extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
-    title: Schema.Attribute.Text;
+    students: Schema.Attribute.Relation<
+      "manyToMany",
+      "plugin::users-permissions.user"
+    >;
+    title: Schema.Attribute.Text & Schema.Attribute.Required;
+    trainer: Schema.Attribute.Relation<
+      "manyToOne",
+      "plugin::users-permissions.user"
+    >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
@@ -557,7 +565,7 @@ export interface ApiEtudiantProfilEtudiantProfil
   extends Struct.CollectionTypeSchema {
   collectionName: "etudiant_profils";
   info: {
-    displayName: "etudiant_profil";
+    displayName: "student_profile";
     pluralName: "etudiant-profils";
     singularName: "etudiant-profil";
   };
@@ -593,7 +601,7 @@ export interface ApiFormateurProfilFormateurProfil
   extends Struct.CollectionTypeSchema {
   collectionName: "formateur_profils";
   info: {
-    displayName: "formateur_profil";
+    displayName: "traineer_profile";
     pluralName: "formateur-profils";
     singularName: "formateur-profil";
   };
@@ -723,10 +731,14 @@ export interface ApiReservationReservation extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    coworking_space: Schema.Attribute.Relation<
+      "manyToOne",
+      "api::coworking-space.coworking-space"
+    >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
-    end_time: Schema.Attribute.DateTime;
+    date: Schema.Attribute.Date;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       "oneToMany",
@@ -735,7 +747,47 @@ export interface ApiReservationReservation extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
     reservation_id: Schema.Attribute.UID;
-    start_time: Schema.Attribute.DateTime;
+    status: Schema.Attribute.Enumeration<
+      ["pending", "confirmed", "cancelled"]
+    > &
+      Schema.Attribute.DefaultTo<"pending">;
+    time_slot: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+    user: Schema.Attribute.Relation<
+      "manyToOne",
+      "plugin::users-permissions.user"
+    >;
+  };
+}
+
+export interface ApiSessionSession extends Struct.CollectionTypeSchema {
+  collectionName: "sessions";
+  info: {
+    displayName: "Session";
+    pluralName: "sessions";
+    singularName: "session";
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    course: Schema.Attribute.Relation<"manyToOne", "api::course.course">;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+    date: Schema.Attribute.Date & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::session.session"
+    > &
+      Schema.Attribute.Private;
+    location: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    time: Schema.Attribute.String;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
@@ -814,7 +866,7 @@ export interface ApiTrainerProfileTrainerProfile
   extends Struct.CollectionTypeSchema {
   collectionName: "trainer_profiles";
   info: {
-    displayName: "trainer_profile";
+    displayName: "1";
     pluralName: "trainer-profiles";
     singularName: "trainer-profile";
   };
@@ -1312,6 +1364,14 @@ export interface PluginUsersPermissionsUser
       Schema.Attribute.SetMinMaxLength<{
         minLength: 6;
       }>;
+    emailPreferences: Schema.Attribute.JSON &
+      Schema.Attribute.DefaultTo<{
+        courses: true;
+        marketing: false;
+        newsletter: true;
+        payments: true;
+        reservations: true;
+      }>;
     etudiant_profil: Schema.Attribute.Relation<
       "oneToOne",
       "api::etudiant-profil.etudiant-profil"
@@ -1385,6 +1445,7 @@ declare module "@strapi/strapi" {
       "api::payment.payment": ApiPaymentPayment;
       "api::professionnel.professionnel": ApiProfessionnelProfessionnel;
       "api::reservation.reservation": ApiReservationReservation;
+      "api::session.session": ApiSessionSession;
       "api::subscription.subscription": ApiSubscriptionSubscription;
       "api::test.test": ApiTestTest;
       "api::trainer-profile.trainer-profile": ApiTrainerProfileTrainerProfile;

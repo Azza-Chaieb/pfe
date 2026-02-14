@@ -12,7 +12,10 @@ export default (plugin) => {
       "formateur-profil",
       "association-profil",
       "professionnel",
-      "trainer-profile"
+      "trainer-profile",
+      "course",
+      "session",
+      "reservation"
     ];
 
     // 2. Configuration automatique : Permissions et Paramètres Avancés
@@ -109,6 +112,45 @@ export default (plugin) => {
     }
   };
 
+  // Lifecycle hooks for email notifications
+  plugin.contentTypes['user'].lifecycles = {
+    async afterCreate(event) {
+      const { result } = event;
+
+      // Send welcome email to new users
+      try {
+        const emailService = strapi.service('api::email.email-service');
+        if (emailService && result.email) {
+          await emailService.sendWelcomeEmail(result.email, result.fullname || result.username);
+          strapi.log.info(`Welcome email sent to ${result.email}`);
+        }
+      } catch (error) {
+        strapi.log.error('Failed to send welcome email:', error);
+      }
+    },
+
+    async afterUpdate(event) {
+      const { result, params } = event;
+      if (!result || !params.data) return;
+
+      // Detect password reset token generation
+      if (result.resetPasswordToken && params.data.resetPasswordToken) {
+        try {
+          const emailService = strapi.service('api::email.email-service');
+          if (emailService && result.email) {
+            await emailService.sendPasswordResetEmail(
+              result.email,
+              result.fullname || result.username,
+              result.resetPasswordToken
+            );
+            strapi.log.info(`Custom password reset email sent to ${result.email}`);
+          }
+        } catch (error) {
+          strapi.log.error('Failed to send custom password reset email:', error);
+        }
+      }
+    },
+  };
 
   console.log("Strapi User-Permissions extension loaded.");
   return plugin;

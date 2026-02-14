@@ -15,7 +15,7 @@ const SearchBar = ({ onSearch, placeholder = "Search..." }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="relative flex items-center w-[400px]">
+        <form onSubmit={handleSubmit} className="relative flex items-center w-full">
             <div className="relative w-full group">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors duration-300">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

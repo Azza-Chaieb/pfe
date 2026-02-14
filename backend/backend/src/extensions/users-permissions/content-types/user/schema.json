@@ -121,6 +121,16 @@
       "allowedTypes": [
         "images"
       ]
+    },
+    "emailPreferences": {
+      "type": "json",
+      "default": {
+        "newsletter": true,
+        "reservations": true,
+        "payments": true,
+        "courses": true,
+        "marketing": false
+      }
     }
   }
 }

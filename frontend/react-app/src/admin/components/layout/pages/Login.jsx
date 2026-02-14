@@ -35,6 +35,12 @@ const Login = () => {
       if (userType === 'admin') {
         console.log('Navigating to /admin');
         navigate('/admin');
+      } else if (userType === 'etudiant' || userType === 'student') {
+        console.log('Navigating to /dashboard');
+        navigate('/dashboard');
+      } else if (userType === 'formateur' || userType === 'trainer') {
+        console.log('Navigating to /trainer/dashboard');
+        navigate('/trainer/dashboard');
       } else {
         console.log('Navigating to /profile');
         navigate('/profile');
@@ -152,6 +158,24 @@ const Login = () => {
               }}
             >
               Vous n'avez pas de compte ? S'inscrire
+            </button>
+
+            <button
+              type="button"
+              onClick={() => navigate('/forgot-password')}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#4b5563',
+                cursor: 'pointer',
+                textDecoration: 'none',
+                fontSize: '0.875rem',
+                marginTop: '0.5rem',
+                display: 'block',
+                width: '100%'
+              }}
+            >
+              Mot de passe oublié ?
             </button>
           </div>
         </form>

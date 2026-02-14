@@ -15,10 +15,21 @@
       "type": "uid"
     },
     "title": {
-      "type": "text"
+      "type": "text",
+      "required": true
     },
     "category": {
       "type": "text"
+    },
+    "trainer": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "students": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::users-permissions.user"
     }
   }
 }

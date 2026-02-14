@@ -14,11 +14,30 @@
     "reservation_id": {
       "type": "uid"
     },
-    "start_time": {
-      "type": "datetime"
+    "date": {
+      "type": "date"
     },
-    "end_time": {
-      "type": "datetime"
+    "time_slot": {
+      "type": "string"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "pending",
+        "confirmed",
+        "cancelled"
+      ],
+      "default": "pending"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "coworking_space": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::coworking-space.coworking-space"
     }
   }
 }

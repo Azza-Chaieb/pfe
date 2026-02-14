@@ -9,6 +9,9 @@ import Settings from "./admin/components/layout/pages/Settings";
 import Login from "./admin/components/layout/pages/Login";
 import UserDashboard from "./pages/UserDashboard";
 import RegisterPage from "./pages/RegisterPage";
+import StudentDashboard from "./pages/StudentDashboard";
+import TeacherDashboard from "./pages/TeacherDashboard";
+import ForgotPassword from "./pages/ForgotPassword";
 import { getRecentActivity } from "./api";
 import { requestNotificationPermission } from "./services/notificationService";
 
@@ -297,6 +300,10 @@ function App() {
                     const userType = (user.user_type || '').toLowerCase();
                     if (userType === 'admin' || user.username?.toLowerCase() === 'admin') {
                       navigate('/admin');
+                    } else if (userType === 'etudiant' || userType === 'student') {
+                      navigate('/dashboard');
+                    } else if (userType === 'formateur' || userType === 'trainer') {
+                      navigate('/trainer/dashboard');
                     } else {
                       navigate('/profile');
                     }
@@ -325,10 +332,21 @@ function App() {
           </>
         } />
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/profile" element={
           <UserRoute>
             <UserDashboard />
+          </UserRoute>
+        } />
+        <Route path="/dashboard" element={
+          <UserRoute>
+            <StudentDashboard />
+          </UserRoute>
+        } />
+        <Route path="/trainer/dashboard" element={
+          <UserRoute>
+            <TeacherDashboard />
           </UserRoute>
         } />
         <Route path="/admin/*" element={
