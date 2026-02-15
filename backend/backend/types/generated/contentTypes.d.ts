@@ -588,6 +588,9 @@ export interface ApiEquipmentEquipment extends Struct.CollectionTypeSchema {
     name: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.Unique;
+    price: Schema.Attribute.Decimal;
+    price_type: Schema.Attribute.Enumeration<["hourly", "daily", "one-time"]> &
+      Schema.Attribute.DefaultTo<"one-time">;
     publishedAt: Schema.Attribute.DateTime;
     spaces: Schema.Attribute.Relation<"manyToMany", "api::space.space">;
     updatedAt: Schema.Attribute.DateTime;
@@ -803,6 +806,42 @@ export interface ApiReservationReservation extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiServiceService extends Struct.CollectionTypeSchema {
+  collectionName: "services";
+  info: {
+    description: "Additional services available for rent with coworking spaces";
+    displayName: "Service";
+    pluralName: "services";
+    singularName: "service";
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::service.service"
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    price: Schema.Attribute.Decimal;
+    price_type: Schema.Attribute.Enumeration<["hourly", "daily", "one-time"]> &
+      Schema.Attribute.DefaultTo<"one-time">;
+    publishedAt: Schema.Attribute.DateTime;
+    spaces: Schema.Attribute.Relation<"manyToMany", "api::space.space">;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiSessionSession extends Struct.CollectionTypeSchema {
   collectionName: "sessions";
   info: {
@@ -914,6 +953,7 @@ export interface ApiSpaceSpace extends Struct.CollectionTypeSchema {
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<"oneToMany", "api::space.space"> &
       Schema.Attribute.Private;
+    mesh_name: Schema.Attribute.String;
     name: Schema.Attribute.String & Schema.Attribute.Required;
     pricing_daily: Schema.Attribute.Decimal;
     pricing_hourly: Schema.Attribute.Decimal;
@@ -924,6 +964,7 @@ export interface ApiSpaceSpace extends Struct.CollectionTypeSchema {
       "oneToMany",
       "api::space-schedule.space-schedule"
     >;
+    services: Schema.Attribute.Relation<"manyToMany", "api::service.service">;
     type: Schema.Attribute.Enumeration<
       ["hot-desk", "fixed-desk", "meeting-room", "event-space"]
     > &
@@ -1594,6 +1635,7 @@ declare module "@strapi/strapi" {
       "api::payment.payment": ApiPaymentPayment;
       "api::professionnel.professionnel": ApiProfessionnelProfessionnel;
       "api::reservation.reservation": ApiReservationReservation;
+      "api::service.service": ApiServiceService;
       "api::session.session": ApiSessionSession;
       "api::space-schedule.space-schedule": ApiSpaceScheduleSpaceSchedule;
       "api::space.space": ApiSpaceSpace;

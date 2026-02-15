@@ -46,8 +46,19 @@ export const {
   createSpace,
   updateSpace,
   deleteSpace,
-  getEquipments
 } = spaceService;
+
+import * as equipmentService from "./services/equipmentService";
+export const {
+  getEquipments,
+  createEquipment,
+  updateEquipment,
+  deleteEquipment,
+} = equipmentService;
+
+import * as serviceService from "./services/serviceService";
+export const { getServicesList, createService, updateService, deleteService } =
+  serviceService;
 
 // Default export if needed (though named exports are preferred now)
 export default api;

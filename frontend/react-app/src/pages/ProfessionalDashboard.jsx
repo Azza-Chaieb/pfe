@@ -75,9 +75,7 @@ const ProfessionalDashboard = () => {
                 Mes Réservations
               </h3>
               <button
-                onClick={() =>
-                  alert("Fonctionnalité de réservation à venir prochainement.")
-                }
+                onClick={() => navigate("/spaces")}
                 className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition"
               >
                 + Nouvelle Réservation
@@ -142,11 +140,7 @@ const ProfessionalDashboard = () => {
                     Vous n'avez pas encore réservé d'espace.
                   </p>
                   <button
-                    onClick={() =>
-                      alert(
-                        "Fonctionnalité de réservation à venir prochainement.",
-                      )
-                    }
+                    onClick={() => navigate("/spaces")}
                     className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
                   >
                     Réserver un espace

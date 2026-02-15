@@ -13,6 +13,7 @@ import Users from "./admin/components/layout/pages/Users";
 import Content from "./admin/components/layout/pages/Content";
 import Settings from "./admin/components/layout/pages/Settings";
 import Login from "./admin/components/layout/pages/Login";
+import EquipmentServiceManagement from "./admin/components/layout/pages/EquipmentServiceManagement";
 import UserDashboard from "./pages/UserDashboard";
 import RegisterPage from "./pages/RegisterPage";
 import StudentDashboard from "./pages/StudentDashboard";
@@ -24,6 +25,7 @@ import ModelTestPage from "./pages/ModelTestPage";
 import ModelManagement from "./admin/components/layout/pages/ModelManagement";
 import ExplorationScene from "./components/3d/ExplorationScene";
 import SpaceManagement from "./admin/components/layout/pages/SpaceManagement";
+import SpaceCatalog from "./pages/SpaceCatalog";
 import { getRecentActivity } from "./api";
 
 import { requestNotificationPermission } from "./services/notificationService";
@@ -445,6 +447,7 @@ function App() {
           }
         />
         <Route path="/login" element={<Login />} />
+        <Route path="/spaces" element={<SpaceCatalog />} />
         <Route path="/explore/:spaceId" element={<ExplorationScene />} />
         <Route path="/test-3d" element={<ModelTestPage />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -492,6 +495,10 @@ function App() {
                 <Route path="models" element={<ModelManagement />} />
                 <Route path="content" element={<Content />} />
                 <Route path="spaces" element={<SpaceManagement />} />
+                <Route
+                  path="equipments-services"
+                  element={<EquipmentServiceManagement />}
+                />
                 <Route path="settings" element={<Settings />} />
               </Routes>
             </AdminRoute>

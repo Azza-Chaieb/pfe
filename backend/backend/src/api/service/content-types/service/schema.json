@@ -1,11 +1,11 @@
 {
   "kind": "collectionType",
-  "collectionName": "equipments",
+  "collectionName": "services",
   "info": {
-    "singularName": "equipment",
-    "pluralName": "equipments",
-    "displayName": "Equipment",
-    "description": "Equipments available in coworking spaces"
+    "singularName": "service",
+    "pluralName": "services",
+    "displayName": "Service",
+    "description": "Additional services available for rent with coworking spaces"
   },
   "options": {
     "draftAndPublish": false
@@ -20,12 +20,6 @@
     "description": {
       "type": "text"
     },
-    "spaces": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::space.space",
-      "mappedBy": "equipments"
-    },
     "price": {
       "type": "decimal"
     },
@@ -33,6 +27,12 @@
       "type": "enumeration",
       "enum": ["hourly", "daily", "one-time"],
       "default": "one-time"
+    },
+    "spaces": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::space.space",
+      "mappedBy": "services"
     }
   }
 }

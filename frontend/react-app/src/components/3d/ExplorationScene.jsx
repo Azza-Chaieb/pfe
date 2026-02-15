@@ -1,305 +1,497 @@
 import React, { Suspense, useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, useGLTF, Html, useProgress, Center } from "@react-three/drei";
+import {
+  OrbitControls,
+  useGLTF,
+  Html,
+  useProgress,
+  Center,
+} from "@react-three/drei";
 import * as THREE from "three";
 import api from "../../services/apiClient";
 
 const API_BASE_URL = "http://localhost:1337";
 
-// Availability states mapping (Mock logic for demonstration)
-const getStatus = (name) => {
-    if (!name) return 'AVAILABLE';
-    const hash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    if (hash % 3 === 0) return 'AVAILABLE';
-    if (hash % 3 === 1) return 'BOOKED';
-    return 'PARTIAL';
+/**
+ * Maps space status to colors for the 3D view.
+ */
+const getSpaceStatus = (space) => {
+  if (!space) return "AVAILABLE";
+  return "AVAILABLE"; // Logic can be extended for real booking checks
 };
 
 const COLORS = {
-    AVAILABLE: '#10b981', // Emerald 500
-    BOOKED: '#ef4444',    // Red 500
-    PARTIAL: '#f59e0b',   // Amber 500
-    SELECTED: '#3b82f6',  // Blue 500
+  AVAILABLE: "#10b981",
+  BOOKED: "#ef4444",
+  PARTIAL: "#f59e0b",
+  SELECTED: "#3b82f6",
 };
 
-// Component for individual model parts with selection/availability handling
-function Model({ url, onSelect, selectedName }) {
-    const { scene } = useGLTF(url);
-    const [hoveredName, setHoveredName] = useState(null);
+/**
+ * 3D Model Component with interaction handlers.
+ */
+function Model({ url, onSelect, onHover, selectedName }) {
+  const { scene } = useGLTF(url);
+  const [localHovered, setLocalHovered] = useState(null);
 
-    // Setup interactive events on all meshes in the scene
-    useEffect(() => {
-        if (!scene) return;
+  useEffect(() => {
+    if (!scene) return;
+    scene.traverse((child) => {
+      if (child.isMesh) {
+        const materials = Array.isArray(child.material)
+          ? child.material
+          : [child.material];
 
-        scene.traverse((child) => {
-            if (child.isMesh) {
-                const materials = Array.isArray(child.material) ? child.material : [child.material];
-                const status = getStatus(child.name || child.parent?.name || "default");
-                const baseColor = new THREE.Color(COLORS[status]);
+        const spaceData = onSelect.spaces?.find(
+          (s) => (s.attributes?.mesh_name || s.mesh_name) === child.name,
+        );
 
-                materials.forEach(mat => {
-                    if (!mat) return;
+        const floor = spaceData?.attributes?.floor ?? spaceData?.floor;
+        const isCurrentFloor =
+          onSelect.activeFloor === null || floor === onSelect.activeFloor;
 
-                    // Selection/Hover logic
-                    const isSelected = child.name === selectedName || child.parent?.name === selectedName;
-                    const isHovered = child.name === hoveredName || child.parent?.name === hoveredName;
+        const status = spaceData ? getSpaceStatus(spaceData) : "AVAILABLE";
+        const baseColor = new THREE.Color(COLORS[status]);
 
-                    if (isSelected) {
-                        mat.color.set(COLORS.SELECTED);
-                        if (mat.emissive) {
-                            mat.emissive.setHex(0x3b82f6);
-                            mat.emissiveIntensity = 0.5;
-                        }
-                    } else if (isHovered) {
-                        mat.color.set(baseColor).lerp(new THREE.Color('#ffffff'), 0.2); // Lighten on hover
-                        if (mat.emissive) mat.emissiveIntensity = 0;
-                    } else {
-                        mat.color.set(baseColor);
-                        if (mat.emissive) mat.emissiveIntensity = 0;
-                    }
-                });
+        materials.forEach((mat) => {
+          if (!mat) return;
+          const isSelected =
+            child.name === selectedName || child.parent?.name === selectedName;
+          const isHovered =
+            child.name === localHovered || child.parent?.name === localHovered;
+
+          // Visual Feedback for filtering
+          if (isSelected) {
+            mat.color.set(COLORS.SELECTED);
+            mat.opacity = 1;
+            if (mat.emissive) {
+              mat.emissive.setHex(0x3b82f6);
+              mat.emissiveIntensity = 0.5;
             }
+          } else if (isHovered && isCurrentFloor) {
+            mat.color.set(baseColor).lerp(new THREE.Color("#ffffff"), 0.3);
+            mat.opacity = 1;
+            if (mat.emissive) mat.emissiveIntensity = 0.1;
+          } else {
+            mat.color.set(baseColor);
+            mat.opacity = isCurrentFloor ? 1 : 0.15; // Fade out other floors
+            mat.transparent = true;
+            if (mat.emissive) mat.emissiveIntensity = 0;
+          }
         });
-    }, [scene, selectedName, hoveredName]);
+      }
+    });
+  }, [
+    scene,
+    selectedName,
+    localHovered,
+    onSelect.spaces,
+    onSelect.activeFloor,
+  ]);
 
-    return (
-        <Center top>
-            <primitive
-                object={scene}
-                onPointerDown={(e) => {
-                    e.stopPropagation();
-                    const objectName = e.object.name || e.object.parent?.name || "Objet interactif";
-                    onSelect({
-                        name: objectName,
-                        point: e.point
-                    });
-                }}
-                onPointerOver={(e) => {
-                    e.stopPropagation();
-                    setHoveredName(e.object.name || e.object.parent?.name);
-                    document.body.style.cursor = 'pointer';
-                }}
-                onPointerOut={() => {
-                    setHoveredName(null);
-                    document.body.style.cursor = 'auto';
-                }}
-                onPointerMissed={() => onSelect(null)}
-                castShadow
-                receiveShadow
-            />
-        </Center>
-    );
+  return (
+    <Center top>
+      <primitive
+        object={scene}
+        onPointerDown={(e) => {
+          e.stopPropagation();
+          const name = e.object.name || e.object.parent?.name;
+          const space = onSelect.spaces?.find(
+            (s) => (s.attributes?.mesh_name || s.mesh_name) === name,
+          );
+          const floor = space?.attributes?.floor ?? space?.floor;
+
+          if (onSelect.activeFloor === null || floor === onSelect.activeFloor) {
+            onSelect({ name: name || "Space", point: e.point });
+          }
+        }}
+        onPointerOver={(e) => {
+          e.stopPropagation();
+          const name = e.object.name || e.object.parent?.name;
+          const space = onSelect.spaces?.find(
+            (s) => (s.attributes?.mesh_name || s.mesh_name) === name,
+          );
+          const floor = space?.attributes?.floor ?? space?.floor;
+
+          if (onSelect.activeFloor === null || floor === onSelect.activeFloor) {
+            setLocalHovered(name);
+            onHover({ name, point: e.point });
+            document.body.style.cursor = "pointer";
+          }
+        }}
+        onPointerOut={() => {
+          setLocalHovered(null);
+          onHover(null);
+          document.body.style.cursor = "auto";
+        }}
+        onPointerMissed={() => onSelect(null)}
+        castShadow
+        receiveShadow
+      />
+    </Center>
+  );
 }
 
+/**
+ * Legend component for 3D availability.
+ */
 const Legend = () => (
-    <div className="absolute bottom-10 left-10 z-10 bg-slate-900/80 backdrop-blur-md p-5 rounded-2xl border border-white/10 shadow-2xl">
-        <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Légende de disponibilité</h4>
-        <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-3">
-                <div className="w-3 h-3 rounded-full bg-[#10b981]" />
-                <span className="text-white text-xs font-medium">Disponible</span>
-            </div>
-            <div className="flex items-center gap-3">
-                <div className="w-3 h-3 rounded-full bg-[#f59e0b]" />
-                <span className="text-white text-xs font-medium">Partiel</span>
-            </div>
-            <div className="flex items-center gap-3">
-                <div className="w-3 h-3 rounded-full bg-[#ef4444]" />
-                <span className="text-white text-xs font-medium">Réservé</span>
-            </div>
-            <div className="h-[1px] bg-white/5 my-1" />
-            <div className="flex items-center gap-3">
-                <div className="w-3 h-3 rounded-full bg-[#3b82f6] shadow-[0_0_8px_#3b82f6]" />
-                <span className="text-blue-400 text-xs font-bold italic tracking-tight">Sélectionné</span>
-            </div>
-        </div>
+  <div className="absolute bottom-10 left-10 z-10 bg-slate-900/80 backdrop-blur-md p-5 rounded-2xl border border-white/10 shadow-2xl">
+    <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">
+      Disponibilité
+    </h4>
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center gap-3">
+        <div className="w-3 h-3 rounded-full bg-[#10b981]" />
+        <span className="text-white text-xs font-medium">Disponible</span>
+      </div>
+      <div className="flex items-center gap-3">
+        <div className="w-3 h-3 rounded-full bg-[#3b82f6]" />
+        <span className="text-blue-400 text-xs font-bold italic">
+          Sélectionné
+        </span>
+      </div>
     </div>
+  </div>
 );
 
+/**
+ * Floor Selector UI Component.
+ */
+const FloorSelector = ({ floors, activeFloor, onChange }) => {
+  // Force show for testing/alignment if there's data, or even if empty for debug
+  if (floors.length === 0) return null;
+
+  return (
+    <div className="absolute left-12 top-1/2 -translate-y-1/2 z-[20] flex flex-col gap-4">
+      <div className="bg-slate-900/40 backdrop-blur-2xl p-2 rounded-[2rem] border border-white/10 shadow-2xl flex flex-col gap-2">
+        <button
+          onClick={() => onChange(null)}
+          className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 font-black text-[10px] uppercase tracking-tighter ${
+            activeFloor === null
+              ? "bg-blue-600 text-white shadow-[0_0_20px_rgba(37,99,235,0.4)]"
+              : "text-slate-400 hover:bg-white/5"
+          }`}
+        >
+          ALL
+        </button>
+        <div className="w-8 h-[1px] bg-white/5 mx-auto my-1" />
+        {floors
+          .sort((a, b) => a - b)
+          .map((floor) => (
+            <button
+              key={floor}
+              onClick={() => onChange(floor)}
+              className={`w-14 h-14 rounded-full flex flex-col items-center justify-center transition-all duration-500 group ${
+                activeFloor === floor
+                  ? "bg-white text-slate-900 shadow-[0_0_30px_rgba(255,255,255,0.2)]"
+                  : "text-slate-500 hover:bg-white/5"
+              }`}
+            >
+              <span
+                className={`text-[8px] font-black uppercase mb-[-2px] ${activeFloor === floor ? "opacity-50" : "opacity-30"}`}
+              >
+                {floor === 0 ? "Base" : "Niv."}
+              </span>
+              <span className="text-lg font-black">
+                {floor === 0 ? "RDC" : floor}
+              </span>
+            </button>
+          ))}
+      </div>
+      <p className="text-[9px] font-black text-white/20 uppercase tracking-[0.3em] text-center rotate-180 [writing-mode:vertical-lr]">
+        Navigation par étages
+      </p>
+    </div>
+  );
+};
+
+/**
+ * Loading component for 3D assets.
+ */
 function Loader() {
-    const { progress } = useProgress();
-    return (
-        <Html center>
-            <div style={{
-                color: "white",
-                fontSize: "1.2rem",
-                fontWeight: "bold",
-                backgroundColor: "rgba(0,0,0,0.5)",
-                padding: "10px 20px",
-                borderRadius: "10px",
-                whiteSpace: "nowrap"
-            }}>
-                Chargement : {progress.toFixed(0)}%
-            </div>
-        </Html>
-    );
+  const { progress } = useProgress();
+  return (
+    <Html center>
+      <div className="bg-slate-900/90 text-white px-6 py-3 rounded-2xl font-black text-sm tracking-widest backdrop-blur-xl border border-white/10 animate-pulse">
+        CHARGEMENT {progress.toFixed(0)}%
+      </div>
+    </Html>
+  );
 }
 
-const ExplorationScene = () => {
-    const { spaceId } = useParams();
-    const [modelUrl, setModelUrl] = useState(null);
-    const [error, setError] = useState(null);
-    const [selectedObject, setSelectedObject] = useState(null);
+/**
+ * Detailed Information Panel for selected spaces.
+ */
+const DetailedInfoPanel = ({ space, onClose }) => {
+  if (!space) return null;
+  const attrs = space.attributes || space;
+  const status = getSpaceStatus(space);
+  const equipmentsList = attrs.equipments?.data || attrs.equipments || [];
+  const servicesList = attrs.services?.data || attrs.services || [];
 
-    useEffect(() => {
-        const fetchSpaceData = async () => {
-            try {
-                const query = isNaN(spaceId)
-                    ? `filters[documentId][$eq]=${spaceId}`
-                    : `filters[id][$eq]=${spaceId}`;
-
-                const response = await api.get(`/coworking-spaces?${query}&populate=models.file`);
-                const spaces = response.data.data || [];
-
-                if (spaces.length > 0) {
-                    const space = spaces[0];
-                    const models = space.models || space.attributes?.models || [];
-
-                    if (models.length > 0) {
-                        const modelFile = models[0].file?.data?.attributes || models[0].file;
-                        if (modelFile?.url) {
-                            setModelUrl(`${API_BASE_URL}${modelFile.url}`);
-                        } else {
-                            setError("Aucun fichier 3D valide trouvé.");
-                        }
-                    } else {
-                        setError("Cet espace n'a pas de modèle 3D associé.");
-                    }
-                } else {
-                    setError(`Espace de coworking introuvable (ID: ${spaceId}).`);
-                }
-            } catch (err) {
-                console.error("Fetch error:", err);
-                setError("Erreur technique lors du chargement.");
-            }
-        };
-
-        if (spaceId) fetchSpaceData();
-    }, [spaceId]);
-
-    const handleBooking = (name) => {
-        alert(`Demande de réservation pour : ${name}`);
-    };
-
-    return (
-        <div className="w-full h-screen relative bg-[#050510] overflow-hidden">
-            {/* Header */}
-            <div className="absolute top-10 left-10 z-10 pointer-events-none">
-                <h1 className="text-3xl font-black text-white tracking-tighter">SUNSPACE <span className="text-blue-500">3D</span></h1>
-                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.3em] mt-1 origin-left">
-                    Espace de Coworking Virtuel
-                </p>
-            </div>
-
-            <Legend />
-
-            {/* Error Overlay */}
-            {error && (
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 text-white font-medium bg-red-600/90 px-8 py-4 rounded-xl shadow-2xl backdrop-blur-md text-center">
-                    <p className="text-lg">⚠ {error}</p>
-                </div>
-            )}
-
-            <Canvas
-                shadows
-                camera={{ position: [8, 5, 8], fov: 45 }}
-                gl={{ antialias: true }}
-            >
-                <color attach="background" args={["#050510"]} />
-                <fog attach="fog" args={["#050510", 15, 25]} />
-
-                <Suspense fallback={<Loader />}>
-                    <ambientLight intensity={0.4} />
-                    <directionalLight
-                        position={[10, 15, 5]}
-                        intensity={1.5}
-                        castShadow
-                    />
-
-                    {modelUrl && (
-                        <Model
-                            url={modelUrl}
-                            onSelect={setSelectedObject}
-                            selectedName={selectedObject?.name}
-                        />
-                    )}
-
-                    {/* Info Tooltip on selection */}
-                    {selectedObject && (
-                        <Html position={selectedObject.point}>
-                            <div style={{
-                                transform: 'translate3d(-50%, -120%, 0)',
-                                background: 'rgba(15, 23, 42, 0.95)',
-                                backdropFilter: 'blur(12px)',
-                                color: 'white',
-                                padding: '18px',
-                                borderRadius: '24px',
-                                border: '1px solid rgba(255,255,255,0.15)',
-                                boxShadow: '0 20px 40px -10px rgba(0, 0, 0, 0.7)',
-                                minWidth: '200px',
-                                pointerEvents: 'auto'
-                            }}>
-                                <h4 style={{ margin: '0 0 6px 0', fontSize: '15px', fontWeight: '900', letterSpacing: '-0.02em' }}>
-                                    {selectedObject.name}
-                                </h4>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-                                    <div style={{
-                                        width: '8px',
-                                        height: '8px',
-                                        background: COLORS[getStatus(selectedObject.name)],
-                                        borderRadius: '50%',
-                                        boxShadow: `0 0 8px ${COLORS[getStatus(selectedObject.name)]}`
-                                    }} />
-                                    <span style={{ fontSize: '11px', color: '#94a3b8', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                                        {getStatus(selectedObject.name) === 'AVAILABLE' ? 'Disponible' :
-                                            getStatus(selectedObject.name) === 'BOOKED' ? 'Réservé' : 'Partiel'}
-                                    </span>
-                                </div>
-                                <button
-                                    onClick={() => handleBooking(selectedObject.name)}
-                                    style={{
-                                        width: '100%',
-                                        padding: '12px',
-                                        background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-                                        border: 'none',
-                                        borderRadius: '12px',
-                                        color: 'white',
-                                        fontSize: '12px',
-                                        fontWeight: '800',
-                                        cursor: 'pointer',
-                                        boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
-                                        transition: 'transform 0.2s'
-                                    }}
-                                >
-                                    RÉSERVER MAINTENANT
-                                </button>
-                                <div style={{
-                                    position: 'absolute',
-                                    bottom: '-8px',
-                                    left: '50%',
-                                    transform: 'translateX(-50%)',
-                                    borderLeft: '8px solid transparent',
-                                    borderRight: '8px solid transparent',
-                                    borderTop: '8px solid rgba(15, 23, 42, 0.95)'
-                                }} />
-                            </div>
-                        </Html>
-                    )}
-
-                    <OrbitControls
-                        makeDefault
-                        enableDamping={true}
-                        dampingFactor={0.05}
-                        minDistance={2}
-                        maxDistance={15}
-                        maxPolarAngle={Math.PI / 2.2}
-                        enablePan={true}
-                    />
-                </Suspense>
-            </Canvas>
+  return (
+    <div className="absolute top-0 right-0 h-full w-[400px] z-[100] bg-slate-900/40 backdrop-blur-3xl border-l border-white/10 shadow-[-20px_0_50px_rgba(0,0,0,0.5)] animate-slide-left overflow-y-auto">
+      <div className="p-10">
+        <button
+          onClick={onClose}
+          className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center hover:bg-white/10 transition-all text-white mb-10"
+        >
+          ✕
+        </button>
+        <div className="flex items-center gap-3 mb-4">
+          <div
+            className="w-3 h-3 rounded-full animate-pulse"
+            style={{
+              background: COLORS[status],
+              boxShadow: `0 0 10px ${COLORS[status]}`,
+            }}
+          />
+          <span className="text-[10px] font-black text-white/50 uppercase tracking-[0.3em]">
+            Disponible immédiatement
+          </span>
         </div>
-    );
+        <h2 className="text-4xl font-black text-white tracking-tighter leading-tight mb-2 uppercase italic">
+          {attrs.name}
+        </h2>
+        <p className="text-slate-400 font-medium text-sm leading-relaxed mb-8">
+          {attrs.description || "Espace premium conçu pour la productivité."}
+        </p>
+        <div className="grid grid-cols-2 gap-4 mb-10">
+          <div className="bg-white/5 p-5 rounded-3xl border border-white/5">
+            <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-1">
+              Prix Journalier
+            </span>
+            <span className="text-xl font-black text-blue-400">
+              {attrs.pricing_daily || "25"}{" "}
+              <span className="text-xs uppercase">DTN</span>
+            </span>
+          </div>
+          <div className="bg-white/5 p-5 rounded-3xl border border-white/5">
+            <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-1">
+              Capacité
+            </span>
+            <span className="text-xl font-black text-white">
+              {attrs.capacity || 1}{" "}
+              <span className="text-xs uppercase">Pers.</span>
+            </span>
+          </div>
+        </div>
+        <div className="space-y-8 mb-12">
+          {equipmentsList.length > 0 && (
+            <div>
+              <h4 className="text-[10px] font-black text-white uppercase tracking-[0.2em] mb-4">
+                📦 Équipements
+              </h4>
+              <div className="flex flex-wrap gap-2">
+                {equipmentsList.map((eq, i) => (
+                  <span
+                    key={i}
+                    className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-bold text-slate-300"
+                  >
+                    {eq.attributes?.name || eq.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+          {servicesList.length > 0 && (
+            <div>
+              <h4 className="text-[10px] font-black text-white uppercase tracking-[0.2em] mb-4">
+                ⚡ Services
+              </h4>
+              <div className="flex flex-wrap gap-2">
+                {servicesList.map((sv, i) => (
+                  <span
+                    key={i}
+                    className="px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-xl text-[10px] font-bold text-blue-400"
+                  >
+                    {sv.attributes?.name || sv.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+        <button
+          onClick={() => alert(`Réservation : ${attrs.name}`)}
+          className="w-full py-6 bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-[0.2em] rounded-[2rem] shadow-2xl transition-all active:scale-95 flex items-center justify-center gap-3"
+        >
+          Réserver cet espace <span>→</span>
+        </button>
+      </div>
+    </div>
+  );
+};
+
+/**
+ * Main 3D Exploration Scene component.
+ */
+const ExplorationScene = () => {
+  const { spaceId } = useParams();
+  const [modelUrl, setModelUrl] = useState(null);
+  const [spaces, setSpaces] = useState([]);
+  const [error, setError] = useState(null);
+  const [selectedObject, setSelectedObject] = useState(null);
+  const [hoveredObject, setHoveredObject] = useState(null);
+  const [activeFloor, setActiveFloor] = useState(null);
+
+  // Extract unique floors
+  const availableFloors = Array.from(
+    new Set(
+      spaces
+        .map((s) => s.attributes?.floor ?? s.floor)
+        .filter((f) => f !== undefined && f !== null),
+    ),
+  );
+
+  console.log("DEBUG: Spaces fetched:", spaces);
+  console.log("DEBUG: Available floors calculated:", availableFloors);
+
+  useEffect(() => {
+    const fetchSpaceData = async () => {
+      try {
+        const query = isNaN(spaceId)
+          ? `filters[documentId][$eq]=${spaceId}`
+          : `filters[id][$eq]=${spaceId}`;
+        const response = await api.get(
+          `/coworking-spaces?${query}&populate[models][populate]=file&populate[spaces][populate]=*`,
+        );
+        const results = response.data.data || [];
+        if (results.length > 0) {
+          const coworkingSpace = results[0];
+          const attrs = coworkingSpace.attributes || coworkingSpace;
+          setSpaces(attrs.spaces?.data || attrs.spaces || []);
+          const models = attrs.models?.data || attrs.models || [];
+          if (models.length > 0) {
+            const modelData = models[0].attributes || models[0];
+            const modelFile =
+              modelData.file?.data?.attributes || modelData.file;
+            if (modelFile?.url) setModelUrl(`${API_BASE_URL}${modelFile.url}`);
+            else setError("Modèle 3D manquant.");
+          } else setError("Aucun modèle 3D configuré.");
+        } else setError("Centre introuvable.");
+      } catch (err) {
+        setError("Erreur de chargement.");
+      }
+    };
+    if (spaceId) fetchSpaceData();
+  }, [spaceId]);
+
+  return (
+    <div className="w-full h-screen relative bg-[#050510] overflow-hidden font-inter">
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-12 left-12 z-10 pointer-events-none">
+        <h1 className="text-4xl font-black text-white tracking-tighter mb-1">
+          SUNSPACE <span className="text-blue-500 italic">PRO</span>
+        </h1>
+        <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.4em]">
+          Vue Interactive 3D
+        </p>
+      </div>
+      <Legend />
+      <FloorSelector
+        floors={availableFloors}
+        activeFloor={activeFloor}
+        onChange={(f) => {
+          setActiveFloor(f);
+          setSelectedObject(null); // Clear selection when floor changes
+        }}
+      />
+      <DetailedInfoPanel
+        space={spaces.find(
+          (s) =>
+            (s.attributes?.mesh_name || s.mesh_name) === selectedObject?.name,
+        )}
+        onClose={() => setSelectedObject(null)}
+      />
+      {error && (
+        <div className="absolute inset-0 flex items-center justify-center z-50 bg-slate-950/80 backdrop-blur-xl">
+          <div className="text-center p-12 bg-white/5 border border-white/10 rounded-[3rem] max-w-md shadow-2xl">
+            <span className="text-6xl mb-6 block">⚠️</span>
+            <h3 className="text-2xl font-black text-white mb-4 uppercase tracking-tighter">
+              {error}
+            </h3>
+            <button
+              onClick={() => (window.location.href = "/spaces")}
+              className="px-8 py-4 bg-blue-600 text-white font-black text-[10px] uppercase rounded-2xl"
+            >
+              Retour
+            </button>
+          </div>
+        </div>
+      )}
+      <Canvas
+        shadows
+        camera={{ position: [10, 8, 10], fov: 40 }}
+        gl={{ antialias: true }}
+      >
+        <color attach="background" args={["#030308"]} />
+        <fog attach="fog" args={["#030308", 15, 30]} />
+        <Suspense fallback={<Loader />}>
+          <ambientLight intensity={0.5} />
+          <spotLight
+            position={[15, 20, 10]}
+            intensity={2}
+            angle={0.3}
+            penumbra={1}
+            castShadow
+          />
+          {modelUrl && (
+            <Model
+              url={modelUrl}
+              onSelect={Object.assign((obj) => setSelectedObject(obj), {
+                spaces,
+                activeFloor,
+              })}
+              onHover={setHoveredObject}
+              selectedName={selectedObject?.name}
+            />
+          )}
+          {hoveredObject && !selectedObject && (
+            <Html position={hoveredObject.point}>
+              <div className="pointer-events-none -translate-x-1/2 -translate-y-[120%] bg-slate-900 shadow-2xl border border-white/20 p-4 rounded-2xl backdrop-blur-md animate-fade-in">
+                <div className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-1">
+                  Espace
+                </div>
+                <div className="text-white font-black uppercase text-sm tracking-tight truncate">
+                  {(() => {
+                    const space = spaces.find(
+                      (s) =>
+                        (s.attributes?.mesh_name || s.mesh_name) ===
+                        hoveredObject.name,
+                    );
+                    if (space) return space.attributes?.name || space.name;
+                    return hoveredObject.name === "pDuck" ||
+                      hoveredObject.name.includes("Shape")
+                      ? "Espace de test"
+                      : hoveredObject.name;
+                  })()}
+                </div>
+              </div>
+            </Html>
+          )}
+          <OrbitControls
+            makeDefault
+            enableDamping
+            dampingFactor={0.05}
+            minDistance={2}
+            maxDistance={20}
+            maxPolarAngle={Math.PI / 2.1}
+            autoRotate={!selectedObject}
+            autoRotateSpeed={0.5}
+          />
+        </Suspense>
+      </Canvas>
+      <style>{`
+        @keyframes slide-left { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fade-in { from { opacity: 0; transform: translate(-50%, -100%); } to { opacity: 1; transform: translate(-50%, -120%); } }
+        .animate-slide-left { animation: slide-left 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        .animate-fade-in { animation: fade-in 0.3s ease-out forwards; }
+      `}</style>
+    </div>
+  );
 };
 
 export default ExplorationScene;

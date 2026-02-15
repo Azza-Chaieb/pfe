@@ -1,22 +1,27 @@
-import React from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import React from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem('jwt');
-    localStorage.removeItem('user');
-    navigate('/login');
+    localStorage.removeItem("jwt");
+    localStorage.removeItem("user");
+    navigate("/login");
   };
 
   const menuItems = [
-    { path: '/admin', icon: '📊', label: 'Tableau de bord' },
-    { path: '/admin/users', icon: '👥', label: 'Utilisateurs' },
-    { path: '/admin/spaces', icon: '🏢', label: 'Espaces' },
-    { path: '/admin/models', icon: '🧊', label: 'Gestion 3D' },
-    { path: '/admin/settings', icon: '⚙️', label: 'Paramètres' },
+    { path: "/admin", icon: "📊", label: "Tableau de bord" },
+    { path: "/admin/users", icon: "👥", label: "Utilisateurs" },
+    { path: "/admin/spaces", icon: "🏢", label: "Espaces" },
+    {
+      path: "/admin/equipments-services",
+      icon: "⚡",
+      label: "Équipements & Services",
+    },
+    { path: "/admin/models", icon: "🧊", label: "Gestion 3D" },
+    { path: "/admin/settings", icon: "⚙️", label: "Paramètres" },
   ];
 
   return (
@@ -35,12 +40,15 @@ const Sidebar = () => {
               key={item.path}
               to={item.path}
               className={`group flex items-center px-5 py-3.5 text-slate-500 rounded-xl transition-all duration-300 ease-out font-medium
-                    ${isActive
-                  ? 'bg-blue-50 text-blue-600 shadow-md shadow-blue-500/10 ring-1 ring-blue-500/10'
-                  : 'hover:bg-white hover:text-blue-500 hover:shadow-sm hover:translate-x-1'
-                }`}
+                    ${
+                      isActive
+                        ? "bg-blue-50 text-blue-600 shadow-md shadow-blue-500/10 ring-1 ring-blue-500/10"
+                        : "hover:bg-white hover:text-blue-500 hover:shadow-sm hover:translate-x-1"
+                    }`}
             >
-              <span className={`text-xl mr-3 transition-all duration-300 ${isActive ? 'grayscale-0' : 'grayscale group-hover:grayscale-0'}`}>
+              <span
+                className={`text-xl mr-3 transition-all duration-300 ${isActive ? "grayscale-0" : "grayscale group-hover:grayscale-0"}`}
+              >
                 {item.icon}
               </span>
               <span>{item.label}</span>
