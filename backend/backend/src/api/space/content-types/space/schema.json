@@ -1,0 +1,67 @@
+{
+    "kind": "collectionType",
+    "collectionName": "spaces",
+    "info": {
+        "singularName": "space",
+        "pluralName": "spaces",
+        "displayName": "Space",
+        "description": "Bookable units (desks, rooms) within a coworking space"
+    },
+    "options": {
+        "draftAndPublish": true
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "name": {
+            "type": "string",
+            "required": true
+        },
+        "type": {
+            "type": "enumeration",
+            "enum": [
+                "hot-desk",
+                "fixed-desk",
+                "meeting-room",
+                "event-space"
+            ],
+            "required": true
+        },
+        "capacity": {
+            "type": "integer",
+            "min": 1
+        },
+        "floor": {
+            "type": "integer"
+        },
+        "pricing_hourly": {
+            "type": "decimal"
+        },
+        "pricing_daily": {
+            "type": "decimal"
+        },
+        "pricing_weekly": {
+            "type": "decimal"
+        },
+        "pricing_monthly": {
+            "type": "decimal"
+        },
+        "equipments": {
+            "type": "relation",
+            "relation": "manyToMany",
+            "target": "api::equipment.equipment",
+            "inversedBy": "spaces"
+        },
+        "coworking_space": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "api::coworking-space.coworking-space",
+            "inversedBy": "spaces"
+        },
+        "schedules": {
+            "type": "relation",
+            "relation": "oneToMany",
+            "target": "api::space-schedule.space-schedule",
+            "mappedBy": "space"
+        }
+    }
+}

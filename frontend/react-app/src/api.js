@@ -31,5 +31,23 @@ export const {
 } = bookingService;
 export const { uploadFile } = fileService;
 
+import * as service3D from "./services/3DService";
+export const {
+  getModels,
+  getCoworkingSpacesList,
+  upload3DModelToSpace,
+  deleteModel,
+} = service3D;
+
+import * as spaceService from "./services/spaceService";
+export const {
+  getSpaces,
+  getSpaceById,
+  createSpace,
+  updateSpace,
+  deleteSpace,
+  getEquipments
+} = spaceService;
+
 // Default export if needed (though named exports are preferred now)
 export default api;

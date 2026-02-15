@@ -22,6 +22,18 @@
     },
     "description": {
       "type": "text"
+    },
+    "models": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::model.model",
+      "mappedBy": "coworking_space"
+    },
+    "spaces": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::space.space",
+      "mappedBy": "coworking_space"
     }
   }
 }

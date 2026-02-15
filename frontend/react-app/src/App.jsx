@@ -20,6 +20,10 @@ import TeacherDashboard from "./pages/TeacherDashboard";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import ProfessionalDashboard from "./pages/ProfessionalDashboard";
+import ModelTestPage from "./pages/ModelTestPage";
+import ModelManagement from "./admin/components/layout/pages/ModelManagement";
+import ExplorationScene from "./components/3d/ExplorationScene";
+import SpaceManagement from "./admin/components/layout/pages/SpaceManagement";
 import { getRecentActivity } from "./api";
 
 import { requestNotificationPermission } from "./services/notificationService";
@@ -441,6 +445,8 @@ function App() {
           }
         />
         <Route path="/login" element={<Login />} />
+        <Route path="/explore/:spaceId" element={<ExplorationScene />} />
+        <Route path="/test-3d" element={<ModelTestPage />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route
@@ -483,7 +489,9 @@ function App() {
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="users" element={<Users />} />
+                <Route path="models" element={<ModelManagement />} />
                 <Route path="content" element={<Content />} />
+                <Route path="spaces" element={<SpaceManagement />} />
                 <Route path="settings" element={<Settings />} />
               </Routes>
             </AdminRoute>

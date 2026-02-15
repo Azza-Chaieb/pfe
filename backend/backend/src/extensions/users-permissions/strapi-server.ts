@@ -18,6 +18,8 @@ export default (plugin) => {
       "course",
       "session",
       "reservation",
+      "coworking-space",
+      "model",
     ];
 
     // 2. Configuration automatique : Permissions et Paramètres Avancés
@@ -129,7 +131,7 @@ export default (plugin) => {
               .create({
                 data: { action, role: authenticatedRole.id, enabled: true },
               })
-              .catch(() => {});
+              .catch(() => { });
           }
         }
 

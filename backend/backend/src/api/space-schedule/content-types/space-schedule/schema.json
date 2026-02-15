@@ -1,0 +1,45 @@
+{
+    "kind": "collectionType",
+    "collectionName": "space_schedules",
+    "info": {
+        "singularName": "space-schedule",
+        "pluralName": "space-schedules",
+        "displayName": "SpaceSchedule",
+        "description": "Operating hours for specific spaces"
+    },
+    "options": {
+        "draftAndPublish": false
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "day_of_week": {
+            "type": "enumeration",
+            "enum": [
+                "monday",
+                "tuesday",
+                "wednesday",
+                "thursday",
+                "friday",
+                "saturday",
+                "sunday"
+            ],
+            "required": true
+        },
+        "start_time": {
+            "type": "time"
+        },
+        "end_time": {
+            "type": "time"
+        },
+        "is_closed": {
+            "type": "boolean",
+            "default": false
+        },
+        "space": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "api::space.space",
+            "inversedBy": "schedules"
+        }
+    }
+}
