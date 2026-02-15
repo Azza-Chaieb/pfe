@@ -551,10 +551,45 @@ export interface ApiCoworkingSpaceCoworkingSpace
       "api::coworking-space.coworking-space"
     > &
       Schema.Attribute.Private;
+    models: Schema.Attribute.Relation<"oneToMany", "api::model.model">;
     name: Schema.Attribute.Text;
     publishedAt: Schema.Attribute.DateTime;
     space_cowrking_id: Schema.Attribute.UID;
+    spaces: Schema.Attribute.Relation<"oneToMany", "api::space.space">;
     type: Schema.Attribute.Text;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiEquipmentEquipment extends Struct.CollectionTypeSchema {
+  collectionName: "equipments";
+  info: {
+    description: "Equipments available in coworking spaces";
+    displayName: "Equipment";
+    pluralName: "equipments";
+    singularName: "equipment";
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::equipment.equipment"
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    publishedAt: Schema.Attribute.DateTime;
+    spaces: Schema.Attribute.Relation<"manyToMany", "api::space.space">;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
@@ -642,12 +677,18 @@ export interface ApiModelModel extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    coworking_space: Schema.Attribute.Relation<
+      "manyToOne",
+      "api::coworking-space.coworking-space"
+    >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
+    file: Schema.Attribute.Media<"files"> & Schema.Attribute.Required;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<"oneToMany", "api::model.model"> &
       Schema.Attribute.Private;
+    metadata: Schema.Attribute.JSON;
     module_id: Schema.Attribute.UID;
     publishedAt: Schema.Attribute.DateTime;
     title: Schema.Attribute.String;
@@ -788,6 +829,105 @@ export interface ApiSessionSession extends Struct.CollectionTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     time: Schema.Attribute.String;
     title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiSpaceScheduleSpaceSchedule
+  extends Struct.CollectionTypeSchema {
+  collectionName: "space_schedules";
+  info: {
+    description: "Operating hours for specific spaces";
+    displayName: "SpaceSchedule";
+    pluralName: "space-schedules";
+    singularName: "space-schedule";
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+    day_of_week: Schema.Attribute.Enumeration<
+      [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday",
+      ]
+    > &
+      Schema.Attribute.Required;
+    end_time: Schema.Attribute.Time;
+    is_closed: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::space-schedule.space-schedule"
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    space: Schema.Attribute.Relation<"manyToOne", "api::space.space">;
+    start_time: Schema.Attribute.Time;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiSpaceSpace extends Struct.CollectionTypeSchema {
+  collectionName: "spaces";
+  info: {
+    description: "Bookable units (desks, rooms) within a coworking space";
+    displayName: "Space";
+    pluralName: "spaces";
+    singularName: "space";
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    capacity: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      >;
+    coworking_space: Schema.Attribute.Relation<
+      "manyToOne",
+      "api::coworking-space.coworking-space"
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+    equipments: Schema.Attribute.Relation<
+      "manyToMany",
+      "api::equipment.equipment"
+    >;
+    floor: Schema.Attribute.Integer;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<"oneToMany", "api::space.space"> &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    pricing_daily: Schema.Attribute.Decimal;
+    pricing_hourly: Schema.Attribute.Decimal;
+    pricing_monthly: Schema.Attribute.Decimal;
+    pricing_weekly: Schema.Attribute.Decimal;
+    publishedAt: Schema.Attribute.DateTime;
+    schedules: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::space-schedule.space-schedule"
+    >;
+    type: Schema.Attribute.Enumeration<
+      ["hot-desk", "fixed-desk", "meeting-room", "event-space"]
+    > &
+      Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
@@ -1447,6 +1587,7 @@ declare module "@strapi/strapi" {
       "api::association-profil.association-profil": ApiAssociationProfilAssociationProfil;
       "api::course.course": ApiCourseCourse;
       "api::coworking-space.coworking-space": ApiCoworkingSpaceCoworkingSpace;
+      "api::equipment.equipment": ApiEquipmentEquipment;
       "api::etudiant-profil.etudiant-profil": ApiEtudiantProfilEtudiantProfil;
       "api::formateur-profil.formateur-profil": ApiFormateurProfilFormateurProfil;
       "api::model.model": ApiModelModel;
@@ -1454,6 +1595,8 @@ declare module "@strapi/strapi" {
       "api::professionnel.professionnel": ApiProfessionnelProfessionnel;
       "api::reservation.reservation": ApiReservationReservation;
       "api::session.session": ApiSessionSession;
+      "api::space-schedule.space-schedule": ApiSpaceScheduleSpaceSchedule;
+      "api::space.space": ApiSpaceSpace;
       "api::subscription.subscription": ApiSubscriptionSubscription;
       "api::test.test": ApiTestTest;
       "api::trainer-profile.trainer-profile": ApiTrainerProfileTrainerProfile;

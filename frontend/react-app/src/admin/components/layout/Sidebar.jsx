@@ -14,6 +14,8 @@ const Sidebar = () => {
   const menuItems = [
     { path: '/admin', icon: '📊', label: 'Tableau de bord' },
     { path: '/admin/users', icon: '👥', label: 'Utilisateurs' },
+    { path: '/admin/spaces', icon: '🏢', label: 'Espaces' },
+    { path: '/admin/models', icon: '🧊', label: 'Gestion 3D' },
     { path: '/admin/settings', icon: '⚙️', label: 'Paramètres' },
   ];
 

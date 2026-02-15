@@ -1,0 +1,30 @@
+{
+    "kind": "collectionType",
+    "collectionName": "equipments",
+    "info": {
+        "singularName": "equipment",
+        "pluralName": "equipments",
+        "displayName": "Equipment",
+        "description": "Equipments available in coworking spaces"
+    },
+    "options": {
+        "draftAndPublish": false
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "name": {
+            "type": "string",
+            "required": true,
+            "unique": true
+        },
+        "description": {
+            "type": "text"
+        },
+        "spaces": {
+            "type": "relation",
+            "relation": "manyToMany",
+            "target": "api::space.space",
+            "mappedBy": "equipments"
+        }
+    }
+}

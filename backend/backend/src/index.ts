@@ -47,7 +47,7 @@ export default {
             if (
               userPermissionsService &&
               typeof userPermissionsService.createResetPasswordToken ===
-                "function"
+              "function"
             ) {
               resetPasswordToken =
                 userPermissionsService.createResetPasswordToken();
@@ -180,28 +180,55 @@ export default {
 
       // Proactively grant upload permissions to Authenticated role
       try {
-        const uploadActions = [
+        const actionsToGrant = [
           "plugin::upload.content-api.upload",
           "plugin::upload.content-api.find",
           "plugin::upload.content-api.findOne",
+          "api::model.model.find",
+          "api::model.model.findOne",
+          "api::model.model.delete",
+          "api::coworking-space.coworking-space.find",
+          "api::coworking-space.coworking-space.findOne",
+          // Adding custom upload route permission just in case
+          "api::coworking-space.coworking-space.upload3DModel",
         ];
 
-        for (const action of uploadActions) {
-          const permission = await strapi
-            .query("plugin::users-permissions.permission")
-            .findOne({
-              where: { action, role: role.id },
-            });
+        // Grant to both Authenticated and Public for testing
+        const allRoles = await strapi
+          .query("plugin::users-permissions.role")
+          .findMany();
 
-          if (!permission) {
-            await strapi.query("plugin::users-permissions.permission").create({
-              data: { action, role: role.id },
-            });
-            console.log(
-              `✅ Granted "${action}" permission to Authenticated role.`,
-            );
+        console.log("👥 Found roles in DB:");
+        allRoles.forEach(r => console.log(`  - Role: ${r.name} (Type: ${r.type}, ID: ${r.id})`));
+
+        const rolesToSync = allRoles.filter(r => ["authenticated", "public", "admin"].includes(r.type || ""));
+
+        for (const r of rolesToSync) {
+          console.log(`🔍 [BOOTSTRAP] Syncing permissions for role: ${r.name} (Type: ${r.type}, ID: ${r.id})`);
+          for (const action of actionsToGrant) {
+            const permission = await strapi
+              .query("plugin::users-permissions.permission")
+              .findOne({
+                where: { action, role: r.id },
+              });
+
+            if (!permission) {
+              await strapi.query("plugin::users-permissions.permission").create({
+                data: { action, role: r.id, enabled: true },
+              });
+              console.log(`✅ [BOOTSTRAP] GRANTED & ENABLED: "${action}" to ${r.name}`);
+            } else if (!permission.enabled) {
+              await strapi.query("plugin::users-permissions.permission").update({
+                where: { id: permission.id },
+                data: { enabled: true },
+              });
+              console.log(`✅ [BOOTSTRAP] FORCED ENABLED: "${action}" for ${r.name}`);
+            } else {
+              console.log(`ℹ️ [BOOTSTRAP] OK: "${action}" is already enabled for ${r.name}`);
+            }
           }
         }
+        console.log("🚀 [BOOTSTRAP] Permissions synchronization complete.");
       } catch (uploadErr) {
         console.warn(
           "⚠️ Failed to auto-grant upload permission:",

@@ -10,10 +10,21 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const messaging = getMessaging(app);
+
+let messaging = null;
+try {
+  messaging = getMessaging(app);
+} catch (error) {
+  console.warn("Firebase Messaging is not supported in this browser:", error.message);
+}
 
 // توليد FCM Token
 export const getFcmToken = async () => {
+  if (!messaging) {
+    console.warn("Firebase Messaging not available.");
+    return null;
+  }
+
   const VAPID_KEY = "VAPID_KEY"; // REPLACE WITH YOUR REAL VAPID KEY FROM FIREBASE CONSOLE
 
   if (VAPID_KEY === "VAPID_KEY") {
@@ -39,6 +50,7 @@ export const getFcmToken = async () => {
 // استقبال notifications مباشرة في الـ frontend
 export const onMessageListener = () =>
   new Promise((resolve) => {
+    if (!messaging) return;
     onMessage(messaging, (payload) => {
       console.log("Message received. ", payload);
       resolve(payload);
@@ -46,6 +58,10 @@ export const onMessageListener = () =>
   });
 
 export const requestNotificationPermission = async () => {
+  if (!messaging) {
+    console.warn("Firebase Messaging not supported, skipping notification permission.");
+    return null;
+  }
   try {
     const permission = await Notification.requestPermission();
     if (permission === 'granted') {
@@ -58,3 +74,4 @@ export const requestNotificationPermission = async () => {
     console.error('Error requesting notification permission:', error);
   }
 };
+
