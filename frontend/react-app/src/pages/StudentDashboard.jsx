@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import DashboardLayout from "../components/layout/DashboardLayout";
+import DashboardStatCard from "../components/layout/DashboardStatCard";
 import EnrolledCoursesWidget from "../components/dashboard/EnrolledCoursesWidget";
 import UpcomingSessionsWidget from "../components/dashboard/UpcomingSessionsWidget";
 import MyBookingsWidget from "../components/dashboard/MyBookingsWidget";
@@ -9,7 +11,7 @@ import {
   getUpcomingSessions,
 } from "../api";
 
-const StudentDashboard = () => {
+const StudentDashboard = ({ activeTab = "dashboard" }) => {
   const [user, setUser] = useState(null);
   const [courses, setCourses] = useState([]);
   const [sessions, setSessions] = useState([]);
@@ -26,24 +28,26 @@ const StudentDashboard = () => {
         setLoading(true);
 
         try {
-          // Fetch data in parallel
           const [resReservations, resCourses, resSessions] = await Promise.all([
             getUserReservations(parsedUser.id),
             getEnrolledCourses(),
             getUpcomingSessions(),
           ]);
 
-          // Map Strapi responses to widget formats (Safe handling for V4 attributes or V5 flat structure)
           setBookings(
             (resReservations.data || []).map((item) => {
               const data = item.attributes || item;
-              const space =
+              const space = data.space?.data?.attributes || data.space || {};
+              const coworking =
                 data.coworking_space?.data?.attributes ||
                 data.coworking_space ||
                 {};
+
               return {
                 id: item.id,
-                spaceName: space.name || "Espace inconnu",
+                spaceName: space.name
+                  ? `${coworking.name || "Espace"} - ${space.name}`
+                  : coworking.name || "Espace inconnu",
                 date: new Date(data.date).toLocaleDateString("fr-FR", {
                   weekday: "long",
                   day: "numeric",
@@ -60,7 +64,7 @@ const StudentDashboard = () => {
               return {
                 id: item.id,
                 title: data.title,
-                progress: data.progress || 0, // Default progress
+                progress: data.progress || 0,
               };
             }),
           );
@@ -94,82 +98,153 @@ const StudentDashboard = () => {
     fetchData();
   }, [navigate]);
 
-  if (!user || loading) {
-    return (
-      <div className="min-h-screen bg-[#f3f4f6] flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 font-medium">
-            Chargement de votre espace...
-          </p>
-        </div>
+  const renderDashboard = () => (
+    <>
+      <div className="mb-8">
+        <h1 className="text-3xl font-black text-slate-800 tracking-tight mb-1">
+          Content de vous revoir,{" "}
+          <span className="text-blue-600">
+            {user?.fullname?.split(" ")[0] || user?.username}
+          </span>{" "}
+          !
+        </h1>
+        <p className="text-xs text-slate-500 font-medium">
+          Voici un aperçu de vos activités d'apprentissage et de vos
+          réservations.
+        </p>
       </div>
-    );
-  }
 
-  return (
-    <div className="min-h-screen bg-[#f3f4f6] p-4 md:p-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Header Section */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-          <div>
-            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
-              Bonjour,{" "}
-              <span className="text-blue-600">
-                {user.fullname || user.username}
-              </span>{" "}
-              ! 👋
-            </h1>
-            <p className="text-gray-600 mt-1">
-              Heureux de vous revoir sur votre espace d'apprentissage.
-            </p>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+        <DashboardStatCard
+          title="Cours suivis"
+          value={courses.length}
+          icon="📚"
+          color="blue"
+        />
+        <DashboardStatCard
+          title="Réservations"
+          value={bookings.length}
+          icon="📅"
+          color="emerald"
+        />
+        <DashboardStatCard
+          title="Sessions à venir"
+          value={sessions.length}
+          icon="⏰"
+          color="purple"
+        />
+        <DashboardStatCard
+          title="Progression moyenne"
+          value={`${Math.round(courses.reduce((acc, c) => acc + (c.progress || 0), 0) / (courses.length || 1))}%`}
+          icon="⚡"
+          color="orange"
+        />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-8">
+          <div className="bg-white/40 backdrop-blur-md p-2 rounded-[32px] border border-white/60 shadow-xl shadow-slate-200/50">
+            <EnrolledCoursesWidget
+              courses={courses}
+              onSeeAll={() => navigate("/student/courses")}
+            />
           </div>
-          <div className="flex gap-3">
-            <button
-              onClick={() => navigate("/profile")}
-              className="px-4 py-2 bg-white text-gray-700 font-semibold rounded-lg shadow-sm border border-gray-200 hover:bg-gray-50 transition-all"
-            >
-              Gérer mon profil
-            </button>
+          <div className="bg-white/40 backdrop-blur-md p-2 rounded-[32px] border border-white/60 shadow-xl shadow-slate-200/50">
+            <MyBookingsWidget
+              bookings={bookings}
+              onSeeAll={() => navigate("/student/bookings")}
+            />
+          </div>
+        </div>
+
+        <div className="lg:col-span-1 space-y-10">
+          <div className="bg-white/40 backdrop-blur-md p-2 rounded-[32px] border border-white/60 shadow-xl shadow-slate-200/50">
+            <UpcomingSessionsWidget sessions={sessions} />
+          </div>
+
+          <div className="p-8 bg-gradient-to-br from-blue-600 to-indigo-800 rounded-[32px] text-white shadow-2xl shadow-blue-200 relative overflow-hidden group">
+            <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700" />
+            <h4 className="text-xl font-black mb-4 tracking-tight">
+              Besoin d'aide ? 💡
+            </h4>
+            <p className="text-blue-100 text-sm leading-relaxed mb-6 font-medium">
+              Explorez nos nouveaux espaces de coworking en 3D pour trouver
+              l'endroit idéal pour vos révisions !
+            </p>
             <button
               onClick={() => navigate("/spaces")}
-              className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition-all"
+              className="w-full py-4 bg-white text-blue-600 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all"
             >
-              Réserver un espace
+              Explorer les espaces
             </button>
           </div>
         </div>
+      </div>
+    </>
+  );
 
-        {/* Dashboard Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content (Left/Center) */}
-          <div className="lg:col-span-2 space-y-8">
-            <EnrolledCoursesWidget courses={courses} />
-            <MyBookingsWidget bookings={bookings} />
-          </div>
-
-          {/* Sidebar (Right) */}
-          <div className="lg:col-span-1">
-            <UpcomingSessionsWidget sessions={sessions} />
-
-            {/* Quick Tips or Stats card could go here */}
-            <div className="mt-8 p-6 bg-gradient-to-br from-indigo-600 to-purple-700 rounded-2xl text-white shadow-xl">
-              <h4 className="text-lg font-bold mb-2">Astuce du jour 💡</h4>
-              <p className="text-indigo-100 text-sm leading-relaxed">
-                Saviez-vous que vous pouvez modifier vos préférences de
-                notification par email directement depuis votre profil ?
-              </p>
-              <button
-                onClick={() => navigate("/profile")}
-                className="mt-4 text-sm font-bold bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-lg transition-colors"
-              >
-                Voir mes réglages
-              </button>
-            </div>
-          </div>
+  const renderCourses = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-3xl font-black text-slate-800 tracking-tight">
+            Mes Cours 📚
+          </h1>
+          <p className="text-xs text-slate-500 font-medium">
+            Suivez votre progression et accédez à vos ressources.
+          </p>
         </div>
+        <button
+          onClick={() => navigate("/dashboard")}
+          className="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-[10px] font-black uppercase hover:bg-slate-200 transition-all"
+        >
+          ← Retour
+        </button>
+      </div>
+      <div className="bg-white/40 backdrop-blur-md p-6 rounded-[32px] border border-white/60 shadow-xl shadow-slate-200/50">
+        <EnrolledCoursesWidget courses={courses} fullPage />
       </div>
     </div>
+  );
+
+  const renderBookings = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-3xl font-black text-slate-800 tracking-tight">
+            Mes Réservations 📅
+          </h1>
+          <p className="text-xs text-slate-500 font-medium">
+            Consultez et gérez vos réservations d'espaces.
+          </p>
+        </div>
+        <div className="flex gap-4">
+          <button
+            onClick={() => navigate("/spaces")}
+            className="px-5 py-2 bg-blue-600 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg"
+          >
+            + Nouveau
+          </button>
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-[10px] font-black uppercase hover:bg-slate-200 transition-all"
+          >
+            ← Retour
+          </button>
+        </div>
+      </div>
+      <div className="bg-white/40 backdrop-blur-md p-6 rounded-[32px] border border-white/60 shadow-xl shadow-slate-200/50">
+        <MyBookingsWidget bookings={bookings} fullPage />
+      </div>
+    </div>
+  );
+
+  return (
+    <DashboardLayout role="student" user={user} loading={loading}>
+      {activeTab === "dashboard" && renderDashboard()}
+      {activeTab === "courses" && renderCourses()}
+      {activeTab === "bookings" && renderBookings()}
+    </DashboardLayout>
   );
 };
 

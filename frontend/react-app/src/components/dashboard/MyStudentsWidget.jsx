@@ -1,47 +1,101 @@
-import React from 'react';
+import React from "react";
 
-const MyStudentsWidget = ({ students = [] }) => {
-    return (
-        <div className="bg-white/80 backdrop-blur-md p-6 rounded-2xl shadow-xl border border-white/20">
-            <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-                👥 Mes Étudiants
-            </h3>
-            <div className="overflow-x-auto">
-                <table className="w-full text-left">
-                    <thead>
-                        <tr className="text-xs uppercase text-gray-400 font-bold border-b border-gray-100">
-                            <th className="pb-3 px-2">Étudiant</th>
-                            <th className="pb-3 px-2">Cours</th>
-                            <th className="pb-3 px-2">Dernière activité</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-50">
-                        {students.length > 0 ? (
-                            students.slice(0, 5).map((student) => (
-                                <tr key={student.id} className="hover:bg-blue-50/30 transition-colors">
-                                    <td className="py-3 px-2">
-                                        <div className="font-semibold text-gray-700">{student.name}</div>
-                                        <div className="text-xs text-gray-400">{student.email}</div>
-                                    </td>
-                                    <td className="py-3 px-2 text-sm text-gray-600">{student.courseTitle}</td>
-                                    <td className="py-3 px-2 text-xs text-gray-500">{student.lastActive}</td>
-                                </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan="3" className="py-6 text-center text-gray-400 italic">Aucun étudiant inscrit à vos cours pour le moment.</td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
-            </div>
-            {students.length > 5 && (
-                <button className="w-full mt-4 py-2 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors border-t border-gray-100 italic">
-                    Voir tous les étudiants...
-                </button>
+const MyStudentsWidget = ({ students = [], onSeeAll, fullPage = false }) => {
+  return (
+    <div className={`p-4 ${fullPage ? "" : ""}`}>
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+          👥 {fullPage ? "Annuaire des étudiants" : "Mes Étudiants"}
+        </h3>
+        {!fullPage && onSeeAll && (
+          <button
+            onClick={onSeeAll}
+            className="text-[10px] font-black uppercase text-purple-600 tracking-widest hover:underline"
+          >
+            Annuaire complet →
+          </button>
+        )}
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="w-full text-left border-separate border-spacing-y-2">
+          <thead>
+            <tr>
+              <th className="px-4 py-2 text-[9px] font-black uppercase text-slate-400 tracking-[0.2em]">
+                Étudiant
+              </th>
+              <th className="px-4 py-2 text-[9px] font-black uppercase text-slate-400 tracking-[0.2em]">
+                Cours
+              </th>
+              {fullPage && (
+                <th className="px-4 py-2 text-[9px] font-black uppercase text-slate-400 tracking-[0.2em]">
+                  Email
+                </th>
+              )}
+              <th className="px-4 py-2 text-[9px] font-black uppercase text-slate-400 tracking-[0.2em] text-right">
+                Dernière activité
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {students.length > 0 ? (
+              students.map((student) => (
+                <tr
+                  key={student.id}
+                  className="bg-white/50 hover:bg-white transition-all group"
+                >
+                  <td className="px-4 py-3 rounded-l-xl border-y border-l border-slate-50">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-400 text-xs">
+                        {student.name.charAt(0)}
+                      </div>
+                      <span className="font-bold text-slate-700 text-sm">
+                        {student.name}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 border-y border-slate-50">
+                    <span className="text-xs font-medium text-slate-500">
+                      {student.courseTitle}
+                    </span>
+                  </td>
+                  {fullPage && (
+                    <td className="px-4 py-3 border-y border-slate-50">
+                      <span className="text-xs text-blue-500 font-medium">
+                        {student.email}
+                      </span>
+                    </td>
+                  )}
+                  <td className="px-4 py-3 rounded-r-xl border-y border-r border-slate-50 text-right">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
+                      {student.lastActive}
+                    </span>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td
+                  colSpan={fullPage ? 4 : 3}
+                  className="text-center py-6 text-slate-400 italic"
+                >
+                  Aucun étudiant inscrit.
+                </td>
+              </tr>
             )}
+          </tbody>
+        </table>
+      </div>
+
+      {fullPage && (
+        <div className="mt-8 flex justify-center">
+          <button className="px-10 py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:bg-black transition-all shadow-xl">
+            Exporter la liste (.CSV)
+          </button>
         </div>
-    );
+      )}
+    </div>
+  );
 };
 
 export default MyStudentsWidget;

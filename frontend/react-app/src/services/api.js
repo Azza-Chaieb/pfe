@@ -1,49 +1,49 @@
-import axios from 'axios';
+import axios from "axios";
 
 const api = axios.create({
-  baseURL: 'http://localhost:1337/api',
+  baseURL: "http://192.168.100.97:1337/api",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
 // Add a request interceptor to attach the token
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 export const login = async (identifier, password) => {
-  const response = await api.post('/auth/local', {
+  const response = await api.post("/auth/local", {
     identifier,
     password,
   });
   if (response.data.jwt) {
-    localStorage.setItem('token', response.data.jwt);
-    localStorage.setItem('user', JSON.stringify(response.data.user));
+    localStorage.setItem("token", response.data.jwt);
+    localStorage.setItem("user", JSON.stringify(response.data.user));
   }
   return response.data;
 };
 
 export const logout = () => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('user');
-  window.location.href = '/login';
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  window.location.href = "/login";
 };
 
 export const getCurrentUser = () => {
-  const userStr = localStorage.getItem('user');
+  const userStr = localStorage.getItem("user");
   return userStr ? JSON.parse(userStr) : null;
 };
 
 export const isAuthenticated = () => {
-  return !!localStorage.getItem('token');
+  return !!localStorage.getItem("token");
 };
 
 export default api;

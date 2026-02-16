@@ -2,7 +2,15 @@ import api from "./apiClient";
 
 export const register = async (userData) => {
   try {
-    const response = await api.post("/auth/local/register", userData);
+    // Extract captchaToken if present to avoid Strapi validation errors in body
+    const { captchaToken, ...data } = userData;
+    const headers = captchaToken ? { "x-captcha-token": captchaToken } : {};
+
+    console.log("🚀 [FRONTEND] Sending registration request");
+    console.log("📦 [FRONTEND] Body (data):", data);
+    console.log("📝 [FRONTEND] Headers:", headers);
+
+    const response = await api.post("/auth/local/register", data, { headers });
     return response.data;
   } catch (error) {
     throw error;

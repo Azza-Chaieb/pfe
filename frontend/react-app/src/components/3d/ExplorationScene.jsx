@@ -1,5 +1,5 @@
 import React, { Suspense, useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Canvas } from "@react-three/fiber";
 import {
   OrbitControls,
@@ -10,8 +10,9 @@ import {
 } from "@react-three/drei";
 import * as THREE from "three";
 import api from "../../services/apiClient";
+import { createReservation } from "../../services/bookingService";
 
-const API_BASE_URL = "http://localhost:1337";
+const API_BASE_URL = "http://192.168.100.97:1337";
 
 /**
  * Maps space status to colors for the 3D view.
@@ -161,7 +162,7 @@ const Legend = () => (
  */
 const FloorSelector = ({ floors, activeFloor, onChange }) => {
   // Force show for testing/alignment if there's data, or even if empty for debug
-  if (floors.length === 0) return null;
+  // if (floors.length === 0) return null;
 
   return (
     <div className="absolute left-12 top-1/2 -translate-y-1/2 z-[20] flex flex-col gap-4">
@@ -200,6 +201,11 @@ const FloorSelector = ({ floors, activeFloor, onChange }) => {
             </button>
           ))}
       </div>
+      {floors.length === 0 && (
+        <p className="text-[8px] font-bold text-blue-400/50 uppercase tracking-widest mt-2 text-center bg-blue-500/5 p-2 rounded-lg border border-blue-500/10 italic">
+          Configuré les étages <br /> dans Strapi (Space)
+        </p>
+      )}
       <p className="text-[9px] font-black text-white/20 uppercase tracking-[0.3em] text-center rotate-180 [writing-mode:vertical-lr]">
         Navigation par étages
       </p>
@@ -224,12 +230,62 @@ function Loader() {
 /**
  * Detailed Information Panel for selected spaces.
  */
-const DetailedInfoPanel = ({ space, onClose }) => {
+const DetailedInfoPanel = ({ space, coworkingSpaceId, onClose }) => {
+  const [quantities, setQuantities] = useState({});
+  const [bookingLoading, setBookingLoading] = useState(false);
+  const navigate = useNavigate();
+
   if (!space) return null;
   const attrs = space.attributes || space;
   const status = getSpaceStatus(space);
   const equipmentsList = attrs.equipments?.data || attrs.equipments || [];
   const servicesList = attrs.services?.data || attrs.services || [];
+
+  const updateQuantity = (id, delta) => {
+    setQuantities((prev) => ({
+      ...prev,
+      [id]: Math.max(0, (prev[id] || 0) + delta),
+    }));
+  };
+
+  const handleBooking = async () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) {
+      alert("Veuillez vous connecter pour réserver.");
+      navigate("/login");
+      return;
+    }
+
+    setBookingLoading(true);
+    try {
+      const selectedExtras = Object.entries(quantities)
+        .filter(([_, q]) => q > 0)
+        .reduce((acc, [id, q]) => ({ ...acc, [id]: q }), {});
+
+      const reservationData = {
+        user: user.id,
+        coworking_space: coworkingSpaceId,
+        space: space.id,
+        date: new Date().toISOString().split("T")[0], // Default to today
+        time_slot: "Full Day",
+        extras: selectedExtras,
+      };
+
+      await createReservation(reservationData);
+      alert("Réservation réussie !");
+
+      const targetDashboard =
+        user.user_type === "professional"
+          ? "/professional/bookings"
+          : "/student/bookings";
+      navigate(targetDashboard);
+    } catch (error) {
+      console.error("Booking error:", error);
+      alert("Erreur lors de la réservation.");
+    } finally {
+      setBookingLoading(false);
+    }
+  };
 
   return (
     <div className="absolute top-0 right-0 h-full w-[400px] z-[100] bg-slate-900/40 backdrop-blur-3xl border-l border-white/10 shadow-[-20px_0_50px_rgba(0,0,0,0.5)] animate-slide-left overflow-y-auto">
@@ -282,43 +338,89 @@ const DetailedInfoPanel = ({ space, onClose }) => {
           {equipmentsList.length > 0 && (
             <div>
               <h4 className="text-[10px] font-black text-white uppercase tracking-[0.2em] mb-4">
-                📦 Équipements
+                📦 Équipements & Quantité
               </h4>
-              <div className="flex flex-wrap gap-2">
-                {equipmentsList.map((eq, i) => (
-                  <span
-                    key={i}
-                    className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-bold text-slate-300"
-                  >
-                    {eq.attributes?.name || eq.name}
-                  </span>
-                ))}
+              <div className="flex flex-col gap-3">
+                {equipmentsList.map((eq, i) => {
+                  const id = eq.id || `eq-${i}`;
+                  return (
+                    <div
+                      key={id}
+                      className="flex items-center justify-between p-3 bg-white/5 border border-white/10 rounded-2xl group hover:bg-white/10 transition-all"
+                    >
+                      <span className="text-xs font-bold text-slate-300">
+                        {eq.attributes?.name || eq.name}
+                      </span>
+                      <div className="flex items-center gap-3 bg-black/20 rounded-xl p-1 border border-white/5">
+                        <button
+                          onClick={() => updateQuantity(id, -1)}
+                          className="w-6 h-6 flex items-center justify-center text-white hover:text-blue-400 transition-colors"
+                        >
+                          -
+                        </button>
+                        <span className="text-[10px] font-black text-blue-400 min-w-[20px] text-center">
+                          {quantities[id] || 0}
+                        </span>
+                        <button
+                          onClick={() => updateQuantity(id, 1)}
+                          className="w-6 h-6 flex items-center justify-center text-white hover:text-blue-400 transition-colors"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
           {servicesList.length > 0 && (
             <div>
               <h4 className="text-[10px] font-black text-white uppercase tracking-[0.2em] mb-4">
-                ⚡ Services
+                ⚡ Services & Options
               </h4>
-              <div className="flex flex-wrap gap-2">
-                {servicesList.map((sv, i) => (
-                  <span
-                    key={i}
-                    className="px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-xl text-[10px] font-bold text-blue-400"
-                  >
-                    {sv.attributes?.name || sv.name}
-                  </span>
-                ))}
+              <div className="flex flex-col gap-3">
+                {servicesList.map((sv, i) => {
+                  const id = sv.id || `sv-${i}`;
+                  return (
+                    <div
+                      key={id}
+                      className="flex items-center justify-between p-3 bg-blue-500/5 border border-blue-500/10 rounded-2xl group hover:bg-blue-500/10 transition-all"
+                    >
+                      <span className="text-xs font-bold text-blue-200">
+                        {sv.attributes?.name || sv.name}
+                      </span>
+                      <div className="flex items-center gap-3 bg-black/20 rounded-xl p-1 border border-blue-500/10">
+                        <button
+                          onClick={() => updateQuantity(id, -1)}
+                          className="w-6 h-6 flex items-center justify-center text-white hover:text-blue-400 transition-colors"
+                        >
+                          -
+                        </button>
+                        <span className="text-[10px] font-black text-blue-400 min-w-[20px] text-center">
+                          {quantities[id] || 0}
+                        </span>
+                        <button
+                          onClick={() => updateQuantity(id, 1)}
+                          className="w-6 h-6 flex items-center justify-center text-white hover:text-blue-400 transition-colors"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
         </div>
         <button
-          onClick={() => alert(`Réservation : ${attrs.name}`)}
-          className="w-full py-6 bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-[0.2em] rounded-[2rem] shadow-2xl transition-all active:scale-95 flex items-center justify-center gap-3"
+          onClick={handleBooking}
+          disabled={bookingLoading}
+          className={`w-full py-6 bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-[0.2em] rounded-[2rem] shadow-2xl transition-all active:scale-95 flex items-center justify-center gap-3 ${bookingLoading ? "opacity-50 cursor-wait" : ""}`}
         >
-          Réserver cet espace <span>→</span>
+          {bookingLoading ? "Traitement..." : "Confirmer la sélection"}{" "}
+          <span>→</span>
         </button>
       </div>
     </div>
@@ -404,6 +506,7 @@ const ExplorationScene = () => {
           (s) =>
             (s.attributes?.mesh_name || s.mesh_name) === selectedObject?.name,
         )}
+        coworkingSpaceId={spaceId}
         onClose={() => setSelectedObject(null)}
       />
       {error && (

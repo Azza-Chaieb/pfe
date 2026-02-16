@@ -17,7 +17,7 @@ import EquipmentServiceManagement from "./admin/components/layout/pages/Equipmen
 import UserDashboard from "./pages/UserDashboard";
 import RegisterPage from "./pages/RegisterPage";
 import StudentDashboard from "./pages/StudentDashboard";
-import TeacherDashboard from "./pages/TeacherDashboard";
+import TrainerDashboard from "./pages/TrainerDashboard";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import ProfessionalDashboard from "./pages/ProfessionalDashboard";
@@ -26,6 +26,7 @@ import ModelManagement from "./admin/components/layout/pages/ModelManagement";
 import ExplorationScene from "./components/3d/ExplorationScene";
 import SpaceManagement from "./admin/components/layout/pages/SpaceManagement";
 import SpaceCatalog from "./pages/SpaceCatalog";
+import AssociationDashboard from "./pages/AssociationDashboard";
 import { getRecentActivity } from "./api";
 
 import { requestNotificationPermission } from "./services/notificationService";
@@ -414,6 +415,8 @@ function App() {
                         navigate("/trainer/dashboard");
                       } else if (userType === "professional") {
                         navigate("/professional/dashboard");
+                      } else if (userType === "association") {
+                        navigate("/association/dashboard");
                       } else {
                         navigate("/profile");
                       }
@@ -460,6 +463,22 @@ function App() {
             </UserRoute>
           }
         />
+        <Route
+          path="/professional/bookings"
+          element={
+            <UserRoute>
+              <ProfessionalDashboard activeTab="bookings" />
+            </UserRoute>
+          }
+        />
+        <Route
+          path="/professional/subscription"
+          element={
+            <UserRoute>
+              <ProfessionalDashboard activeTab="subscription" />
+            </UserRoute>
+          }
+        />
         <Route path="/register" element={<RegisterPage />} />
         <Route
           path="/profile"
@@ -478,10 +497,66 @@ function App() {
           }
         />
         <Route
+          path="/student/courses"
+          element={
+            <UserRoute>
+              <StudentDashboard activeTab="courses" />
+            </UserRoute>
+          }
+        />
+        <Route
+          path="/student/bookings"
+          element={
+            <UserRoute>
+              <StudentDashboard activeTab="bookings" />
+            </UserRoute>
+          }
+        />
+        <Route
           path="/trainer/dashboard"
           element={
             <UserRoute>
-              <TeacherDashboard />
+              <TrainerDashboard />
+            </UserRoute>
+          }
+        />
+        <Route
+          path="/trainer/manage"
+          element={
+            <UserRoute>
+              <TrainerDashboard activeTab="manage" />
+            </UserRoute>
+          }
+        />
+        <Route
+          path="/trainer/students"
+          element={
+            <UserRoute>
+              <TrainerDashboard activeTab="students" />
+            </UserRoute>
+          }
+        />
+        <Route
+          path="/association/dashboard"
+          element={
+            <UserRoute>
+              <AssociationDashboard />
+            </UserRoute>
+          }
+        />
+        <Route
+          path="/association/events"
+          element={
+            <UserRoute>
+              <AssociationDashboard activeTab="events" />
+            </UserRoute>
+          }
+        />
+        <Route
+          path="/association/members"
+          element={
+            <UserRoute>
+              <AssociationDashboard activeTab="members" />
             </UserRoute>
           }
         />

@@ -14,7 +14,7 @@
       "name": "Apache 2.0",
       "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "x-generation-date": "2026-02-15T22:31:18.936Z"
+    "x-generation-date": "2026-02-16T14:29:09.337Z"
   },
   "x-strapi-config": {
     "plugins": [
@@ -12473,6 +12473,13 @@
                   }
                 }
               },
+              "bio": {
+                "type": "string"
+              },
+              "city": {
+                "type": "string"
+              },
+              "social_links": {},
               "avatar": {
                 "type": "object",
                 "properties": {
@@ -14536,6 +14543,13 @@
                   }
                 }
               },
+              "bio": {
+                "type": "string"
+              },
+              "city": {
+                "type": "string"
+              },
+              "social_links": {},
               "avatar": {
                 "type": "object",
                 "properties": {
@@ -16552,6 +16566,9 @@
                                     "one-time"
                                   ]
                                 },
+                                "quantity": {
+                                  "type": "integer"
+                                },
                                 "createdAt": {
                                   "type": "string",
                                   "format": "date-time"
@@ -16816,6 +16833,9 @@
                                     "daily",
                                     "one-time"
                                   ]
+                                },
+                                "quantity": {
+                                  "type": "integer"
                                 },
                                 "spaces": {
                                   "type": "array",
@@ -17290,6 +17310,9 @@
                   "one-time"
                 ]
               },
+              "quantity": {
+                "type": "integer"
+              },
               "locale": {
                 "type": "string"
               },
@@ -17479,6 +17502,9 @@
                           "daily",
                           "one-time"
                         ]
+                      },
+                      "quantity": {
+                        "type": "integer"
                       },
                       "createdAt": {
                         "type": "string",
@@ -18778,6 +18804,9 @@
                           "one-time"
                         ]
                       },
+                      "quantity": {
+                        "type": "integer"
+                      },
                       "spaces": {
                         "type": "array",
                         "items": {
@@ -18963,6 +18992,9 @@
               "daily",
               "one-time"
             ]
+          },
+          "quantity": {
+            "type": "integer"
           },
           "createdAt": {
             "type": "string",
@@ -20359,6 +20391,13 @@
                   }
                 }
               },
+              "bio": {
+                "type": "string"
+              },
+              "city": {
+                "type": "string"
+              },
+              "social_links": {},
               "avatar": {
                 "type": "object",
                 "properties": {
@@ -22402,6 +22441,13 @@
                   }
                 }
               },
+              "bio": {
+                "type": "string"
+              },
+              "city": {
+                "type": "string"
+              },
+              "social_links": {},
               "avatar": {
                 "type": "object",
                 "properties": {
@@ -24511,6 +24557,9 @@
                               "one-time"
                             ]
                           },
+                          "quantity": {
+                            "type": "integer"
+                          },
                           "createdAt": {
                             "type": "string",
                             "format": "date-time"
@@ -24775,6 +24824,9 @@
                               "daily",
                               "one-time"
                             ]
+                          },
+                          "quantity": {
+                            "type": "integer"
                           },
                           "spaces": {
                             "type": "array",
@@ -27011,6 +27063,13 @@
                   }
                 }
               },
+              "bio": {
+                "type": "string"
+              },
+              "city": {
+                "type": "string"
+              },
+              "social_links": {},
               "avatar": {
                 "type": "object",
                 "properties": {
@@ -27809,6 +27868,18 @@
                 ],
                 "example": "string or id"
               },
+              "space": {
+                "oneOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ],
+                "example": "string or id"
+              },
+              "extras": {},
               "locale": {
                 "type": "string"
               },
@@ -29083,6 +29154,13 @@
                   }
                 }
               },
+              "bio": {
+                "type": "string"
+              },
+              "city": {
+                "type": "string"
+              },
+              "social_links": {},
               "avatar": {
                 "type": "object",
                 "properties": {
@@ -30174,6 +30252,9 @@
                               "one-time"
                             ]
                           },
+                          "quantity": {
+                            "type": "integer"
+                          },
                           "createdAt": {
                             "type": "string",
                             "format": "date-time"
@@ -30439,6 +30520,9 @@
                               "one-time"
                             ]
                           },
+                          "quantity": {
+                            "type": "integer"
+                          },
                           "spaces": {
                             "type": "array",
                             "items": {
@@ -30687,6 +30771,25 @@
               }
             }
           },
+          "space": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ]
+              },
+              "documentId": {
+                "type": "string"
+              }
+            }
+          },
+          "extras": {},
           "createdAt": {
             "type": "string",
             "format": "date-time"
@@ -30810,6 +30913,25 @@
                     }
                   }
                 },
+                "space": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "oneOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ]
+                    },
+                    "documentId": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "extras": {},
                 "createdAt": {
                   "type": "string",
                   "format": "date-time"
@@ -30928,6 +31050,9 @@
                   "one-time"
                 ]
               },
+              "quantity": {
+                "type": "integer"
+              },
               "spaces": {
                 "type": "array",
                 "items": {
@@ -31034,6 +31159,9 @@
               "daily",
               "one-time"
             ]
+          },
+          "quantity": {
+            "type": "integer"
           },
           "spaces": {
             "type": "array",
@@ -31143,6 +31271,9 @@
                           "daily",
                           "one-time"
                         ]
+                      },
+                      "quantity": {
+                        "type": "integer"
                       },
                       "createdAt": {
                         "type": "string",
@@ -32441,6 +32572,9 @@
                           "daily",
                           "one-time"
                         ]
+                      },
+                      "quantity": {
+                        "type": "integer"
                       },
                       "spaces": {
                         "type": "array",
@@ -34036,6 +34170,13 @@
                       }
                     }
                   },
+                  "bio": {
+                    "type": "string"
+                  },
+                  "city": {
+                    "type": "string"
+                  },
+                  "social_links": {},
                   "avatar": {
                     "type": "object",
                     "properties": {
@@ -36516,6 +36657,9 @@
                                 "one-time"
                               ]
                             },
+                            "quantity": {
+                              "type": "integer"
+                            },
                             "spaces": {
                               "type": "array",
                               "items": {
@@ -36701,6 +36845,9 @@
                     "daily",
                     "one-time"
                   ]
+                },
+                "quantity": {
+                  "type": "integer"
                 },
                 "createdAt": {
                   "type": "string",
@@ -37179,6 +37326,9 @@
                         "daily",
                         "one-time"
                       ]
+                    },
+                    "quantity": {
+                      "type": "integer"
                     },
                     "createdAt": {
                       "type": "string",
@@ -38477,6 +38627,9 @@
                         "daily",
                         "one-time"
                       ]
+                    },
+                    "quantity": {
+                      "type": "integer"
                     },
                     "spaces": {
                       "type": "array",
@@ -40034,6 +40187,13 @@
                   }
                 }
               },
+              "bio": {
+                "type": "string"
+              },
+              "city": {
+                "type": "string"
+              },
+              "social_links": {},
               "avatar": {
                 "type": "object",
                 "properties": {

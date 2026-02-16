@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export default (plugin) => {
   console.log("🚀🚀🚀 LOADING EXTENSION: users-permissions - strapi-server.ts");
 
@@ -131,7 +133,7 @@ export default (plugin) => {
               .create({
                 data: { action, role: authenticatedRole.id, enabled: true },
               })
-              .catch(() => { });
+              .catch(() => {});
           }
         }
 
@@ -219,7 +221,86 @@ export default (plugin) => {
     },
   };
 
-  // Override forgotPassword controller to use our custom email service
+  // lifecycle hooks... (unchanged)
+
+  // Override register controller for reCAPTCHA validation
+  const originalRegister = plugin.controllers.auth.register;
+
+  plugin.controllers.auth.register = async (ctx) => {
+    console.log("📥 [BACKEND] Registration request received");
+    console.log(
+      "📝 [BACKEND] Headers received:",
+      JSON.stringify(ctx.headers, null, 2),
+    );
+    console.log(
+      "📦 [BACKEND] Body received:",
+      JSON.stringify(ctx.request.body, null, 2),
+    );
+
+    // Read from header instead of body to avoid Strapi validation pollution
+    const captchaToken = ctx.get("x-captcha-token");
+
+    // Safety: also check body if header is missing, but delete it after
+    const bodyToken = ctx.request.body.captchaToken;
+    const finalToken = captchaToken || bodyToken;
+
+    if (bodyToken) {
+      console.warn(
+        "⚠️ [BACKEND] Found captchaToken in body. Deleting it to avoid validation errors.",
+      );
+      delete ctx.request.body.captchaToken;
+    }
+    if (!finalToken) {
+      console.error("❌ [BACKEND] No reCAPTCHA token found in request");
+      return ctx.badRequest("Le reCAPTCHA est obligatoire.");
+    }
+
+    try {
+      const RECAPTCHA_SECRET = process.env.RECAPTCHA_SECRET;
+
+      console.log("🔍 [BACKEND] Verifying reCAPTCHA with Google...");
+      const response = await axios.post(
+        `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET}&response=${finalToken}`,
+      );
+
+      console.log("📊 Google reCAPTCHA response:", response.data);
+
+      if (!response.data.success) {
+        console.error("❌ reCAPTCHA validation failed:", response.data);
+        return ctx.badRequest("Validation reCAPTCHA échouée.");
+      }
+
+      // If valid, proceed with original registration
+      console.log(
+        "✅ [BACKEND] reCAPTCHA valid. Proceeding to Strapi registration...",
+      );
+
+      try {
+        await originalRegister(ctx);
+        console.log("📤 [BACKEND] Strapi response status:", ctx.status);
+        if (ctx.status >= 400) {
+          console.error(
+            "❌ [BACKEND] Strapi registration failed with:",
+            JSON.stringify(ctx.body, null, 2),
+          );
+        }
+        return; // ctx is already updated by originalRegister
+      } catch (strapiErr: any) {
+        console.error(
+          "💥 [BACKEND] Strapi originalRegister CRASHED:",
+          strapiErr.message,
+        );
+        throw strapiErr;
+      }
+    } catch (error: any) {
+      console.error("💥 Error during reCAPTCHA process:", error.message);
+      return ctx.internalServerError(
+        "Une erreur est survenue lors de la vérification du reCAPTCHA.",
+      );
+    }
+  };
+
+  // Override forgotPassword controller...
   plugin.controllers.auth.forgotPassword = async (ctx) => {
     console.log("🔍 CUSTOM FORGOTPASSWORD CONTROLLER CALLED");
     const { email } = ctx.request.body;

@@ -43,6 +43,10 @@
       "relation": "manyToMany",
       "target": "api::booking.booking",
       "mappedBy": "equipments"
+    },
+    "quantity": {
+      "type": "integer",
+      "default": 1
     }
   }
 }

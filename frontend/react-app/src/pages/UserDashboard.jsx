@@ -1,61 +1,36 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import api, { updateUser, uploadFile, updateSubProfile } from "../api";
+import DashboardLayout from "../components/layout/DashboardLayout";
 
 const UserDashboard = () => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState(null);
-  const [successMsg, setSuccessMsg] = useState("");
+  const [activeTab, setActiveTab] = useState("identity"); // identity, professional, settings
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({});
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState(null);
-  const [debugError, setDebugError] = useState(null);
+  const [error, setError] = useState(null);
+  const [successMsg, setSuccessMsg] = useState("");
 
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
-  const getProfileEndpoint = (type) => {
-    const endpoints = {
-      student: "/etudiant-profils",
-      trainer: "/formateur-profils",
-      association: "/association-profils",
-      professional: "/professionnels",
-    };
-    return endpoints[type] || "";
-  };
-
-  const getAvatarUrl = (avatar) => {
-    if (!avatar) return null;
-    // Handle Strapi 4/5 variations (object vs array)
-    const asset = Array.isArray(avatar) ? avatar[0] : avatar;
-    const url = asset.url || asset.attributes?.url;
-
-    if (!url) return null;
-    if (url.startsWith("http")) return url;
-    return `http://localhost:1337${url}`;
-  };
-
-  const getProfileId = () => {
-    const prof =
-      userData.etudiant_profil ||
-      userData.formateur_profil ||
-      userData.association_profil ||
-      userData.professionnel ||
-      userData.trainer_profile;
-    return prof?.documentId || prof?.id;
-  };
-
   const fetchUserData = async () => {
     try {
-      // Step 1: Get basic user info (Standard endpoint, no populate needed yet)
       const userRes = await api.get("/users/me?populate=avatar");
       const userBase = userRes.data;
 
-      // Step 2: Get specific profile info using filters (More robust in Strapi 5)
-      const endpoint = getProfileEndpoint(userBase.user_type);
+      const endpoints = {
+        student: "/etudiant-profils",
+        trainer: "/formateur-profils",
+        association: "/association-profils",
+        professional: "/professionnels",
+      };
+
+      const endpoint = endpoints[userBase.user_type];
       let profileData = {};
 
       if (endpoint) {
@@ -63,50 +38,36 @@ const UserDashboard = () => {
           const profRes = await api.get(
             `${endpoint}?filters[user][id]=${userBase.id}&populate=*`,
           );
-          // Strapi API returns { data: [...] } for find queries
           const results = profRes.data?.data || profRes.data;
           profileData = Array.isArray(results) ? results[0] : results;
         } catch (profErr) {
-          console.warn("Profile fetch error (Dual-Fetch):", profErr);
+          console.warn("Profile fetch error:", profErr);
         }
       }
 
-      // Merge everything
-      const fullUserData = {
-        ...userBase,
-        // Add the profile data under the expected key for backward compatibility
-        ...(userBase.user_type === "student" && {
-          etudiant_profil: profileData,
-        }),
-        ...(userBase.user_type === "trainer" && {
-          formateur_profil: profileData,
-        }),
-        ...(userBase.user_type === "association" && {
-          association_profil: profileData,
-        }),
-        ...(userBase.user_type === "professional" && {
-          professionnel: profileData,
-        }),
-      };
-
+      const fullUserData = { ...userBase, profile: profileData };
       setUserData(fullUserData);
       setEditData({
-        fullname: fullUserData.fullname,
-        phone: fullUserData.phone,
+        fullname: fullUserData.fullname || "",
+        phone: fullUserData.phone || "",
+        bio: fullUserData.bio || "",
+        city: fullUserData.city || "",
+        social_links: fullUserData.social_links || {
+          linkedin: "",
+          twitter: "",
+          instagram: "",
+        },
         emailPreferences: fullUserData.emailPreferences || {
           reservations: true,
           payments: true,
           courses: true,
           newsletter: false,
         },
-        ...profileData,
+        profileFields: profileData.attributes || profileData || {},
       });
-      setError(null);
     } catch (err) {
-      console.error("Dashboard dual-fetch error:", err.response?.data || err);
-      const errorObj = err.response?.data?.error;
-      setDebugError(errorObj);
-      setError(errorObj?.message || "Impossible de charger vos informations.");
+      console.error("Fetch error:", err);
+      setError("Impossible de charger vos informations.");
       if (err.response?.status === 401) navigate("/login");
     } finally {
       setLoading(false);
@@ -115,35 +76,27 @@ const UserDashboard = () => {
 
   useEffect(() => {
     fetchUserData();
-  }, [navigate]);
-
-  if (loading)
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 animate-fade-in">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
-
-  if (!userData && (error || loading === false))
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-        <div className="bg-white p-8 rounded-2xl shadow-xl text-center max-w-md w-full">
-          <p className="text-red-500 mb-4">
-            {error || "Une erreur est survenue."}
-          </p>
-          <button
-            onClick={() => navigate("/login")}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg"
-          >
-            Retour au login
-          </button>
-        </div>
-      </div>
-    );
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setEditData((prev) => ({ ...prev, [name]: value }));
+    if (name.includes(".")) {
+      const [parent, child] = name.split(".");
+      setEditData((prev) => ({
+        ...prev,
+        [parent]: { ...prev[parent], [child]: value },
+      }));
+    } else {
+      setEditData((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleProfileFieldChange = (e) => {
+    const { name, value } = e.target;
+    setEditData((prev) => ({
+      ...prev,
+      profileFields: { ...prev.profileFields, [name]: value },
+    }));
   };
 
   const handlePreferenceToggle = (pref) => {
@@ -158,12 +111,9 @@ const UserDashboard = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    console.log("File selected:", file);
     if (file) {
       setAvatarFile(file);
-      const previewUrl = URL.createObjectURL(file);
-      console.log("Generated preview URL:", previewUrl);
-      setAvatarPreview(previewUrl);
+      setAvatarPreview(URL.createObjectURL(file));
     }
   };
 
@@ -173,691 +123,467 @@ const UserDashboard = () => {
     setSuccessMsg("");
 
     try {
-      // 1. Upload Avatar if changed
       let avatarId = userData.avatar?.id;
       if (avatarFile) {
-        try {
-          const formData = new FormData();
-
-          // Sanitize filename: remove spaces/accents to avoid Windows/Strapi 5 encoding issues
-          const extension = avatarFile.name.split(".").pop();
-          const timestamp = Date.now();
-          const safeName = `avatar_${userData.id}_${timestamp}.${extension}`;
-
-          const safeFile = new File([avatarFile], safeName, {
-            type: avatarFile.type,
-          });
-          console.log("Uploading file with safe name:", safeName);
-
-          formData.append("files", safeFile);
-          const uploadRes = await uploadFile(formData);
-          avatarId = Array.isArray(uploadRes) ? uploadRes[0].id : uploadRes.id;
-        } catch (uploadErr) {
-          const errorMsg =
-            uploadErr.response?.data?.error?.message ||
-            uploadErr.message ||
-            "Erreur inconnue";
-          const errorDetails = uploadErr.response?.data?.error?.details || {};
-          console.error(
-            "Critical Upload Error Status:",
-            uploadErr.response?.status,
-          );
-          console.error(
-            "Critical Upload Error Response Data:",
-            JSON.stringify(uploadErr.response?.data, null, 2),
-          );
-
-          const detailedMsg =
-            uploadErr.response?.data?.error?.message ||
-            uploadErr.message ||
-            "Erreur inconnue";
-          setError(
-            `L'image n'a pas pu être téléchargée (Erreur 500). Message: ${detailedMsg}`,
-          );
-          setDebugError(uploadErr.response?.data);
-        }
+        const formData = new FormData();
+        formData.append("files", avatarFile);
+        const uploadRes = await uploadFile(formData);
+        avatarId = Array.isArray(uploadRes) ? uploadRes[0].id : uploadRes.id;
       }
 
-      // 2. Update User (fullname, phone, avatar, preferences)
+      // 1. Update User Base
       await updateUser(userData.id, {
         fullname: editData.fullname,
         phone: editData.phone,
+        bio: editData.bio,
+        city: editData.city,
+        social_links: editData.social_links,
         avatar: avatarId,
         emailPreferences: editData.emailPreferences,
       });
 
-      // 3. Update Specific Profile
-      const endpoint = getProfileEndpoint(userData.user_type);
-      const profileId = getProfileId();
+      // 2. Update Role Specific Profile
+      const endpoints = {
+        student: "/etudiant-profils",
+        trainer: "/formateur-profils",
+        association: "/association-profils",
+        professional: "/professionnels",
+      };
+      const endpoint = endpoints[userData.user_type];
+      const profileId = userData.profile?.documentId || userData.profile?.id;
+
       if (endpoint && profileId) {
-        const profilePayload = { ...editData };
-        // Clean up meta/system fields that Strapi 5 rejects in data object
-        const keysToExclude = [
+        const cleanedFields = { ...editData.profileFields };
+        const excludes = [
           "id",
           "documentId",
           "createdAt",
           "updatedAt",
           "publishedAt",
-          "published_at",
-          "created_at",
-          "updated_at",
-          "fullname",
-          "phone",
           "user",
-          "localizations",
-          "locale",
-          "emailPreferences",
         ];
-        keysToExclude.forEach((key) => delete profilePayload[key]);
-
-        await updateSubProfile(endpoint, profileId, profilePayload);
+        excludes.forEach((k) => delete cleanedFields[k]);
+        await updateSubProfile(endpoint, profileId, cleanedFields);
       }
 
-      setSuccessMsg("Profil mis à jour avec succès !");
-      setTimeout(() => setSuccessMsg(""), 5000); // Auto-hide success message
-      await fetchUserData(); // Refresh data
+      setSuccessMsg("Profil mis à jour avec succès ! ✨");
+      await fetchUserData();
       setIsEditing(false);
       setAvatarFile(null);
       setAvatarPreview(null);
     } catch (err) {
-      console.error("Save error full details:", err.response?.data || err);
-      const errorObj = err.response?.data?.error;
-      setDebugError(errorObj);
-
-      // Format nice error message
-      let msg = "Erreur lors de la sauvegarde.";
-      if (errorObj?.message) {
-        msg = `Erreur: ${errorObj.message}`;
-        if (errorObj.message.toLowerCase().includes("forbidden")) {
-          msg =
-            "Erreur: Vous n'avez pas l'autorisation d'effectuer cette modification (Vérifiez les permissions Upload dans Strapi).";
-        }
-      }
-      setError(msg);
+      console.error("Save error:", err);
+      setError("Erreur lors de la mise à jour.");
     } finally {
       setSaving(false);
     }
   };
 
-  // Get the specific profile data for view mode
-  const profile =
-    userData.etudiant_profil ||
-    userData.formateur_profil ||
-    userData.association_profil ||
-    userData.professionnel ||
-    userData.trainer_profile ||
-    {};
-
-  const getRoleLabel = (role) => {
-    const roles = {
-      student: "Étudiant",
-      trainer: "Formateur",
-      association: "Association",
-      professional: "Professionnel",
-      admin: "Administrateur",
-    };
-    return roles[role] || role;
+  const getAvatarUrl = (user) => {
+    if (!user?.avatar) return null;
+    const url = user.avatar.url || user.avatar.attributes?.url;
+    return url
+      ? url.startsWith("http")
+        ? url
+        : `http://192.168.100.97:1337${url}`
+      : null;
   };
 
-  const getThemeColor = (role) => {
-    const themes = {
-      student: "from-purple-500 to-indigo-600",
-      trainer: "from-orange-400 to-red-500",
-      association: "from-teal-400 to-blue-500",
-      professional: "from-blue-600 to-indigo-800",
-      admin: "from-gray-700 to-gray-900",
-    };
-    return themes[role] || "from-blue-500 to-indigo-600";
-  };
+  if (loading) return <DashboardLayout loading={true} />;
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-12 animate-fade-in overflow-x-hidden">
-      {/* Header / Hero */}
-      <div
-        className={`h-48 bg-gradient-to-r ${getThemeColor(userData.user_type)} w-full relative`}
-      >
-        <div
-          className="absolute -bottom-16 left-1/2 -translate-x-1/2 md:left-24 md:translate-x-0 w-32 h-32 bg-white rounded-3xl shadow-xl flex items-center justify-center text-4xl border-4 border-white overflow-hidden cursor-pointer group"
-          onClick={() => isEditing && fileInputRef.current.click()}
-        >
-          {avatarPreview ? (
-            <img
-              src={avatarPreview}
-              alt="Avatar Preview"
-              className="w-full h-full object-cover"
-            />
-          ) : getAvatarUrl(userData.avatar) ? (
-            <img
-              src={getAvatarUrl(userData.avatar)}
-              alt="Avatar"
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                console.error("Avatar failed to load:", e.target.src);
-                e.target.style.display = "none";
-              }}
-            />
-          ) : (
-            <span>
-              {userData.user_type === "student"
-                ? "🎓"
+    <DashboardLayout
+      role={userData?.user_type}
+      user={userData}
+      loading={loading}
+    >
+      <div className="max-w-5xl mx-auto py-4">
+        {/* Profile Hero Card */}
+        <div className="bg-white/40 backdrop-blur-2xl rounded-[40px] border border-white/60 shadow-2xl shadow-slate-200/50 overflow-hidden mb-10 relative group">
+          <div
+            className={`h-32 w-full bg-gradient-to-r ${
+              userData.user_type === "student"
+                ? "from-purple-500/20 to-indigo-500/20"
                 : userData.user_type === "trainer"
-                  ? "👨‍🏫"
-                  : userData.user_type === "association"
-                    ? "🤝"
-                    : "💼"}
-            </span>
-          )}
+                  ? "from-orange-500/20 to-red-500/20"
+                  : "from-blue-500/20 to-cyan-500/20"
+            }`}
+          />
 
-          {isEditing && (
-            <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <span className="text-white text-sm font-bold">Changer</span>
-            </div>
-          )}
-        </div>
-        <input
-          type="file"
-          ref={fileInputRef}
-          onChange={handleFileChange}
-          className="hidden"
-          accept="image/*"
-        />
-      </div>
-
-      <div className="max-w-6xl mx-auto px-4 mt-20">
-        <div className="flex flex-col md:flex-row gap-8">
-          {/* Main Content */}
-          <div className="flex-1 space-y-6">
-            {/* Feedback Messages */}
-            {error && (
-              <div className="p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-xl animate-fade-in space-y-2">
-                <p className="font-bold">{error}</p>
-                {debugError && (
-                  <div className="text-[10px] bg-red-100/50 p-2 rounded border border-red-200 overflow-auto max-h-24 font-mono">
-                    <p>🔍 Détails techniques :</p>
-                    <pre>{JSON.stringify(debugError, null, 2)}</pre>
-                  </div>
-                )}
-              </div>
-            )}
-            {successMsg && (
-              <div className="p-4 bg-green-50 border-l-4 border-green-500 text-green-700 rounded-r-xl animate-fade-in">
-                {successMsg}
-              </div>
-            )}
-
-            {/* Profile Mode Toggle Title */}
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-black text-slate-800 tracking-tight">
-                {isEditing ? "Modifier votre profil" : "Votre Tableau de bord"}
-              </h2>
-              {!isEditing && (
-                <button
-                  onClick={() => setIsEditing(true)}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200"
-                >
-                  Éditer le profil
-                </button>
+          <div className="px-10 pb-10 -mt-12 flex flex-col md:flex-row items-end gap-8">
+            <div
+              className="w-40 h-40 bg-white rounded-[32px] shadow-2xl shadow-slate-300 relative group cursor-pointer border-8 border-white overflow-hidden"
+              onClick={() => isEditing && fileInputRef.current.click()}
+            >
+              {avatarPreview ? (
+                <img
+                  src={avatarPreview}
+                  alt="Preview"
+                  className="w-full h-full object-cover"
+                />
+              ) : getAvatarUrl(userData) ? (
+                <img
+                  src={getAvatarUrl(userData)}
+                  alt="Avatar"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full bg-slate-100 flex items-center justify-center text-5xl">
+                  👤
+                </div>
+              )}
+              {isEditing && (
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <span className="text-white font-black text-xs uppercase tracking-widest">
+                    Modifier
+                  </span>
+                </div>
               )}
             </div>
 
-            {isEditing ? (
-              /* EDIT MODE */
-              <div className="space-y-6 animate-fade-in">
-                {/* Avatar Edit Section */}
-                <div className="bg-white p-8 rounded-3xl shadow-xl border border-white/60 backdrop-blur-md">
-                  <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6">
-                    Photo de profil
-                  </h3>
-                  <div className="flex items-center gap-6">
-                    <div
-                      className="w-24 h-24 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 flex items-center justify-center overflow-hidden cursor-pointer hover:border-blue-400 transition-colors"
-                      onClick={() => {
-                        console.log("Clicking file input...");
-                        fileInputRef.current.click();
-                      }}
-                    >
-                      {avatarPreview ? (
-                        <img
-                          src={avatarPreview}
-                          alt="Local Preview"
-                          className="w-full h-full object-cover"
-                        />
-                      ) : getAvatarUrl(userData.avatar) ? (
-                        <img
-                          src={getAvatarUrl(userData.avatar)}
-                          alt="Server Avatar"
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            console.error(
-                              "Edit box avatar failed to load:",
-                              e.target.src,
-                            );
-                            e.target.style.display = "none";
-                          }}
-                        />
-                      ) : (
-                        <span className="text-2xl text-slate-300">+</span>
-                      )}
-                    </div>
-                    <div>
-                      <button
-                        onClick={() => fileInputRef.current.click()}
-                        className="px-4 py-2 bg-slate-100 text-slate-600 rounded-lg text-sm font-bold hover:bg-slate-200 transition-all"
-                      >
-                        Changer la photo
-                      </button>
-                      <p className="text-xs text-slate-400 mt-2 italic">
-                        Format JPG, PNG. Taille max 2Mo.
-                      </p>
-                    </div>
-                  </div>
-                </div>
+            <div className="flex-1 pb-4">
+              <div className="flex items-center gap-3 mb-2">
+                <h1 className="text-4xl font-black text-slate-800 tracking-tight">
+                  {userData.fullname || userData.username}
+                </h1>
+                <span
+                  className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${
+                    userData.user_type === "admin"
+                      ? "bg-red-100 text-red-600"
+                      : "bg-blue-100 text-blue-600"
+                  }`}
+                >
+                  {userData.user_type}
+                </span>
+              </div>
+              <p className="text-slate-500 font-medium flex items-center gap-2">
+                <span>📍</span> {userData.city || "Emplacement non défini"} •
+                <span>📧</span> {userData.email}
+              </p>
+            </div>
 
-                <div className="bg-white p-8 rounded-3xl shadow-xl border border-white/60 backdrop-blur-md">
-                  <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6">
-                    Informations Générales
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">
-                        Nom Complet
-                      </label>
-                      <input
-                        type="text"
-                        name="fullname"
-                        value={editData.fullname || ""}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 bg-slate-50 border border-transparent rounded-xl focus:bg-white focus:ring-4 focus:ring-blue-50 focus:border-blue-500 outline-none transition-all"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">
-                        Téléphone
-                      </label>
-                      <input
-                        type="text"
-                        name="phone"
-                        value={editData.phone || ""}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 bg-slate-50 border border-transparent rounded-xl focus:bg-white focus:ring-4 focus:ring-blue-50 focus:border-blue-500 outline-none transition-all"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white p-8 rounded-3xl shadow-xl border border-white/60 backdrop-blur-md">
-                  <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6">
-                    Détails Spécifiques ({getRoleLabel(userData.user_type)})
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {userData.user_type === "student" && (
-                      <>
-                        <div className="space-y-2">
-                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">
-                            Niveau d'études
-                          </label>
-                          <input
-                            type="text"
-                            name="level"
-                            value={editData.level || ""}
-                            onChange={handleInputChange}
-                            className="w-full px-4 py-3 bg-slate-50 border-transparent rounded-xl focus:bg-white focus:ring-4 focus:ring-blue-50 outline-none transition-all"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">
-                            Date de naissance
-                          </label>
-                          <input
-                            type="date"
-                            name="birth_date"
-                            value={editData.birth_date || ""}
-                            onChange={handleInputChange}
-                            className="w-full px-4 py-3 bg-slate-50 border-transparent rounded-xl focus:bg-white focus:ring-4 focus:ring-blue-50 outline-none transition-all"
-                          />
-                        </div>
-                        <div className="md:col-span-2 space-y-2">
-                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">
-                            Adresse
-                          </label>
-                          <textarea
-                            name="address"
-                            value={editData.address || ""}
-                            onChange={handleInputChange}
-                            className="w-full px-4 py-3 bg-slate-50 border-transparent rounded-xl focus:bg-white focus:ring-4 focus:ring-blue-50 outline-none transition-all"
-                            rows="2"
-                          />
-                        </div>
-                      </>
-                    )}
-                    {userData.user_type === "trainer" && (
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">
-                          Spécialité
-                        </label>
-                        <input
-                          type="text"
-                          name="specialty"
-                          value={editData.specialty || ""}
-                          onChange={handleInputChange}
-                          className="w-full px-4 py-3 bg-slate-50 border-transparent rounded-xl focus:bg-white focus:ring-4 focus:ring-blue-50 outline-none transition-all"
-                        />
-                      </div>
-                    )}
-                    {userData.user_type === "association" && (
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">
-                          Nom de l'Organisation
-                        </label>
-                        <input
-                          type="text"
-                          name="name"
-                          value={editData.name || ""}
-                          onChange={handleInputChange}
-                          className="w-full px-4 py-3 bg-slate-50 border-transparent rounded-xl focus:bg-white focus:ring-4 focus:ring-blue-50 outline-none transition-all"
-                        />
-                      </div>
-                    )}
-                    {userData.user_type === "professional" && (
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">
-                          Entreprise
-                        </label>
-                        <input
-                          type="text"
-                          name="company"
-                          value={editData.company || ""}
-                          onChange={handleInputChange}
-                          className="w-full px-4 py-3 bg-slate-50 border-transparent rounded-xl focus:bg-white focus:ring-4 focus:ring-blue-50 outline-none transition-all"
-                        />
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Email Preferences Edit Section */}
-                <div className="bg-white p-8 rounded-3xl shadow-xl border border-white/60 backdrop-blur-md">
-                  <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                    <span>📧</span> Préférences de messagerie
-                  </h3>
-                  <div className="space-y-4">
-                    {[
-                      {
-                        id: "reservations",
-                        label: "Confirmations de réservation",
-                        icon: "📅",
-                      },
-                      {
-                        id: "payments",
-                        label: "Confirmations de paiement",
-                        icon: "💰",
-                      },
-                      {
-                        id: "courses",
-                        label: "Mises à jour des cours",
-                        icon: "📚",
-                      },
-                      {
-                        id: "newsletter",
-                        label: "Newsletter & Promotions",
-                        icon: "✨",
-                      },
-                    ].map((pref) => (
-                      <div
-                        key={pref.id}
-                        className="flex items-center justify-between p-4 bg-slate-50/50 rounded-2xl hover:bg-slate-50 transition-colors"
-                      >
-                        <div className="flex items-center gap-3">
-                          <span className="text-xl">{pref.icon}</span>
-                          <div>
-                            <h4 className="font-bold text-slate-700 text-sm">
-                              {pref.label}
-                            </h4>
-                            <p className="text-[10px] text-slate-400 uppercase tracking-wider font-medium">
-                              Notification par email
-                            </p>
-                          </div>
-                        </div>
-                        <button
-                          onClick={() => handlePreferenceToggle(pref.id)}
-                          className={`w-12 h-6 rounded-full transition-all duration-300 relative ${editData.emailPreferences?.[pref.id] ? "bg-blue-600" : "bg-slate-300"}`}
-                        >
-                          <div
-                            className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${editData.emailPreferences?.[pref.id] ? "left-7" : "left-1"}`}
-                          />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex gap-4">
+            <div className="pb-4">
+              {!isEditing ? (
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-black transition-all shadow-xl shadow-slate-200"
+                >
+                  Éditer le Profil
+                </button>
+              ) : (
+                <div className="flex gap-3">
                   <button
                     onClick={handleSave}
                     disabled={saving}
-                    className="flex-1 py-4 bg-gray-900 text-white rounded-2xl font-bold hover:bg-black transition-all shadow-xl disabled:opacity-50"
+                    className="px-8 py-4 bg-blue-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-blue-100"
                   >
-                    {saving ? "Sauvegarde..." : "Enregistrer les modifications"}
+                    {saving ? "..." : "Sauvegarder"}
                   </button>
                   <button
                     onClick={() => setIsEditing(false)}
-                    disabled={saving}
-                    className="px-8 py-4 bg-white border border-slate-200 text-slate-600 rounded-2xl font-bold hover:bg-slate-50 transition-all font-sans"
+                    className="px-8 py-4 bg-white text-slate-500 border border-slate-100 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 transition-all"
                   >
                     Annuler
                   </button>
                 </div>
-              </div>
-            ) : (
-              /* VIEW MODE */
-              <div className="space-y-6 animate-fade-in">
-                {/* Welcome Card */}
-                <div className="bg-white p-8 rounded-3xl shadow-xl border border-white/60 backdrop-blur-md hover:scale-[1.01] transition-all duration-300">
-                  <div className="flex justify-between items-start mb-6">
-                    <div>
-                      <h1 className="text-3xl font-extrabold text-slate-800 tracking-tight">
-                        Bonjour, {userData.fullname || userData.username} !
-                      </h1>
-                      <p className="text-slate-500">
-                        Bienvenue dans votre espace{" "}
-                        <span className="font-semibold text-blue-600">
-                          {getRoleLabel(userData.user_type)}
-                        </span>
-                      </p>
-                    </div>
-                    <span
-                      className={`px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${userData.user_type === "admin" ? "bg-red-100 text-red-600" : "bg-blue-100 text-blue-600"}`}
-                    >
-                      {getRoleLabel(userData.user_type)}
-                    </span>
-                  </div>
+              )}
+            </div>
+          </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-slate-100">
-                    <div className="space-y-1">
-                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
-                        Email
-                      </p>
-                      <p className="text-slate-700 font-medium">
-                        {userData.email}
-                      </p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
-                        Téléphone
-                      </p>
-                      <p className="text-slate-700 font-medium">
-                        {userData.phone || "Non renseigné"}
-                      </p>
-                    </div>
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            onChange={handleFileChange}
+            accept="images/*"
+          />
+        </div>
+
+        {/* Tab Navigation */}
+        <div className="flex gap-4 mb-8 bg-white/40 backdrop-blur-md p-2 rounded-3xl border border-white/60 w-fit">
+          {[
+            { id: "identity", label: "Identité", icon: "👤" },
+            { id: "professional", label: "Profil Pro", icon: "💼" },
+            { id: "settings", label: "Paramètres", icon: "⚙️" },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center gap-3 transition-all ${
+                activeTab === tab.id
+                  ? "bg-white text-blue-600 shadow-xl shadow-blue-100"
+                  : "text-slate-500 hover:text-slate-800"
+              }`}
+            >
+              <span
+                className={activeTab === tab.id ? "" : "grayscale opacity-50"}
+              >
+                {tab.icon}
+              </span>
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Messages */}
+        {error && (
+          <div className="p-6 bg-red-50 text-red-600 rounded-[28px] font-bold text-sm mb-8 border border-red-100 animate-fade-in">
+            ⚠️ {error}
+          </div>
+        )}
+        {successMsg && (
+          <div className="p-6 bg-emerald-50 text-emerald-600 rounded-[28px] font-bold text-sm mb-8 border border-emerald-100 animate-fade-in">
+            ✅ {successMsg}
+          </div>
+        )}
+
+        {/* Tab Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          <div className="lg:col-span-2 space-y-10">
+            {activeTab === "identity" && (
+              <div className="bg-white/40 backdrop-blur-md p-10 rounded-[40px] border border-white/60 shadow-xl shadow-slate-200/50 space-y-8 animate-fade-in">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-xl font-black text-slate-800 tracking-tight">
+                    Informations de base
+                  </h3>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">
+                      Nom Complet
+                    </label>
+                    <input
+                      disabled={!isEditing}
+                      name="fullname"
+                      value={editData.fullname}
+                      onChange={handleInputChange}
+                      className="w-full px-6 py-4 bg-white/60 border border-transparent rounded-[20px] focus:bg-white focus:ring-4 focus:ring-blue-50 outline-none transition-all font-medium text-slate-700 disabled:opacity-50"
+                    />
+                  </div>
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">
+                      Ville
+                    </label>
+                    <input
+                      disabled={!isEditing}
+                      name="city"
+                      value={editData.city}
+                      onChange={handleInputChange}
+                      placeholder="Ex: Tunis, Paris..."
+                      className="w-full px-6 py-4 bg-white/60 border border-transparent rounded-[20px] focus:bg-white focus:ring-4 focus:ring-blue-50 outline-none transition-all font-medium text-slate-700 disabled:opacity-50"
+                    />
                   </div>
                 </div>
 
-                {/* Specific Info Card */}
-                <div className="bg-white/80 p-8 rounded-3xl shadow-xl border border-white/60 backdrop-blur-md hover:scale-[1.01] transition-all duration-300">
-                  <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-                    <span className="p-2 bg-gray-50 rounded-lg">📋</span>
-                    Détails de votre profil
-                  </h2>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {userData.user_type === "student" && (
-                      <>
-                        <div className="p-4 bg-gray-50 rounded-2xl">
-                          <p className="text-xs text-gray-400 font-bold mb-1">
-                            Niveau d'études
-                          </p>
-                          <p className="text-lg font-medium text-gray-800">
-                            {profile.level || "Non spécifié"}
-                          </p>
-                        </div>
-                        <div className="p-4 bg-gray-50 rounded-2xl">
-                          <p className="text-xs text-gray-400 font-bold mb-1">
-                            Date de naissance
-                          </p>
-                          <p className="text-lg font-medium text-gray-800">
-                            {profile.birth_date || "Non spécifiée"}
-                          </p>
-                        </div>
-                        <div className="md:col-span-2 p-4 bg-gray-50 rounded-2xl">
-                          <p className="text-xs text-gray-400 font-bold mb-1">
-                            Adresse
-                          </p>
-                          <p className="text-gray-800 italic">
-                            {profile.address || "Aucune adresse enregistrée"}
-                          </p>
-                        </div>
-                      </>
-                    )}
-
-                    {userData.user_type === "trainer" && (
-                      <>
-                        <div className="p-4 bg-gray-50 rounded-2xl">
-                          <p className="text-xs text-gray-400 font-bold mb-1">
-                            Spécialité
-                          </p>
-                          <p className="text-lg font-medium text-gray-800">
-                            {profile.specialty || "Non spécifiée"}
-                          </p>
-                        </div>
-                        <div className="p-4 bg-gray-50 rounded-2xl">
-                          <p className="text-xs text-gray-400 font-bold mb-1">
-                            Téléphone de contact
-                          </p>
-                          <p className="text-lg font-medium text-gray-800">
-                            {profile.phone || userData.phone}
-                          </p>
-                        </div>
-                      </>
-                    )}
-
-                    {userData.user_type === "association" && (
-                      <>
-                        <div className="p-4 bg-gray-50 rounded-2xl">
-                          <p className="text-xs text-gray-400 font-bold mb-1">
-                            Organisation
-                          </p>
-                          <p className="text-lg font-medium text-gray-800">
-                            {profile.name || "Non spécifiée"}
-                          </p>
-                        </div>
-                        <div className="p-4 bg-gray-50 rounded-2xl">
-                          <p className="text-xs text-gray-400 font-bold mb-1">
-                            Téléphone Office
-                          </p>
-                          <p className="text-lg font-medium text-gray-800">
-                            {profile.phone || userData.phone}
-                          </p>
-                        </div>
-                      </>
-                    )}
-
-                    {userData.user_type === "professional" && (
-                      <div className="md:col-span-2 p-4 bg-gray-50 rounded-2xl">
-                        <p className="text-xs text-gray-400 font-bold mb-1">
-                          Entreprise
-                        </p>
-                        <p className="text-xl font-bold text-gray-800">
-                          {profile.company || "Non spécifiée"}
-                        </p>
-                      </div>
-                    )}
-                  </div>
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">
+                    Biographie
+                  </label>
+                  <textarea
+                    disabled={!isEditing}
+                    name="bio"
+                    value={editData.bio}
+                    onChange={handleInputChange}
+                    placeholder="Parlez-nous de vous..."
+                    rows="4"
+                    className="w-full px-6 py-4 bg-white/60 border border-transparent rounded-[20px] focus:bg-white focus:ring-4 focus:ring-blue-50 outline-none transition-all font-medium text-slate-700 disabled:opacity-50 resize-none"
+                  />
                 </div>
 
-                {/* Email Preferences View Mode */}
-                <div className="bg-white p-8 rounded-3xl shadow-xl border border-white/60 backdrop-blur-md hover:scale-[1.01] transition-all duration-300">
-                  <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-                    <span className="p-2 bg-blue-50 text-blue-500 rounded-lg">
-                      🔔
-                    </span>
-                    Préférences de notifications
-                  </h2>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {[
-                      { id: "reservations", label: "Réservations", icon: "📅" },
-                      { id: "payments", label: "Paiements", icon: "💰" },
-                      { id: "courses", label: "Cours", icon: "📚" },
-                      { id: "newsletter", label: "Newsletters", icon: "✨" },
-                    ].map((pref) => (
-                      <div
-                        key={pref.id}
-                        className={`p-4 rounded-2xl border-2 transition-all ${userData.emailPreferences?.[pref.id] ? "bg-blue-50/50 border-blue-100" : "bg-gray-50 border-transparent opacity-60"}`}
-                      >
-                        <div className="text-2xl mb-2">{pref.icon}</div>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">
-                          {pref.label}
-                        </p>
-                        <p
-                          className={`text-xs font-bold ${userData.emailPreferences?.[pref.id] ? "text-blue-600" : "text-slate-400"}`}
-                        >
-                          {userData.emailPreferences?.[pref.id]
-                            ? "Activé"
-                            : "Désactivé"}
-                        </p>
+                <div className="pt-6 border-t border-slate-100 space-y-6">
+                  <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                    Réseaux Sociaux
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {["linkedin", "twitter", "instagram"].map((platform) => (
+                      <div key={platform} className="space-y-2">
+                        <label className="text-[10px] font-bold text-slate-400 capitalize">
+                          {platform}
+                        </label>
+                        <input
+                          disabled={!isEditing}
+                          name={`social_links.${platform}`}
+                          value={editData.social_links[platform]}
+                          onChange={handleInputChange}
+                          placeholder="@handle"
+                          className="w-full px-5 py-3 bg-white/60 border border-transparent rounded-xl focus:bg-white outline-none transition-all text-xs font-medium"
+                        />
                       </div>
                     ))}
                   </div>
                 </div>
               </div>
             )}
+
+            {activeTab === "professional" && (
+              <div className="bg-white/40 backdrop-blur-md p-10 rounded-[40px] border border-white/60 shadow-xl shadow-slate-200/50 space-y-8 animate-fade-in">
+                <h3 className="text-xl font-black text-slate-800 tracking-tight mb-6 capitalize">
+                  Spécificités {userData.user_type}
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {userData.user_type === "student" && (
+                    <>
+                      <div className="space-y-3">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">
+                          Niveau d'études
+                        </label>
+                        <input
+                          disabled={!isEditing}
+                          name="level"
+                          value={editData.profileFields.level || ""}
+                          onChange={handleProfileFieldChange}
+                          className="w-full px-6 py-4 bg-white/60 border border-transparent rounded-[20px] focus:bg-white outline-none transition-all font-medium"
+                        />
+                      </div>
+                      <div className="space-y-3">
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">
+                          Date de naissance
+                        </label>
+                        <input
+                          disabled={!isEditing}
+                          type="date"
+                          name="birth_date"
+                          value={editData.profileFields.birth_date || ""}
+                          onChange={handleProfileFieldChange}
+                          className="w-full px-6 py-4 bg-white/60 border border-transparent rounded-[20px] focus:bg-white outline-none transition-all font-medium"
+                        />
+                      </div>
+                    </>
+                  )}
+                  {userData.user_type === "trainer" && (
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">
+                        Spécialité
+                      </label>
+                      <input
+                        disabled={!isEditing}
+                        name="specialty"
+                        value={editData.profileFields.specialty || ""}
+                        onChange={handleProfileFieldChange}
+                        className="w-full px-6 py-4 bg-white/60 border border-transparent rounded-[20px] focus:bg-white outline-none transition-all font-medium"
+                      />
+                    </div>
+                  )}
+                  {userData.user_type === "professional" && (
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">
+                        Entreprise
+                      </label>
+                      <input
+                        disabled={!isEditing}
+                        name="company"
+                        value={editData.profileFields.company || ""}
+                        onChange={handleProfileFieldChange}
+                        className="w-full px-6 py-4 bg-white/60 border border-transparent rounded-[20px] focus:bg-white outline-none transition-all font-medium"
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {activeTab === "settings" && (
+              <div className="bg-white/40 backdrop-blur-md p-10 rounded-[40px] border border-white/60 shadow-xl shadow-slate-200/50 space-y-8 animate-fade-in">
+                <h3 className="text-xl font-black text-slate-800 tracking-tight mb-8">
+                  Notifications & Messagerie
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {[
+                    { id: "reservations", label: "Réservations", icon: "📅" },
+                    { id: "payments", label: "Paiements", icon: "💰" },
+                    { id: "courses", label: "Cours", icon: "📚" },
+                    { id: "newsletter", label: "Actualités", icon: "✨" },
+                  ].map((pref) => (
+                    <div
+                      key={pref.id}
+                      className="p-6 bg-white/60 rounded-[32px] border border-slate-50 flex items-center justify-between group hover:bg-white transition-all"
+                    >
+                      <div className="flex items-center gap-4">
+                        <span className="text-2xl group-hover:scale-110 transition-transform">
+                          {pref.icon}
+                        </span>
+                        <div>
+                          <h4 className="font-black text-slate-700 text-xs uppercase tracking-widest">
+                            {pref.label}
+                          </h4>
+                          <p className="text-[10px] text-slate-400 font-bold italic">
+                            Via Email
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() =>
+                          isEditing && handlePreferenceToggle(pref.id)
+                        }
+                        className={`w-12 h-6 rounded-full transition-all duration-500 relative ${editData.emailPreferences?.[pref.id] ? "bg-emerald-500" : "bg-slate-300"}`}
+                      >
+                        <div
+                          className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-500 ${editData.emailPreferences?.[pref.id] ? "left-7" : "left-1"}`}
+                        />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Sidebar Actions */}
-          <div className="md:w-72 space-y-4">
-            <button
-              onClick={() => {
-                if (userData.user_type === "professional")
-                  navigate("/professional/dashboard");
-                else if (userData.user_type === "trainer")
-                  navigate("/trainer/dashboard");
-                else if (userData.user_type === "student")
-                  navigate("/dashboard");
-                else navigate("/");
-              }}
-              className="w-full p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all text-left flex items-center gap-3"
-            >
-              <span className="p-2 bg-blue-50 text-blue-500 rounded-lg">
-                🏠
-              </span>
-              <span className="font-medium text-gray-700">
-                Retour au tableau de bord
-              </span>
-            </button>
-            <button
-              onClick={() => {
-                localStorage.removeItem("jwt");
-                localStorage.removeItem("user");
-                navigate("/login");
-              }}
-              className="w-full p-4 bg-red-50 text-red-600 rounded-2xl hover:bg-red-100 transition-all text-left flex items-center gap-3"
-            >
-              <span className="p-2 bg-white rounded-lg">🚪</span>
-              <span className="font-medium">Se déconnecter</span>
-            </button>
+          <div className="lg:col-span-1 space-y-8">
+            <div className="bg-gradient-to-br from-indigo-600 to-blue-800 rounded-[40px] p-10 text-white shadow-2xl relative overflow-hidden group">
+              <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700" />
+              <h3 className="text-2xl font-black mb-4 tracking-tight">
+                Support VIP 👑
+              </h3>
+              <p className="text-indigo-100 text-sm leading-relaxed mb-8 font-medium italic">
+                "Parce que votre réussite est notre priorité absolue."
+              </p>
+              <button className="w-full py-4 bg-white/20 backdrop-blur-md border border-white/30 rounded-[20px] text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:bg-white/30">
+                Contact Direct
+              </button>
+            </div>
+
+            <div className="bg-white/40 backdrop-blur-md p-8 rounded-[40px] border border-white/60 shadow-xl shadow-slate-200/50">
+              <h4 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-6 px-2">
+                Activité de session
+              </h4>
+              <div className="space-y-6">
+                <div className="flex gap-4">
+                  <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full mt-2 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
+                  <div>
+                    <p className="text-xs font-bold text-slate-700">
+                      Dernière mise à jour
+                    </p>
+                    <p className="text-[10px] text-slate-400 font-medium tracking-tight">
+                      {userData.updatedAt
+                        ? new Date(userData.updatedAt).toLocaleString("fr-FR")
+                        : "À l'instant"}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 shadow-[0_0_8px_rgba(59,130,246,0.5)]"></div>
+                  <div>
+                    <p className="text-xs font-bold text-slate-700">
+                      Réseau actuel
+                    </p>
+                    <p className="text-[10px] text-slate-400 font-medium tracking-tight">
+                      SunSpace Secure Gateway
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+
+      <style>{`
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+      `}</style>
+    </DashboardLayout>
   );
 };
 

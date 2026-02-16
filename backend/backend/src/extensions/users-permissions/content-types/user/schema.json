@@ -108,6 +108,20 @@
       "target": "api::trainer-profile.trainer-profile",
       "mappedBy": "user"
     },
+    "bio": {
+      "type": "text"
+    },
+    "city": {
+      "type": "string"
+    },
+    "social_links": {
+      "type": "json",
+      "default": {
+        "linkedin": "",
+        "twitter": "",
+        "instagram": ""
+      }
+    },
     "avatar": {
       "type": "media",
       "multiple": false,

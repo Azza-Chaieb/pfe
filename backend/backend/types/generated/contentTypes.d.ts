@@ -592,6 +592,7 @@ export interface ApiEquipmentEquipment extends Struct.CollectionTypeSchema {
     price_type: Schema.Attribute.Enumeration<["hourly", "daily", "one-time"]> &
       Schema.Attribute.DefaultTo<"one-time">;
     publishedAt: Schema.Attribute.DateTime;
+    quantity: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<1>;
     spaces: Schema.Attribute.Relation<"manyToMany", "api::space.space">;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
@@ -783,6 +784,7 @@ export interface ApiReservationReservation extends Struct.CollectionTypeSchema {
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
     date: Schema.Attribute.Date;
+    extras: Schema.Attribute.JSON;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       "oneToMany",
@@ -791,6 +793,7 @@ export interface ApiReservationReservation extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
     reservation_id: Schema.Attribute.UID;
+    space: Schema.Attribute.Relation<"manyToOne", "api::space.space">;
     status: Schema.Attribute.Enumeration<
       ["pending", "confirmed", "cancelled"]
     > &
@@ -835,6 +838,7 @@ export interface ApiServiceService extends Struct.CollectionTypeSchema {
     price_type: Schema.Attribute.Enumeration<["hourly", "daily", "one-time"]> &
       Schema.Attribute.DefaultTo<"one-time">;
     publishedAt: Schema.Attribute.DateTime;
+    quantity: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<1>;
     spaces: Schema.Attribute.Relation<"manyToMany", "api::space.space">;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
@@ -1538,7 +1542,9 @@ export interface PluginUsersPermissionsUser
       "api::association-profil.association-profil"
     >;
     avatar: Schema.Attribute.Media<"images">;
+    bio: Schema.Attribute.Text;
     blocked: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    city: Schema.Attribute.String;
     confirmationToken: Schema.Attribute.String & Schema.Attribute.Private;
     confirmed: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     createdAt: Schema.Attribute.DateTime;
@@ -1590,6 +1596,12 @@ export interface PluginUsersPermissionsUser
       "manyToOne",
       "plugin::users-permissions.role"
     >;
+    social_links: Schema.Attribute.JSON &
+      Schema.Attribute.DefaultTo<{
+        instagram: "";
+        linkedin: "";
+        twitter: "";
+      }>;
     subscription: Schema.Attribute.Relation<
       "oneToMany",
       "api::subscription.subscription"

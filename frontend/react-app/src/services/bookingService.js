@@ -65,3 +65,17 @@ export const getProfessionalBookings = async (userId) => {
     throw error;
   }
 };
+export const createReservation = async (data) => {
+  try {
+    const response = await api.post("/reservations", {
+      data: {
+        ...data,
+        status: "pending", // Default status
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error creating reservation", error);
+    throw error;
+  }
+};
