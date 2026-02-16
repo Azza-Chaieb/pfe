@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import DashboardLayout from "../components/layout/DashboardLayout";
+import DashboardStatCard from "../components/layout/DashboardStatCard";
 import {
   getProfessionalBookings,
   getSubscriptionDetails,
   cancelSubscription,
 } from "../api";
 
-const ProfessionalDashboard = () => {
+const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
   const [user, setUser] = useState(null);
   const [bookings, setBookings] = useState([]);
   const [subscription, setSubscription] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("dashboard"); // 'dashboard', 'bookings', 'subscription'
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,501 +25,333 @@ const ProfessionalDashboard = () => {
         }
         setUser(storedUser);
 
-        // Fetch bookings
-        const bookingsData = await getProfessionalBookings(storedUser.id);
-        setBookings(bookingsData.data || []);
+        const [bookingsData, subData] = await Promise.all([
+          getProfessionalBookings(storedUser.id),
+          getSubscriptionDetails(storedUser.id),
+        ]);
 
-        // Fetch subscription
-        const subData = await getSubscriptionDetails(storedUser.id);
+        setBookings(bookingsData.data || []);
         setSubscription(subData);
       } catch (error) {
-        console.error("Error loading dashboard:", error);
+        console.error("Error loading professional dashboard:", error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchDashboardData();
-    fetchDashboardData();
   }, [navigate]);
 
   const handleCancelSubscription = async () => {
-    if (
-      window.confirm(
-        "Êtes-vous sûr de vouloir annuler votre abonnement ? Cette action est irréversible.",
-      )
-    ) {
+    if (window.confirm("Êtes-vous sûr de vouloir annuler votre abonnement ?")) {
       try {
         await cancelSubscription(user.id);
         setSubscription(null);
-        alert("Votre abonnement a été annulé avec succès.");
+        alert("Abonnement annulé.");
       } catch (error) {
-        console.error("Erreur lors de l'annulation", error);
-        alert("Une erreur est survenue lors de la tentative d'annulation.");
+        console.error("Erreur", error);
       }
     }
   };
 
-  if (loading) {
-    return (
-      <div className="p-8 text-center">Chargement du tableau de bord...</div>
-    );
-  }
+  const renderDashboard = () => (
+    <>
+      {/* Welcome Section */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-black text-slate-800 tracking-tight mb-1">
+          Espace <span className="text-blue-600">Professionnel</span> 👋
+        </h1>
+        <p className="text-xs text-slate-500 font-medium tracking-tight">
+          Gérez vos ressources et votre abonnement premium.
+        </p>
+      </div>
 
-  const renderContent = () => {
-    switch (activeTab) {
-      case "bookings":
-        return (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-              <h3 className="text-lg font-bold text-gray-800">
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+        <DashboardStatCard
+          title="Réservations"
+          value={bookings.length}
+          icon="🏢"
+          color="blue"
+        />
+        <DashboardStatCard
+          title="Abonnement Actif"
+          value={subscription ? "Oui" : "Non"}
+          icon="💎"
+          color={subscription ? "emerald" : "orange"}
+        />
+        <DashboardStatCard
+          title="Prochaine Date"
+          value={
+            bookings.length > 0
+              ? new Date(bookings[0].attributes?.date).toLocaleDateString(
+                  "fr-FR",
+                )
+              : "-"
+          }
+          icon="📅"
+          color="purple"
+        />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-8">
+          <div className="bg-white/40 backdrop-blur-md p-6 rounded-[28px] border border-white/60 shadow-xl shadow-slate-200/50">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-lg font-black text-slate-800 tracking-tight">
                 Mes Réservations
               </h3>
               <button
-                onClick={() => navigate("/spaces")}
-                className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition"
+                onClick={() => navigate("/professional/bookings")}
+                className="text-[10px] font-black uppercase text-blue-600 tracking-widest hover:underline"
               >
-                + Nouvelle Réservation
+                Gérer tout →
               </button>
             </div>
-            <div className="p-6">
-              {bookings.length > 0 ? (
-                <div className="space-y-4">
-                  {bookings.map((booking) => (
-                    <div
-                      key={booking.id}
-                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50"
-                    >
-                      <div>
-                        <h4 className="font-bold text-gray-800">
-                          {booking.attributes?.coworking_space?.data?.attributes
-                            ?.name || "Espace de Coworking"}
-                        </h4>
-                        <p className="text-sm text-gray-500">
-                          {new Date(
-                            booking.attributes?.date,
-                          ).toLocaleDateString()}{" "}
-                          • {booking.attributes?.time_slot || "All Day"}
-                        </p>
-                      </div>
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          booking.attributes?.status === "confirmed"
-                            ? "bg-green-100 text-green-700"
-                            : booking.attributes?.status === "cancelled"
-                              ? "bg-red-100 text-red-700"
-                              : "bg-yellow-100 text-yellow-700"
-                        }`}
+
+            <div className="overflow-x-auto text-xs">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-slate-100">
+                    <th className="pb-3 font-black text-slate-400 uppercase tracking-widest">
+                      Lieu
+                    </th>
+                    <th className="pb-3 font-black text-slate-400 uppercase tracking-widest text-center">
+                      Date
+                    </th>
+                    <th className="pb-3 font-black text-slate-400 uppercase tracking-widest text-right">
+                      Statut
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-50">
+                  {bookings.slice(0, 3).map((booking) => {
+                    const data = booking.attributes || booking;
+                    const space =
+                      data.space?.data?.attributes || data.space || {};
+                    const coworking =
+                      data.coworking_space?.data?.attributes ||
+                      data.coworking_space ||
+                      {};
+                    return (
+                      <tr key={booking.id}>
+                        <td className="py-4 font-bold text-slate-700">
+                          {space.name
+                            ? `${coworking.name || "Espace"} - ${space.name}`
+                            : coworking.name || "Espace"}
+                        </td>
+                        <td className="py-4 text-center text-slate-500">
+                          {new Date(data.date).toLocaleDateString()}
+                        </td>
+                        <td className="py-4 text-right">
+                          <span
+                            className={`px-3 py-1 rounded-full text-[9px] font-black uppercase ${data.status === "confirmed" ? "bg-emerald-50 text-emerald-600" : "bg-orange-50 text-orange-600"}`}
+                          >
+                            {data.status || "En attente"}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                  {bookings.length === 0 && (
+                    <tr>
+                      <td
+                        colSpan="3"
+                        className="py-8 text-center text-slate-400 italic"
                       >
-                        {booking.attributes?.status || "En attente"}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-12">
-                  <div className="inline-block p-4 rounded-full bg-blue-50 text-blue-500 mb-4">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-8 w-8"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                      />
-                    </svg>
-                  </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-1">
-                    Aucune réservation
-                  </h3>
-                  <p className="text-gray-500 mb-6">
-                    Vous n'avez pas encore réservé d'espace.
-                  </p>
-                  <button
-                    onClick={() => navigate("/spaces")}
-                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
-                  >
-                    Réserver un espace
-                  </button>
-                </div>
-              )}
+                        Aucune réservation.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
-        );
-      case "subscription":
-        return (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 h-fit max-w-2xl mx-auto">
-            <div className="p-6 border-b border-gray-100">
-              <h3 className="text-lg font-bold text-gray-800">
-                Détails de l'abonnement
-              </h3>
+        </div>
+
+        <div className="lg:col-span-1 space-y-8">
+          <div className="bg-white/40 backdrop-blur-md p-6 rounded-[28px] border border-white/60 shadow-xl shadow-slate-200/50 relative overflow-hidden group">
+            <h3 className="text-lg font-black text-slate-800 tracking-tight mb-4">
+              Abonnement
+            </h3>
+            <div className="p-5 bg-gradient-to-br from-indigo-500 to-blue-700 rounded-2xl text-white shadow-xl mb-4">
+              <p className="text-[9px] font-black uppercase tracking-widest opacity-70 mb-1">
+                Status
+              </p>
+              <h4 className="text-lg font-black">
+                {subscription ? "Premium Pro" : "Free Tier"}
+              </h4>
             </div>
-            <div className="p-8">
-              {subscription ? (
-                <div>
-                  <div className="flex items-center justify-between mb-8">
-                    <div>
-                      <span className="text-gray-500 text-sm uppercase tracking-wide">
-                        Plan Actuel
-                      </span>
-                      <h2 className="text-3xl font-extrabold text-indigo-600 mt-1">
-                        Premium Pro
-                      </h2>
-                    </div>
-                    <span className="px-4 py-1.5 bg-green-100 text-green-700 rounded-full text-sm font-bold">
-                      Actif
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-6 mb-8">
-                    <div className="p-4 bg-gray-50 rounded-lg">
-                      <span className="text-gray-500 text-sm block mb-1">
-                        Date de début
-                      </span>
-                      <span className="font-bold text-gray-800">
-                        {new Date(subscription.start_time).toLocaleDateString()}
-                      </span>
-                    </div>
-                    <div className="p-4 bg-gray-50 rounded-lg">
-                      <span className="text-gray-500 text-sm block mb-1">
-                        Date de fin
-                      </span>
-                      <span className="font-bold text-gray-800">
-                        {new Date(subscription.end_time).toLocaleDateString()}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="border-t pt-6">
-                    <h4 className="font-bold text-gray-800 mb-4">
-                      Avantages inclus
-                    </h4>
-                    <ul className="space-y-3 mb-8">
-                      <li className="flex items-center text-gray-600">
-                        <span className="text-green-500 mr-2">✓</span> Accès
-                        illimité aux espaces de coworking
-                      </li>
-                      <li className="flex items-center text-gray-600">
-                        <span className="text-green-500 mr-2">✓</span> Connexion
-                        Internet Haut Débit
-                      </li>
-                      <li className="flex items-center text-gray-600">
-                        <span className="text-green-500 mr-2">✓</span> Café et
-                        boissons gratuits
-                      </li>
-                    </ul>
-
-                    <button
-                      onClick={handleCancelSubscription}
-                      className="w-full py-3 bg-white border border-red-200 text-red-600 rounded-lg hover:bg-red-50 font-medium transition"
-                    >
-                      Annuler l'abonnement
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <div className="inline-block p-4 rounded-full bg-indigo-50 text-indigo-500 mb-4">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-10 w-10"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"
-                      />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
-                    Aucun abonnement actif
-                  </h3>
-                  <p className="text-gray-500 mb-8 max-w-sm mx-auto">
-                    Profitez de nos espaces de travail premium en souscrivant à
-                    un abonnement adapté à vos besoins.
-                  </p>
-
-                  <button
-                    onClick={() =>
-                      alert(
-                        "Les offres d'abonnement seront bientôt disponibles.",
-                      )
-                    }
-                    className="w-full py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-200 font-bold transition transform hover:-translate-y-1"
-                  >
-                    Voir les offres d'abonnement
-                  </button>
-                </div>
-              )}
-            </div>
+            <button
+              onClick={() => navigate("/professional/subscription")}
+              className="w-full py-3 bg-slate-900 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-black transition-all"
+            >
+              Détails de l'offre
+            </button>
           </div>
-        );
-      default:
-        return null; // Will render default content below
-    }
-  };
+        </div>
+      </div>
+    </>
+  );
+
+  const renderBookings = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-3xl font-black text-slate-800 tracking-tight">
+            Gestion des Réservations 🏢
+          </h1>
+          <p className="text-xs text-slate-500 font-medium">
+            Historique complet et gestion de vos espaces réservés.
+          </p>
+        </div>
+        <div className="flex gap-4">
+          <button
+            onClick={() => navigate("/spaces")}
+            className="px-6 py-2 bg-blue-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg"
+          >
+            + Nouvelle Réservation
+          </button>
+          <button
+            onClick={() => navigate("/professional/dashboard")}
+            className="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-[10px] font-black uppercase hover:bg-slate-200 transition-all"
+          >
+            ← Retour
+          </button>
+        </div>
+      </div>
+      <div className="bg-white/40 backdrop-blur-md p-8 rounded-[32px] border border-white/60 shadow-xl shadow-slate-200/50">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="border-b border-slate-100">
+                <th className="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                  Espace
+                </th>
+                <th className="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                  Date
+                </th>
+                <th className="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                  Services
+                </th>
+                <th className="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">
+                  Statut
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-50">
+              {bookings.map((booking) => {
+                const data = booking.attributes || booking;
+                const space = data.space?.data?.attributes || data.space || {};
+                const coworking =
+                  data.coworking_space?.data?.attributes ||
+                  data.coworking_space ||
+                  {};
+                const extras = data.extras || {};
+                const extrasCount = Object.keys(extras).length;
+
+                return (
+                  <tr
+                    key={booking.id}
+                    className="hover:bg-white/50 transition-all"
+                  >
+                    <td className="py-5 font-bold text-slate-700">
+                      {space.name
+                        ? `${coworking.name || "Espace"} - ${space.name}`
+                        : coworking.name || "Espace"}
+                    </td>
+                    <td className="py-5 text-slate-500">
+                      {new Date(data.date).toLocaleDateString("fr-FR", {
+                        weekday: "long",
+                        day: "numeric",
+                        month: "long",
+                      })}
+                    </td>
+                    <td className="py-5">
+                      <span className="text-[10px] bg-slate-100 text-slate-500 px-2 py-1 rounded">
+                        {extrasCount > 0
+                          ? `${extrasCount} option(s)`
+                          : "Aucun extra"}
+                      </span>
+                    </td>
+                    <td className="py-5 text-right">
+                      <span
+                        className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase ${data.status === "confirmed" ? "bg-emerald-50 text-emerald-600" : "bg-orange-50 text-orange-600"}`}
+                      >
+                        {data.status || "En attente"}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderSubscription = () => (
+    <div className="max-w-4xl mx-auto py-10">
+      <div className="flex justify-between items-center mb-12">
+        <div>
+          <h1 className="text-4xl font-black text-slate-800 tracking-tighter">
+            Mon Abonnement 💎
+          </h1>
+          <p className="text-slate-500 font-medium tracking-tight">
+            Gérez votre plan et vos factures.
+          </p>
+        </div>
+        <button
+          onClick={() => navigate("/professional/dashboard")}
+          className="px-6 py-2 bg-slate-100 text-slate-600 rounded-xl text-[10px] font-black uppercase hover:bg-slate-200 transition-all"
+        >
+          ← Retour
+        </button>
+      </div>
+
+      <div className="bg-white/40 backdrop-blur-md p-10 rounded-[40px] border border-white/60 shadow-2xl relative overflow-hidden">
+        {/* "À bientôt" Label Layer */}
+        <div className="absolute inset-0 bg-white/60 backdrop-blur-sm z-10 flex flex-col items-center justify-center p-12 text-center animate-fade-in">
+          <div className="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center text-4xl mb-6 shadow-inner animate-bounce">
+            ✨
+          </div>
+          <h2 className="text-3xl font-black text-slate-800 mb-4 tracking-tighter">
+            À bientôt !
+          </h2>
+          <p className="text-sm text-slate-500 font-bold uppercase tracking-[0.2em] leading-relaxed max-w-sm">
+            Le portail de gestion des abonnements premium est en cours de
+            finalisation.
+          </p>
+          <div className="mt-8 flex gap-4">
+            <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
+            <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse [animation-delay:200ms]" />
+            <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse [animation-delay:400ms]" />
+          </div>
+        </div>
+
+        <div className="opacity-10 grayscale blur-[2px] pointer-events-none">
+          {/* Mock content below the overlay */}
+          <div className="p-8 bg-blue-600 rounded-3xl text-white mb-8">
+            <h3 className="text-2xl font-black mb-1">Premium Plan</h3>
+            <p className="opacity-80">99 DTN / Mois</p>
+          </div>
+          <div className="space-y-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-12 bg-slate-100 rounded-2xl w-full" />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white shadow-md hidden md:block">
-        <div className="p-6">
-          <h1
-            className="text-2xl font-bold text-blue-600 cursor-pointer"
-            onClick={() => setActiveTab("dashboard")}
-          >
-            SunSpace Pro
-          </h1>
-        </div>
-        <nav className="mt-6 space-y-1">
-          <button
-            onClick={() => setActiveTab("dashboard")}
-            className={`w-full text-left py-3 px-6 font-medium transition-colors border-r-4 ${
-              activeTab === "dashboard"
-                ? "bg-blue-50 text-blue-600 border-blue-600"
-                : "text-gray-600 hover:bg-gray-50 hover:text-blue-600 border-transparent"
-            }`}
-          >
-            Tableau de bord
-          </button>
-          <button
-            onClick={() => setActiveTab("bookings")}
-            className={`w-full text-left py-3 px-6 font-medium transition-colors border-r-4 ${
-              activeTab === "bookings"
-                ? "bg-blue-50 text-blue-600 border-blue-600"
-                : "text-gray-600 hover:bg-gray-50 hover:text-blue-600 border-transparent"
-            }`}
-          >
-            Mes Réservations
-          </button>
-          <button
-            onClick={() => setActiveTab("subscription")}
-            className={`w-full text-left py-3 px-6 font-medium transition-colors border-r-4 ${
-              activeTab === "subscription"
-                ? "bg-blue-50 text-blue-600 border-blue-600"
-                : "text-gray-600 hover:bg-gray-50 hover:text-blue-600 border-transparent"
-            }`}
-          >
-            Mon Abonnement
-          </button>
-          <button
-            onClick={() => navigate("/profile")}
-            className="w-full text-left py-3 px-6 text-gray-600 hover:bg-gray-50 hover:text-blue-600 transition-colors border-r-4 border-transparent font-medium"
-          >
-            Mon Profil
-          </button>
-          <button
-            onClick={() => {
-              localStorage.removeItem("jwt");
-              localStorage.removeItem("user");
-              navigate("/login");
-            }}
-            className="w-full text-left py-3 px-6 text-red-600 hover:bg-red-50 transition-colors mt-auto border-r-4 border-transparent"
-          >
-            Déconnexion
-          </button>
-        </nav>
-      </aside>
-
-      {/* Main Content */}
-      <main className="flex-1 p-8">
-        <header className="flex justify-between items-center mb-8">
-          <div>
-            <h2 className="text-3xl font-bold text-gray-800">
-              {activeTab === "dashboard"
-                ? `Bonjour, ${user?.username} 👋`
-                : activeTab === "bookings"
-                  ? "Mes Réservations"
-                  : "Mon Abonnement"}
-            </h2>
-            <p className="text-gray-500">
-              {activeTab === "dashboard"
-                ? "Voici un aperçu de votre activité professionnelle."
-                : activeTab === "bookings"
-                  ? "Gérez vos réservations d'espace passées et futures."
-                  : "Gérez votre plan et vos factures."}
-            </p>
-          </div>
-          <div className="h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">
-            {user?.username?.charAt(0).toUpperCase()}
-          </div>
-        </header>
-
-        {activeTab === "dashboard" && (
-          <>
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 mt-2">
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h3 className="text-gray-500 text-sm font-medium uppercase">
-                  Réservations Totales
-                </h3>
-                <p className="text-3xl font-bold text-gray-800 mt-2">
-                  {bookings.length}
-                </p>
-              </div>
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h3 className="text-gray-500 text-sm font-medium uppercase">
-                  Abonnement Actif
-                </h3>
-                <p
-                  className={`text-3xl font-bold mt-2 ${subscription ? "text-green-600" : "text-gray-400"}`}
-                >
-                  {subscription ? "Oui" : "Non"}
-                </p>
-              </div>
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h3 className="text-gray-500 text-sm font-medium uppercase">
-                  Prochaine Réservation
-                </h3>
-                <p className="text-lg font-bold text-blue-600 mt-2">
-                  {bookings.length > 0
-                    ? new Date(
-                        bookings[0].attributes?.date,
-                      ).toLocaleDateString()
-                    : "-"}
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Bookings List (Mini) */}
-              <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-                  <h3 className="text-lg font-bold text-gray-800">
-                    Dernières Réservations
-                  </h3>
-                  <button
-                    onClick={() => setActiveTab("bookings")}
-                    className="text-blue-600 text-sm font-medium hover:underline"
-                  >
-                    Voir tout
-                  </button>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-sm text-gray-600">
-                    <thead className="bg-gray-50 text-gray-500 uppercase font-medium">
-                      <tr>
-                        <th className="px-6 py-4">Lieu</th>
-                        <th className="px-6 py-4">Date</th>
-                        <th className="px-6 py-4">Horaire</th>
-                        <th className="px-6 py-4">Statut</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100">
-                      {bookings.length > 0 ? (
-                        bookings.slice(0, 5).map((booking) => (
-                          <tr
-                            key={booking.id}
-                            className="hover:bg-gray-50 transition-colors"
-                          >
-                            <td className="px-6 py-4 font-medium text-gray-800">
-                              {booking.attributes?.coworking_space?.data
-                                ?.attributes?.name || "Grand Espace"}
-                            </td>
-                            <td className="px-6 py-4">
-                              {new Date(
-                                booking.attributes?.date,
-                              ).toLocaleDateString()}
-                            </td>
-                            <td className="px-6 py-4">
-                              {booking.attributes?.time_slot || "09:00 - 18:00"}
-                            </td>
-                            <td className="px-6 py-4">
-                              <span
-                                className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                  booking.attributes?.status === "confirmed"
-                                    ? "bg-green-100 text-green-700"
-                                    : booking.attributes?.status === "cancelled"
-                                      ? "bg-red-100 text-red-700"
-                                      : "bg-yellow-100 text-yellow-700"
-                                }`}
-                              >
-                                {booking.attributes?.status || "En attente"}
-                              </span>
-                            </td>
-                          </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td
-                            colSpan="4"
-                            className="px-6 py-8 text-center text-gray-400"
-                          >
-                            Aucune réservation récente.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              {/* Subscription Details (Mini) */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 h-fit">
-                <div className="p-6 border-b border-gray-100">
-                  <h3 className="text-lg font-bold text-gray-800">
-                    Mon Abonnement
-                  </h3>
-                </div>
-                <div className="p-6">
-                  {subscription ? (
-                    <div>
-                      <div className="mb-4">
-                        <span className="text-gray-500 text-sm">
-                          Plan actuel
-                        </span>
-                        <p className="text-xl font-bold text-indigo-600">
-                          Premium Pro
-                        </p>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2.5 mb-2">
-                        <div
-                          className="bg-indigo-600 h-2.5 rounded-full"
-                          style={{ width: "45%" }}
-                        ></div>
-                      </div>
-                      <p className="text-xs text-gray-500 text-right">
-                        Renouvellement dans 15 jours
-                      </p>
-
-                      <button
-                        onClick={() => setActiveTab("subscription")}
-                        className="w-full mt-6 py-2 px-4 border border-indigo-600 text-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors font-medium text-sm"
-                      >
-                        Gérer l'abonnement
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="text-center py-4">
-                      <p className="text-gray-600 mb-4">
-                        Aucun abonnement actif.
-                      </p>
-                      <button
-                        onClick={() => setActiveTab("subscription")}
-                        className="w-full py-2 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
-                      >
-                        Découvrir les offres
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </>
-        )}
-
-        {renderContent()}
-      </main>
-    </div>
+    <DashboardLayout role="professional" user={user} loading={loading}>
+      {activeTab === "dashboard" && renderDashboard()}
+      {activeTab === "bookings" && renderBookings()}
+      {activeTab === "subscription" && renderSubscription()}
+    </DashboardLayout>
   );
 };
 

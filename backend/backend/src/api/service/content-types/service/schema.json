@@ -28,6 +28,10 @@
       "enum": ["hourly", "daily", "one-time"],
       "default": "one-time"
     },
+    "quantity": {
+      "type": "integer",
+      "default": 1
+    },
     "spaces": {
       "type": "relation",
       "relation": "manyToMany",

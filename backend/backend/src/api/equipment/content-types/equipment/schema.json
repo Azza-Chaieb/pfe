@@ -33,6 +33,10 @@
       "type": "enumeration",
       "enum": ["hourly", "daily", "one-time"],
       "default": "one-time"
+    },
+    "quantity": {
+      "type": "integer",
+      "default": 1
     }
   }
 }

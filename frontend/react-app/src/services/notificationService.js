@@ -15,7 +15,10 @@ let messaging = null;
 try {
   messaging = getMessaging(app);
 } catch (error) {
-  console.warn("Firebase Messaging is not supported in this browser:", error.message);
+  console.warn(
+    "Firebase Messaging is not supported in this browser:",
+    error.message,
+  );
 }
 
 // توليد FCM Token
@@ -25,10 +28,12 @@ export const getFcmToken = async () => {
     return null;
   }
 
-  const VAPID_KEY = "VAPID_KEY"; // REPLACE WITH YOUR REAL VAPID KEY FROM FIREBASE CONSOLE
+  const VAPID_KEY = import.meta.env.VITE_VAPID_KEY;
 
   if (VAPID_KEY === "VAPID_KEY") {
-    console.warn("Firebase: VAPID_KEY is missing. Push notifications will not work.");
+    console.warn(
+      "Firebase: VAPID_KEY is missing. Push notifications will not work.",
+    );
     return null;
   }
 
@@ -59,19 +64,20 @@ export const onMessageListener = () =>
 
 export const requestNotificationPermission = async () => {
   if (!messaging) {
-    console.warn("Firebase Messaging not supported, skipping notification permission.");
+    console.warn(
+      "Firebase Messaging not supported, skipping notification permission.",
+    );
     return null;
   }
   try {
     const permission = await Notification.requestPermission();
-    if (permission === 'granted') {
-      console.log('Notification permission granted.');
+    if (permission === "granted") {
+      console.log("Notification permission granted.");
       return await getFcmToken();
     } else {
-      console.log('Unable to get permission to notify.');
+      console.log("Unable to get permission to notify.");
     }
   } catch (error) {
-    console.error('Error requesting notification permission:', error);
+    console.error("Error requesting notification permission:", error);
   }
 };
-
