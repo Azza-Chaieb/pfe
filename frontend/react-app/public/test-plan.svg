@@ -1,0 +1,27 @@
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="400" height="300" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2" />
+  <text x="20" y="30" font-family="Arial" font-size="14" font-weight="bold" fill="#64748b">PLAN DE TEST 2D</text>
+  
+  <!-- Bureau 1 -->
+  <g id="bureau_1" class="space-item">
+    <rect x="50" y="70" width="120" height="80" rx="8" fill="#fff" stroke="#cbd5e1" stroke-width="2" />
+    <text x="75" y="115" font-family="Arial" font-size="12" font-weight="bold" fill="#334155">Bureau 101</text>
+  </g>
+
+  <!-- Bureau 2 -->
+  <g id="bureau_2" class="space-item">
+    <rect x="220" y="70" width="120" height="80" rx="8" fill="#fff" stroke="#cbd5e1" stroke-width="2" />
+    <text x="245" y="115" font-family="Arial" font-size="12" font-weight="bold" fill="#334155">Bureau 201</text>
+  </g>
+
+  <!-- Bureau 3 -->
+  <g id="bureau_3" class="space-item">
+    <rect x="50" y="180" width="120" height="80" rx="8" fill="#fff" stroke="#cbd5e1" stroke-width="2" />
+    <text x="75" y="225" font-family="Arial" font-size="12" font-weight="bold" fill="#334155">B03</text>
+  </g>
+
+  <style>
+    .space-item:hover rect { fill: #eff6ff; stroke: #3b82f6; }
+    .space-item { cursor: pointer; transition: all 0.2s; }
+  </style>
+</svg>

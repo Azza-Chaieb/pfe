@@ -47,7 +47,16 @@ export const getFcmToken = async () => {
       return null;
     }
   } catch (err) {
-    console.error("Error retrieving FCM token:", err);
+    if (
+      err.message?.includes("401") ||
+      err.message?.includes("authentication")
+    ) {
+      console.warn(
+        "Firebase Messaging 401: Veuillez vérifier votre clé VAPID et la configuration de l'API Cloud Messaging dans la console Firebase.",
+      );
+    } else {
+      console.error("Error retrieving FCM token:", err);
+    }
     return null;
   }
 };
