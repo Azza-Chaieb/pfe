@@ -11,7 +11,7 @@ const ResetPassword = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const token = searchParams.get("token");
+  const token = searchParams.get("token") || searchParams.get("code");
 
   useEffect(() => {
     if (!token) {

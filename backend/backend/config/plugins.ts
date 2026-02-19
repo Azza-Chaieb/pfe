@@ -1,17 +1,20 @@
 export default {
-  'users-permissions': {
+  "users-permissions": {
     config: {
       register: {
-        allowedFields: ['fullname', 'phone', 'user_type'],
+        allowedFields: ["fullname", "phone", "user_type"],
       },
       jwt: {
-        expiresIn: '7d',
+        expiresIn: "7d",
+      },
+      passwordResetToken: {
+        url: "http://192.168.100.97:3000/reset-password",
       },
     },
   },
   email: {
     config: {
-      provider: 'nodemailer',
+      provider: "nodemailer",
       providerOptions: {
         host: process.env.SMTP_HOST,
         port: process.env.SMTP_PORT,
