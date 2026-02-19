@@ -1,26 +1,49 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../../services/apiClient";
 import { createReservation } from "../../services/bookingService";
 
 /**
- * BookingModal Component
- * Matches the design requested by the Product Owner and makes all fields functional.
+ * BookingModal Component - CLEAN & LOGICAL VERSION
+ * Enforces a single submission to prevent redundant clicks.
  */
-const BookingModal = ({ space, coworkingSpaceId, onClose }) => {
+const BookingModal = ({ space, coworkingSpaceId, initialDate, onClose }) => {
   const [bookingLoading, setBookingLoading] = useState(false);
+  const [existingReservations, setExistingReservations] = useState([]);
+  const [checkingAvailability, setCheckingAvailability] = useState(false);
   const [equipmentQuantities, setEquipmentQuantities] = useState({});
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
     phone: "",
     participants: 1,
-    date: new Date().toISOString().split("T")[0],
+    date: initialDate || new Date().toISOString().split("T")[0],
     startTime: "09:00",
     endTime: "18:00",
     allDay: false,
   });
 
   const navigate = useNavigate();
+  const isSubmitting = useRef(false);
+
+  // Fetch current reservations for the selected date
+  useEffect(() => {
+    if (!space?.id || !formData.date) return;
+    const checkAvailability = async () => {
+      setCheckingAvailability(true);
+      try {
+        const response = await api.get(
+          `/reservations?filters[space][id][$eq]=${space.id}&filters[date][$eq]=${formData.date}&filters[status][$ne]=cancelled`
+        );
+        setExistingReservations(response.data?.data || []);
+      } catch (err) {
+        console.error("Availability check failed:", err);
+      } finally {
+        setCheckingAvailability(false);
+      }
+    };
+    checkAvailability();
+  }, [space?.id, formData.date]);
 
   if (!space) return null;
   const attrs = space.attributes || space;
@@ -47,28 +70,30 @@ const BookingModal = ({ space, coworkingSpaceId, onClose }) => {
   };
 
   const handleBooking = async () => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (!user) {
-      alert("Veuillez vous connecter pour réserver.");
-      navigate("/login");
-      return;
-    }
-
-    if (!formData.fullName || !formData.email || !formData.phone) {
-      alert("Veuillez remplir tous les champs obligatoires.");
-      return;
-    }
-
+    // CRITICAL: Block any double-submission immediately
+    if (isSubmitting.current) return;
+    isSubmitting.current = true;
     setBookingLoading(true);
+
     try {
+      const userString = localStorage.getItem("user");
+      const user = userString ? JSON.parse(userString) : null;
+
+      if (!user) {
+        alert("Veuillez vous connecter pour réserver.");
+        navigate("/login");
+        setBookingLoading(false);
+        isSubmitting.current = false;
+        return;
+      }
+
       const reservationData = {
         user: user.id,
         coworking_space: coworkingSpaceId,
         space: space.id,
         date: formData.date,
-        time_slot: formData.allDay
-          ? "Full Day"
-          : `${formData.startTime} - ${formData.endTime}`,
+        time_slot: formData.allDay ? "Full Day" : `${formData.startTime} - ${formData.endTime}`,
+        total_price: parseFloat(calculateTotalPrice()), // CRITICAL: Save price to DB
         extras: {
           equipments: equipmentQuantities,
           contact: {
@@ -80,394 +105,228 @@ const BookingModal = ({ space, coworkingSpaceId, onClose }) => {
         },
       };
 
-      await createReservation(reservationData);
-      alert("Réservation réussie !");
+      console.log("[Booking] Logic: Requesting creation...");
+      const response = await createReservation(reservationData);
+
+      // LOGICAL SEQUENCE: Success -> Alert -> Redirect (Email is handled by backend)
+      window.alert("Félicitations ! Votre réservation a été enregistrée avec succès. Vous allez recevoir un email de confirmation.");
+
       onClose();
-      navigate(
-        user.user_type === "professional"
-          ? "/professional/bookings"
-          : "/student/bookings",
-      );
+      navigate(user.user_type === "professional" ? "/professional/bookings" : "/student/bookings");
+
     } catch (error) {
-      console.error("Booking error:", error);
-      alert("Erreur lors de la réservation.");
-    } finally {
+      console.error("Booking Error:", error.response?.data || error.message);
+      const errorMsg = error.response?.data?.error?.message || "Une erreur est survenue lors de la réservation.";
+      window.alert(`Oups ! ${errorMsg}`);
+
+      // Let user retry if it was a real error
       setBookingLoading(false);
+      isSubmitting.current = false;
     }
   };
 
-  // Generate time options
-  const hours = Array.from({ length: 15 }).map((_, i) => {
-    const h = (i + 8).toString().padStart(2, "0");
-    return `${h}:00`;
-  });
+  const hours = Array.from({ length: 15 }).map((_, i) => `${(i + 8).toString().padStart(2, "0")}:00`);
+
+  const calculateTotalPrice = () => {
+    if (!attrs) return 0;
+
+    // Ensure we have a valid date string
+    const datePart = formData.date || new Date().toISOString().split("T")[0];
+    const startStr = `${datePart}T${formData.startTime || "09:00"}:00`;
+    const endStr = `${datePart}T${formData.endTime || "18:00"}:00`;
+
+    const start = new Date(startStr);
+    const end = new Date(endStr);
+
+    let durationMs = 0;
+    if (formData.allDay) {
+      durationMs = 8 * 3600000; // 8 hours for a full day
+    } else if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
+      durationMs = end.getTime() - start.getTime();
+    }
+
+    const durationHours = Math.max(0, durationMs / (1000 * 60 * 60));
+    const durationDays = formData.allDay ? 1 : Math.ceil(durationHours / 24);
+
+    let total = 0;
+
+    // Base Space Price - handle potential string values from API
+    const pHourly = parseFloat(attrs.pricing_hourly || 0);
+    const pDaily = parseFloat(attrs.pricing_daily || 0);
+
+    if (!formData.allDay && durationHours < 8 && pHourly > 0) {
+      total += durationHours * pHourly;
+    } else if (pDaily > 0) {
+      total += durationDays * pDaily;
+    } else if (pHourly > 0) {
+      total += durationHours * pHourly;
+    }
+
+    // Equipment Price
+    equipmentsList.forEach((eq) => {
+      const eqAttrs = eq.attributes || eq;
+      const qty = equipmentQuantities[eq.id] || 0;
+      const pEq = parseFloat(eqAttrs.price || 0);
+      if (qty > 0 && pEq > 0) {
+        const pt = eqAttrs.price_type || "one-time";
+        if (pt === "hourly") total += durationHours * pEq * qty;
+        else if (pt === "daily") total += durationDays * pEq * qty;
+        else total += pEq * qty;
+      }
+    });
+
+    console.log(`[Booking] Calculated Price: ${total}, Hours: ${durationHours}`);
+    return total.toFixed(2);
+  };
+
+  const hasConflict = !formData.allDay && existingReservations.some(res => {
+    const slotStr = res.attributes?.time_slot || res.time_slot || "";
+    if (slotStr === "Full Day") return true;
+
+    const [resStart, resEnd] = slotStr.split(' - ');
+    if (!resStart || !resEnd) return false;
+
+    const sA = parseInt(formData.startTime.replace(':', ''));
+    const eA = parseInt(formData.endTime.replace(':', ''));
+    const sB = parseInt(resStart.replace(':', ''));
+    const eB = parseInt(resEnd.replace(':', ''));
+    return sA < eB && sB < eA;
+  }) || (formData.allDay && existingReservations.length > 0);
 
   return (
-    <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-300">
-      <div className="bg-white w-full max-w-5xl rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[90vh] relative animate-in zoom-in duration-300">
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-6 right-6 text-slate-400 hover:text-slate-600 transition-colors z-10"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-md p-4 scroll-smooth">
+      <div className="bg-white w-full max-w-6xl rounded-[3rem] overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[95vh] relative animate-in zoom-in duration-300">
+
+        <button onClick={onClose} className="absolute top-8 right-8 text-slate-300 hover:text-slate-600 transition-all z-20 p-2 hover:bg-slate-100 rounded-full">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
 
-        {/* Left Column */}
-        <div className="flex-1 p-8 overflow-y-auto border-r border-slate-100">
-          <header className="mb-8">
-            <h2 className="text-3xl font-black text-slate-800 mb-2 uppercase tracking-tight">
-              {attrs.name}
-            </h2>
-            <div className="flex items-center gap-4 text-slate-400 text-[10px] font-bold uppercase tracking-wider">
-              <span className="flex items-center gap-1">
-                👤 Max {attrs.capacity || 20} personnes
-              </span>
-              <span className="flex items-center gap-1">📍 Localisation</span>
-              <span className="flex items-center gap-1">
-                💰 {attrs.pricing_hourly || 10}DT/h ·{" "}
-                {attrs.pricing_daily || 45}DT/jour
-              </span>
+        {/* Info Column */}
+        <div className="flex-1 p-12 overflow-y-auto bg-white border-r border-slate-100">
+          <header className="mb-10">
+            <h2 className="text-4xl font-black text-slate-900 mb-3 uppercase tracking-tighter">{attrs.name}</h2>
+            <div className="flex flex-wrap items-center gap-4 text-[11px] font-black text-slate-400 tracking-widest uppercase">
+              <span className="flex items-center gap-1.5">👤 MAX {attrs.capacity || 20}</span>
+              <span className="flex items-center gap-1.5 text-emerald-600">💰 {attrs.pricing_hourly}DT/H · {attrs.pricing_daily}DT/JOUR</span>
             </div>
           </header>
 
-          <section className="mb-8">
-            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">
-              Description
-            </h4>
-            <div className="bg-slate-50 p-4 rounded-xl text-sm text-slate-600 leading-relaxed border border-slate-100">
-              {attrs.description || "Espace de travail moderne et lumineux."}
+          <section className="mb-10">
+            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Description</h4>
+            <div className="bg-slate-50 p-6 rounded-[1.5rem] text-sm text-slate-600 leading-relaxed italic">
+              {attrs.description || "Un espace de travail moderne parfaitement équipé."}
             </div>
           </section>
 
-          <section className="mb-8">
-            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">
-              Equipements disponibles
-            </h4>
-            <div className="flex flex-col gap-3">
-              {equipmentsList.length > 0 ? (
-                equipmentsList.map((eq) => {
-                  const id = eq.id;
-                  const qty = equipmentQuantities[id] || 0;
-                  return (
-                    <div
-                      key={id}
-                      className={`flex items-center justify-between p-3 rounded-xl border transition-all ${
-                        qty > 0
-                          ? "bg-emerald-50 border-emerald-200"
-                          : "bg-slate-50 border-slate-100"
-                      }`}
-                    >
-                      <span className="text-xs font-bold text-slate-700">
-                        {eq.attributes?.name || eq.name}
+          <section className="mb-10">
+            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Équipements</h4>
+            <div className="grid grid-cols-1 gap-2">
+              {equipmentsList.length > 0 ? equipmentsList.map((eq) => {
+                const id = eq.id;
+                const qty = equipmentQuantities[id] || 0;
+                return (
+                  <div key={id} className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${qty > 0 ? "bg-emerald-50 border-emerald-200" : "bg-white border-slate-100"}`}>
+                    <div className="flex flex-col">
+                      <span className="text-xs font-bold text-slate-700">{eq.attributes?.name || eq.name}</span>
+                      <span className="text-[10px] text-emerald-600 font-black uppercase">
+                        {eq.attributes?.price || eq.price}DT
+                        {eq.attributes?.price_type === 'hourly' ? '/H' : eq.attributes?.price_type === 'daily' ? '/JOUR' : ''}
                       </span>
-                      <div className="flex items-center gap-3">
-                        <button
-                          onClick={() => updateEquipmentQuantity(id, -1)}
-                          className="w-8 h-8 flex items-center justify-center bg-white border border-slate-200 rounded-lg text-slate-400 hover:text-emerald-500 hover:border-emerald-500 transition-colors shadow-sm"
-                        >
-                          -
-                        </button>
-                        <span className="text-xs font-black min-w-[20px] text-center text-emerald-600">
-                          {qty}
-                        </span>
-                        <button
-                          onClick={() => updateEquipmentQuantity(id, 1)}
-                          className="w-8 h-8 flex items-center justify-center bg-white border border-slate-200 rounded-lg text-slate-400 hover:text-emerald-500 hover:border-emerald-500 transition-colors shadow-sm"
-                        >
-                          +
-                        </button>
-                      </div>
                     </div>
-                  );
-                })
-              ) : (
-                <span className="text-[10px] text-slate-400 italic font-medium">
-                  Aucun équipement spécifique.
-                </span>
-              )}
+                    <div className="flex items-center gap-4">
+                      <button onClick={() => updateEquipmentQuantity(id, -1)} className="w-8 h-8 rounded-lg bg-white border border-slate-200 font-black">-</button>
+                      <span className="text-sm font-black text-emerald-600">{qty}</span>
+                      <button onClick={() => updateEquipmentQuantity(id, 1)} className="w-8 h-8 rounded-lg bg-white border border-slate-200 font-black">+</button>
+                    </div>
+                  </div>
+                );
+              }) : <span className="text-xs italic text-slate-400">Aucun équipement disponible.</span>}
             </div>
           </section>
 
-          <section>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-6 h-6 bg-slate-100 rounded-full flex items-center justify-center text-slate-600">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-              </div>
-              <h4 className="text-[10px] font-black text-slate-800 uppercase tracking-widest">
-                Informations de contact
-              </h4>
-            </div>
-
+          <section className="space-y-4">
+            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Coordonnées</h4>
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-slate-500 uppercase">
-                  Nom complet *
-                </label>
-                <input
-                  type="text"
-                  name="fullName"
-                  value={formData.fullName}
-                  onChange={handleInputChange}
-                  placeholder=""
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-slate-500 uppercase">
-                  Email *
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  placeholder=""
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-slate-500 uppercase">
-                  Téléphone *
-                </label>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  placeholder=""
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-slate-500 uppercase">
-                  Nombre de participants *
-                </label>
-                <input
-                  type="number"
-                  name="participants"
-                  value={formData.participants}
-                  onChange={handleInputChange}
-                  min="1"
-                  max={attrs.capacity || 20}
-                  className="w-full bg-slate-100 border border-emerald-500/30 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all font-bold text-emerald-800"
-                />
-              </div>
+              <input type="text" placeholder="Nom Complet" name="fullName" value={formData.fullName} onChange={handleInputChange} className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-bold" />
+              <input type="email" placeholder="Email" name="email" value={formData.email} onChange={handleInputChange} className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-bold" />
+              <input type="tel" placeholder="Téléphone" name="phone" value={formData.phone} onChange={handleInputChange} className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-bold" />
+              <input type="number" placeholder="Personnes" name="participants" value={formData.participants} onChange={handleInputChange} className="w-full bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-sm font-black text-emerald-800" />
             </div>
           </section>
         </div>
 
-        {/* Right Column */}
-        <div className="w-full md:w-[420px] p-8 bg-slate-50/50 overflow-y-auto">
-          <section className="mb-8">
-            <div className="flex items-center gap-2 mb-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="text-slate-400"
-              >
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-              </svg>
-              <h4 className="text-[10px] font-black text-slate-800 uppercase tracking-widest">
-                Sélectionner une date
-              </h4>
-            </div>
-
-            <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-              <div className="flex justify-between items-center mb-4 px-2">
-                <span className="text-sm font-black text-slate-800">
-                  Février 2026
-                </span>
-                <div className="flex gap-2">
-                  <button className="text-slate-400 hover:text-slate-600">
-                    ‹
-                  </button>
-                  <button className="text-slate-400 hover:text-slate-600">
-                    ›
-                  </button>
-                </div>
-              </div>
-              <div className="grid grid-cols-7 gap-1 text-center mb-2">
-                {["lun", "mar", "mer", "jeu", "ven", "sam", "dim"].map((d) => (
-                  <span
-                    key={d}
-                    className="text-[8px] font-black text-slate-400 uppercase"
-                  >
-                    {d}
-                  </span>
-                ))}
-              </div>
-              <div className="grid grid-cols-7 gap-1 text-center">
+        {/* Selection Column */}
+        <div className="w-full md:w-[480px] p-12 bg-slate-50/50 overflow-y-auto">
+          <section className="mb-10">
+            <div className="bg-white border border-slate-200 rounded-[2rem] p-6 shadow-xl">
+              <p className="text-[10px] font-black text-slate-400 uppercase mb-4">Février 2026</p>
+              <div className="grid grid-cols-7 gap-1.5 text-center">
                 {Array.from({ length: 28 }).map((_, i) => {
                   const day = i + 1;
-                  const dateStr = `2026-02-${day.toString().padStart(2, "0")}`;
-                  const isSelected = formData.date === dateStr;
-                  const isToday = day === 17;
+                  const dStr = `2026-02-${day.toString().padStart(2, "0")}`;
                   return (
-                    <button
-                      key={day}
-                      onClick={() =>
-                        setFormData((prev) => ({ ...prev, date: dateStr }))
-                      }
-                      className={`h-8 rounded-lg text-[10px] font-bold transition-all ${
-                        isSelected
-                          ? "bg-blue-600 text-white shadow-lg"
-                          : isToday
-                            ? "bg-emerald-100 text-emerald-700"
-                            : "text-slate-600 hover:bg-slate-50"
-                      }`}
-                    >
+                    <button key={day} onClick={() => setFormData(p => ({ ...p, date: dStr }))} className={`h-10 rounded-xl text-[10px] font-black transition-all ${formData.date === dStr ? "bg-blue-600 text-white shadow-lg shadow-blue-500/30" : "text-slate-600 hover:bg-slate-100"}`}>
                       {day}
                     </button>
                   );
                 })}
               </div>
-              <div className="mt-4 pt-4 border-t border-slate-50">
-                <p className="text-[10px] font-bold text-blue-500 italic uppercase">
-                  {new Date(formData.date).toLocaleDateString("fr-FR", {
-                    weekday: "long",
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })}
-                </p>
-                <p className="text-[9px] font-medium text-slate-400">
-                  {formData.date === "2026-02-17"
-                    ? "Aujourd'hui"
-                    : "Date sélectionnée"}
-                </p>
-              </div>
             </div>
           </section>
 
-          <section className="mb-8">
-            <div className="flex items-center gap-2 mb-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="text-slate-400"
-              >
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12 6 12 12 16 14"></polyline>
-              </svg>
-              <h4 className="text-[10px] font-black text-slate-800 uppercase tracking-widest">
-                Sélectionner l'horaire
-              </h4>
-            </div>
+          <section className="mb-10 space-y-6">
+            <label className="flex items-center gap-3 cursor-pointer group">
+              <input type="checkbox" name="allDay" checked={formData.allDay} onChange={handleInputChange} className="hidden" />
+              <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${formData.allDay ? "bg-blue-600 border-blue-600" : "border-slate-200 bg-white"}`}>
+                {formData.allDay && <span className="text-white text-xs font-black">✓</span>}
+              </div>
+              <span className="text-[11px] font-black uppercase text-slate-600">Toute la journée</span>
+            </label>
 
-            <div className="flex items-center gap-2 mb-4">
-              <input
-                type="checkbox"
-                id="allDayCheckbox"
-                name="allDay"
-                checked={formData.allDay}
-                onChange={handleInputChange}
-                className="w-4 h-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500"
-              />
-              <label
-                htmlFor="allDayCheckbox"
-                className="text-[10px] font-bold text-slate-400 cursor-pointer"
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setFormData(p => ({ ...p, startTime: "09:00", endTime: "13:00", allDay: false }))}
+                className="py-2 bg-slate-100 hover:bg-slate-200 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-600 transition-all"
               >
-                Réserver toute la journée (08:00 - 18:00)
-              </label>
+                Matinée (9h-13h)
+              </button>
+              <button
+                type="button"
+                onClick={() => setFormData(p => ({ ...p, startTime: "14:00", endTime: "18:00", allDay: false }))}
+                className="py-2 bg-slate-100 hover:bg-slate-200 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-600 transition-all"
+              >
+                Après-midi (14h-18h)
+              </button>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-[9px] font-black text-slate-400 uppercase">
-                  Heure de début
-                </label>
-                <select
-                  name="startTime"
-                  value={formData.startTime}
-                  onChange={handleInputChange}
-                  disabled={formData.allDay}
-                  className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-600 focus:outline-none appearance-none font-medium"
-                >
-                  {hours.map((h) => (
-                    <option key={h} value={h}>
-                      {h}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-[9px] font-black text-slate-400 uppercase">
-                  Heure de fin
-                </label>
-                <select
-                  name="endTime"
-                  value={formData.endTime}
-                  onChange={handleInputChange}
-                  disabled={formData.allDay}
-                  className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs text-slate-600 focus:outline-none appearance-none font-medium"
-                >
-                  {hours.map((h) => (
-                    <option key={h} value={h}>
-                      {h}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <select name="startTime" value={formData.startTime} onChange={handleInputChange} disabled={formData.allDay} className="w-full bg-white border border-slate-200 rounded-2xl p-4 text-xs font-bold">
+                {hours.map(h => <option key={h} value={h}>{h}</option>)}
+              </select>
+              <select name="endTime" value={formData.endTime} onChange={handleInputChange} disabled={formData.allDay} className="w-full bg-white border border-slate-200 rounded-2xl p-4 text-xs font-bold">
+                {hours.map(h => <option key={h} value={h}>{h}</option>)}
+              </select>
             </div>
           </section>
 
-          <button
-            onClick={handleBooking}
-            disabled={bookingLoading}
-            className={`w-full py-5 text-white font-black text-[10px] uppercase tracking-widest rounded-2xl transition-all shadow-xl active:scale-[0.98] ${
-              bookingLoading
-                ? "bg-slate-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700 shadow-blue-500/20"
-            }`}
-          >
-            {bookingLoading ? "Réservation en cours..." : "Réserver l'Espace"}
+          <div className="mb-6 p-6 bg-blue-50 border border-blue-100 rounded-[2rem] flex justify-between items-center">
+            <div>
+              <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Total Estimé</p>
+              <h3 className="text-2xl font-black text-blue-600">{calculateTotalPrice()} DT</h3>
+            </div>
+            <div className="text-right">
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">TVA Incluse</p>
+              <p className="text-[9px] font-bold text-slate-400 italic">Paiement sur place</p>
+            </div>
+          </div>
+
+          <button onClick={handleBooking} disabled={bookingLoading || hasConflict} className={`w-full py-6 text-white font-black text-[11px] uppercase tracking-[0.2em] rounded-[1.5rem] shadow-2xl transition-all ${bookingLoading || hasConflict ? "bg-slate-300 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700 active:scale-95 shadow-blue-500/30"}`}>
+            {bookingLoading ? "VALIDATION..." : hasConflict ? "NON DISPONIBLE" : "CONFIRMER LA RÉSERVATION"}
           </button>
-          <p className="text-center text-[8px] text-slate-400 font-medium italic mt-4">
-            * Tous les champs sont obligatoires
+
+          <p className="mt-6 text-center text-[9px] text-slate-400 font-bold uppercase tracking-widest leading-relaxed">
+            * En cliquant sur confirmer, vous bloquez cet espace et recevez un email de confirmation instantanément.
           </p>
         </div>
       </div>

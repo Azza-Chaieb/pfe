@@ -1,0 +1,48 @@
+{
+    "kind": "collectionType",
+    "collectionName": "subscription_plans",
+    "info": {
+        "singularName": "subscription-plan",
+        "pluralName": "subscription-plans",
+        "displayName": "Subscription Plan",
+        "description": "Defines the available subscription tiers (Basic, Premium, Enterprise)"
+    },
+    "options": {
+        "draftAndPublish": true
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "name": {
+            "type": "string",
+            "required": true,
+            "unique": true
+        },
+        "description": {
+            "type": "text"
+        },
+        "price": {
+            "type": "decimal",
+            "required": true
+        },
+        "duration_days": {
+            "type": "integer",
+            "default": 30
+        },
+        "type": {
+            "type": "enumeration",
+            "enum": [
+                "basic",
+                "premium",
+                "enterprise"
+            ],
+            "default": "basic"
+        },
+        "features": {
+            "type": "json"
+        },
+        "max_credits": {
+            "type": "integer",
+            "default": 10
+        }
+    }
+}

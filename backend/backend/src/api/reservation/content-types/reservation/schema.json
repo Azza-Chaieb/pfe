@@ -7,7 +7,7 @@
     "displayName": "Reservation"
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
@@ -22,7 +22,11 @@
     },
     "status": {
       "type": "enumeration",
-      "enum": ["pending", "confirmed", "cancelled"],
+      "enum": [
+        "pending",
+        "confirmed",
+        "cancelled"
+      ],
       "default": "pending"
     },
     "user": {
@@ -42,6 +46,9 @@
     },
     "extras": {
       "type": "json"
+    },
+    "total_price": {
+      "type": "decimal"
     }
   }
 }

@@ -132,7 +132,7 @@ const RegisterPage = () => {
       if (profileEndpoint) {
         const axios = (await import("axios")).default;
         await axios.post(
-          `http://192.168.100.97:1337/api${profileEndpoint}`,
+          `http://192.168.0.5:1337/api${profileEndpoint}`,
           { data: profileData },
           {
             headers: { Authorization: `Bearer ${jwt}` },

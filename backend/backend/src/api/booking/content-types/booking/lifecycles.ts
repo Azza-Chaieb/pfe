@@ -119,7 +119,7 @@ async function handleBookingLogic(event) {
 
 async function sendConfirmationEmail(result) {
     try {
-        const fullBooking = await strapi.entityService.findOne('api::booking.booking', result.id, {
+        const fullBooking: any = await strapi.entityService.findOne('api::booking.booking', result.id, {
             populate: ['user', 'space']
         });
 

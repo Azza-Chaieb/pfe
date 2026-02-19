@@ -65,6 +65,17 @@ export const getProfessionalBookings = async (userId) => {
     throw error;
   }
 };
+
+export const getAllReservations = async () => {
+  try {
+    const response = await api.get("/reservations?populate=*&sort=date:desc");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching all reservations:", error);
+    throw error;
+  }
+};
+
 export const createReservation = async (data) => {
   try {
     const response = await api.post("/reservations", {
@@ -78,4 +89,20 @@ export const createReservation = async (data) => {
     console.error("Error creating reservation", error);
     throw error;
   }
+};
+
+export const updateReservation = async (id, data) => {
+  try {
+    const response = await api.put(`/reservations/${id}`, {
+      data: data,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating reservation", error);
+    throw error;
+  }
+};
+
+export const cancelReservation = async (id) => {
+  return updateReservation(id, { status: "cancelled" });
 };

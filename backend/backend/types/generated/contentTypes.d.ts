@@ -491,6 +491,55 @@ export interface ApiAssociationProfilAssociationProfil
   };
 }
 
+export interface ApiBookingBooking extends Struct.CollectionTypeSchema {
+  collectionName: "bookings";
+  info: {
+    description: "Comprehensive booking system for spaces and equipments";
+    displayName: "Booking";
+    pluralName: "bookings";
+    singularName: "booking";
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+    end_time: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    equipments: Schema.Attribute.Relation<
+      "manyToMany",
+      "api::equipment.equipment"
+    >;
+    frequency: Schema.Attribute.Enumeration<["daily", "weekly", "monthly"]>;
+    is_recurring: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::booking.booking"
+    > &
+      Schema.Attribute.Private;
+    payment_id: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    repeat_until: Schema.Attribute.Date;
+    space: Schema.Attribute.Relation<"manyToOne", "api::space.space">;
+    start_time: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    status: Schema.Attribute.Enumeration<
+      ["pending", "confirmed", "cancelled", "completed"]
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<"pending">;
+    total_price: Schema.Attribute.Decimal;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+    user: Schema.Attribute.Relation<
+      "manyToOne",
+      "plugin::users-permissions.user"
+    >;
+  };
+}
+
 export interface ApiCourseCourse extends Struct.CollectionTypeSchema {
   collectionName: "courses";
   info: {
@@ -575,6 +624,7 @@ export interface ApiEquipmentEquipment extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
+    bookings: Schema.Attribute.Relation<"manyToMany", "api::booking.booking">;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
@@ -773,7 +823,7 @@ export interface ApiReservationReservation extends Struct.CollectionTypeSchema {
     singularName: "reservation";
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     coworking_space: Schema.Attribute.Relation<
@@ -799,6 +849,7 @@ export interface ApiReservationReservation extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.DefaultTo<"pending">;
     time_slot: Schema.Attribute.String;
+    total_price: Schema.Attribute.Decimal;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
@@ -979,6 +1030,45 @@ export interface ApiSpaceSpace extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiSubscriptionPlanSubscriptionPlan
+  extends Struct.CollectionTypeSchema {
+  collectionName: "subscription_plans";
+  info: {
+    description: "Defines the available subscription tiers (Basic, Premium, Enterprise)";
+    displayName: "Subscription Plan";
+    pluralName: "subscription-plans";
+    singularName: "subscription-plan";
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    duration_days: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<30>;
+    features: Schema.Attribute.JSON;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::subscription-plan.subscription-plan"
+    > &
+      Schema.Attribute.Private;
+    max_credits: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<10>;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    price: Schema.Attribute.Decimal & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    type: Schema.Attribute.Enumeration<["basic", "premium", "enterprise"]> &
+      Schema.Attribute.DefaultTo<"basic">;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiSubscriptionSubscription
   extends Struct.CollectionTypeSchema {
   collectionName: "subscriptions";
@@ -1076,6 +1166,53 @@ export interface ApiTrainerProfileTrainerProfile
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
+  };
+}
+
+export interface ApiUserSubscriptionUserSubscription
+  extends Struct.CollectionTypeSchema {
+  collectionName: "user_subscriptions";
+  info: {
+    description: "Tracks active subscriptions for each user";
+    displayName: "User Subscription";
+    pluralName: "user-subscriptions";
+    singularName: "user-subscription";
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    billing_cycle: Schema.Attribute.Enumeration<["monthly", "yearly"]> &
+      Schema.Attribute.DefaultTo<"monthly">;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+    end_date: Schema.Attribute.Date & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::user-subscription.user-subscription"
+    > &
+      Schema.Attribute.Private;
+    payment_reference: Schema.Attribute.String;
+    plan: Schema.Attribute.Relation<
+      "manyToOne",
+      "api::subscription-plan.subscription-plan"
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    remaining_credits: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    start_date: Schema.Attribute.Date & Schema.Attribute.Required;
+    status: Schema.Attribute.Enumeration<
+      ["pending", "active", "expired", "cancelled"]
+    > &
+      Schema.Attribute.DefaultTo<"pending">;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+    user: Schema.Attribute.Relation<
+      "manyToOne",
+      "plugin::users-permissions.user"
+    >;
   };
 }
 
@@ -1638,6 +1775,7 @@ declare module "@strapi/strapi" {
       "admin::user": AdminUser;
       "api::admin-profil.admin-profil": ApiAdminProfilAdminProfil;
       "api::association-profil.association-profil": ApiAssociationProfilAssociationProfil;
+      "api::booking.booking": ApiBookingBooking;
       "api::course.course": ApiCourseCourse;
       "api::coworking-space.coworking-space": ApiCoworkingSpaceCoworkingSpace;
       "api::equipment.equipment": ApiEquipmentEquipment;
@@ -1651,9 +1789,11 @@ declare module "@strapi/strapi" {
       "api::session.session": ApiSessionSession;
       "api::space-schedule.space-schedule": ApiSpaceScheduleSpaceSchedule;
       "api::space.space": ApiSpaceSpace;
+      "api::subscription-plan.subscription-plan": ApiSubscriptionPlanSubscriptionPlan;
       "api::subscription.subscription": ApiSubscriptionSubscription;
       "api::test.test": ApiTestTest;
       "api::trainer-profile.trainer-profile": ApiTrainerProfileTrainerProfile;
+      "api::user-subscription.user-subscription": ApiUserSubscriptionUserSubscription;
       "plugin::content-releases.release": PluginContentReleasesRelease;
       "plugin::content-releases.release-action": PluginContentReleasesReleaseAction;
       "plugin::i18n.locale": PluginI18NLocale;

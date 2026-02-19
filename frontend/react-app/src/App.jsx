@@ -1,6 +1,7 @@
 // src/App.jsx
 import { useState, useEffect } from "react";
 import Scene from "./components/Scene";
+
 import {
   Routes,
   Route,
@@ -13,6 +14,7 @@ import Users from "./admin/components/layout/pages/Users";
 import Content from "./admin/components/layout/pages/Content";
 import Settings from "./admin/components/layout/pages/Settings";
 import Login from "./admin/components/layout/pages/Login";
+import ReservationManagement from "./admin/components/layout/pages/ReservationManagement";
 import EquipmentServiceManagement from "./admin/components/layout/pages/EquipmentServiceManagement";
 import UserDashboard from "./pages/UserDashboard";
 import RegisterPage from "./pages/RegisterPage";
@@ -24,9 +26,11 @@ import ProfessionalDashboard from "./pages/ProfessionalDashboard";
 import ModelTestPage from "./pages/ModelTestPage";
 import ModelManagement from "./admin/components/layout/pages/ModelManagement";
 import ExplorationScene from "./components/3d/ExplorationScene";
+
 import SpaceManagement from "./admin/components/layout/pages/SpaceManagement";
 import SpaceCatalog from "./pages/SpaceCatalog";
 import AssociationDashboard from "./pages/AssociationDashboard";
+import SubscriptionPlans from "./pages/SubscriptionPlans";
 import { getRecentActivity } from "./api";
 
 import { requestNotificationPermission } from "./services/notificationService";
@@ -364,6 +368,7 @@ function App() {
           element={
             <>
               <Scene />
+
               <div
                 style={{
                   position: "absolute",
@@ -452,9 +457,12 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/spaces" element={<SpaceCatalog />} />
         <Route path="/explore/:spaceId" element={<ExplorationScene />} />
+
         <Route path="/test-3d" element={<ModelTestPage />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/reset_password" element={<ResetPassword />} />
+        <Route path="/subscription-plans" element={<SubscriptionPlans />} />
         <Route
           path="/professional/dashboard"
           element={
@@ -537,6 +545,14 @@ function App() {
           }
         />
         <Route
+          path="/trainer/bookings"
+          element={
+            <UserRoute>
+              <TrainerDashboard activeTab="bookings" />
+            </UserRoute>
+          }
+        />
+        <Route
           path="/association/dashboard"
           element={
             <UserRoute>
@@ -567,6 +583,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="users" element={<Users />} />
+                <Route path="reservations" element={<ReservationManagement />} />
                 <Route path="models" element={<ModelManagement />} />
                 <Route path="content" element={<Content />} />
                 <Route path="spaces" element={<SpaceManagement />} />

@@ -235,6 +235,127 @@ export default {
           uploadErr.message,
         );
       }
+
+      // ─── Seed Subscription Plans (TÂCHE-056) ───────────────────────────────
+      try {
+        const SUBSCRIPTION_PLANS = [
+          {
+            name: "Basique",
+            description: "Idéal pour les freelances et indépendants.",
+            price: 49,
+            duration_days: 30,
+            type: "basic",
+            max_credits: 5,
+            features: [
+              "5 réservations/mois",
+              "10 heures de salle de réunion",
+              "Accès open-space en semaine",
+              "WiFi haut débit",
+              "Café et thé inclus",
+              "Support par email",
+            ],
+            publishedAt: new Date().toISOString(),
+          },
+          {
+            name: "Premium",
+            description: "Le meilleur rapport qualité/prix pour les professionnels.",
+            price: 99,
+            duration_days: 30,
+            type: "premium",
+            max_credits: 20,
+            features: [
+              "20 réservations/mois",
+              "50 heures de salle de réunion",
+              "Accès open-space 7j/7",
+              "Bureau semi-privatif",
+              "Impression 100 pages/mois",
+              "Casier personnel",
+              "Support prioritaire",
+            ],
+            publishedAt: new Date().toISOString(),
+          },
+          {
+            name: "Entreprise",
+            description: "Pour les équipes et entreprises exigeantes.",
+            price: 199,
+            duration_days: 30,
+            type: "enterprise",
+            max_credits: 9999,
+            features: [
+              "Réservations illimitées",
+              "Accès 24h/7j à tous les espaces",
+              "Bureau privatif dédié",
+              "Salles de réunion illimitées",
+              "Impression illimitée",
+              "Domiciliation commerciale",
+              "Gestionnaire de compte dédié",
+            ],
+            publishedAt: new Date().toISOString(),
+          },
+        ];
+
+        console.log("💳 [BOOTSTRAP] Seeding subscription plans...");
+        for (const plan of SUBSCRIPTION_PLANS) {
+          const existing = await strapi.entityService.findMany(
+            "api::subscription-plan.subscription-plan" as any,
+            { filters: { name: plan.name } } as any,
+          );
+
+          if (!existing || (existing as any[]).length === 0) {
+            await strapi.entityService.create(
+              "api::subscription-plan.subscription-plan" as any,
+              { data: plan } as any,
+            );
+            console.log(`✅ [BOOTSTRAP] Created plan: ${plan.name}`);
+          } else {
+            console.log(`ℹ️ [BOOTSTRAP] Plan already exists: ${plan.name}`);
+          }
+        }
+
+        // Auto-grant subscription-plan read permissions to Public + Authenticated
+        const subscriptionActions = [
+          "api::subscription-plan.subscription-plan.find",
+          "api::subscription-plan.subscription-plan.findOne",
+          "api::user-subscription.user-subscription.find",
+          "api::user-subscription.user-subscription.findOne",
+          "api::user-subscription.user-subscription.create",
+          "api::user-subscription.user-subscription.update",
+        ];
+
+        const allRoles2 = await strapi
+          .query("plugin::users-permissions.role")
+          .findMany();
+
+        for (const r of allRoles2) {
+          const actionsForRole =
+            r.type === "public"
+              ? subscriptionActions.slice(0, 2) // Public: find + findOne only
+              : subscriptionActions; // Authenticated: all
+
+          for (const action of actionsForRole) {
+            const perm = await strapi
+              .query("plugin::users-permissions.permission")
+              .findOne({ where: { action, role: r.id } });
+
+            if (!perm) {
+              await strapi
+                .query("plugin::users-permissions.permission")
+                .create({ data: { action, role: r.id, enabled: true } });
+              console.log(`✅ [BOOTSTRAP] Granted "${action}" to ${r.name}`);
+            } else if (!perm.enabled) {
+              await strapi
+                .query("plugin::users-permissions.permission")
+                .update({ where: { id: perm.id }, data: { enabled: true } });
+              console.log(`✅ [BOOTSTRAP] Enabled "${action}" for ${r.name}`);
+            }
+          }
+        }
+        console.log("💳 [BOOTSTRAP] Subscription plans seeding complete.");
+      } catch (planErr) {
+        console.warn("⚠️ [BOOTSTRAP] Failed to seed subscription plans:", (planErr as Error).message);
+      }
+      // ───────────────────────────────────────────────────────────────────────
+
     } catch (error) {
       console.error("❌ Failed during bootstrap:", error);
     }

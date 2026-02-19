@@ -31,13 +31,18 @@ const Dashboard = () => {
         ]);
 
         if (activityData && activityData.data) {
-          const mappedActivities = activityData.data.map(item => ({
-            id: item.id,
-            user: `Client #${item.id}`, // Strapi might not populate user name directly in all views
-            action: `a fait une réservation: ${item.attributes.details || 'N/A'}`,
-            time: new Date(item.attributes.createdAt).toLocaleDateString(),
-            icon: '📅'
-          }));
+          const mappedActivities = activityData.data.map(item => {
+            // Strapi V5 might have flattened attributes or nested them
+            const data = item.attributes || item;
+            return {
+              id: item.id,
+              documentId: item.documentId,
+              user: `Client #${item.id}`,
+              action: `a fait une réservation: ${data.details || 'N/A'}`,
+              time: new Date(data.createdAt || Date.now()).toLocaleDateString(),
+              icon: '📅'
+            };
+          });
           setActivities(mappedActivities);
         }
       } catch (error) {

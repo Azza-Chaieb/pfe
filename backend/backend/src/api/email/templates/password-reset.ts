@@ -5,8 +5,13 @@ export const passwordResetEmail = (
   resetToken: string,
   expiresIn: string = "1 heure",
 ) => {
-  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+  const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
   const resetUrl = `${frontendUrl}/reset-password?token=${resetToken}`;
+
+  console.log("-----------------------------------------");
+  console.log("📧 GENERATING RESET EMAIL");
+  console.log("🔗 URL:", resetUrl);
+  console.log("-----------------------------------------");
 
   const content = `
     <div class="header">

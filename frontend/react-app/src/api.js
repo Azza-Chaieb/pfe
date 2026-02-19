@@ -28,6 +28,10 @@ export const {
   getRecentActivity,
   getUserReservations,
   getProfessionalBookings,
+  getAllReservations,
+  createReservation,
+  updateReservation,
+  cancelReservation,
 } = bookingService;
 export const { uploadFile } = fileService;
 

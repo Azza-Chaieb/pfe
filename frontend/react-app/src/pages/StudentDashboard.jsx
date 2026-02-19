@@ -10,6 +10,7 @@ import {
   getEnrolledCourses,
   getUpcomingSessions,
 } from "../api";
+import BookingCalendar from "../components/calendar/BookingCalendar";
 
 const StudentDashboard = ({ activeTab = "dashboard" }) => {
   const [user, setUser] = useState(null);
@@ -17,6 +18,7 @@ const StudentDashboard = ({ activeTab = "dashboard" }) => {
   const [sessions, setSessions] = useState([]);
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [bookingView, setBookingView] = useState("list"); // 'list' or 'calendar'
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -172,7 +174,7 @@ const StudentDashboard = ({ activeTab = "dashboard" }) => {
               l'endroit idéal pour vos révisions !
             </p>
             <button
-              onClick={() => navigate("/spaces")}
+              onClick={() => navigate("/explore/5")}
               className="w-full py-4 bg-white text-blue-600 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all"
             >
               Explorer les espaces
@@ -206,7 +208,6 @@ const StudentDashboard = ({ activeTab = "dashboard" }) => {
       </div>
     </div>
   );
-
   const renderBookings = () => (
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-6">
@@ -218,9 +219,23 @@ const StudentDashboard = ({ activeTab = "dashboard" }) => {
             Consultez et gérez vos réservations d'espaces.
           </p>
         </div>
-        <div className="flex gap-4">
+        <div className="flex gap-4 items-center">
+          <div className="flex bg-slate-100 p-1 rounded-xl mr-2">
+            <button
+              onClick={() => setBookingView("list")}
+              className={`px-4 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${bookingView === "list" ? "bg-white text-blue-600 shadow-sm" : "text-slate-400 hover:text-slate-600"}`}
+            >
+              Liste
+            </button>
+            <button
+              onClick={() => setBookingView("calendar")}
+              className={`px-4 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${bookingView === "calendar" ? "bg-white text-blue-600 shadow-sm" : "text-slate-400 hover:text-slate-600"}`}
+            >
+              Calendrier
+            </button>
+          </div>
           <button
-            onClick={() => navigate("/spaces")}
+            onClick={() => navigate("/explore/5")}
             className="px-5 py-2 bg-blue-600 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg"
           >
             + Nouveau
@@ -233,9 +248,13 @@ const StudentDashboard = ({ activeTab = "dashboard" }) => {
           </button>
         </div>
       </div>
-      <div className="bg-white/40 backdrop-blur-md p-6 rounded-[32px] border border-white/60 shadow-xl shadow-slate-200/50">
-        <MyBookingsWidget bookings={bookings} fullPage />
-      </div>
+      {bookingView === "calendar" ? (
+        <BookingCalendar userId={user?.id} />
+      ) : (
+        <div className="bg-white/40 backdrop-blur-md p-6 rounded-[32px] border border-white/60 shadow-xl shadow-slate-200/50">
+          <MyBookingsWidget bookings={bookings} fullPage />
+        </div>
+      )}
     </div>
   );
 
