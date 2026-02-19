@@ -34,8 +34,7 @@ const Content = () => {
             type: "permission",
             message:
               "Accès refusé (403). Vous n'avez pas la permission de voir ce contenu.",
-            detail:
-              "Connectez-vous au panneau d'administration Strapi (http://192.168.100.97:1337/admin) > Settings > Users & Permissions > Roles > Authenticated > Select 'Course' > Check 'find'.",
+            detail: `Vérifiez si Strapi est lancé sur http://192.168.0.5:1337/admin`,
           });
         } else {
           setError({

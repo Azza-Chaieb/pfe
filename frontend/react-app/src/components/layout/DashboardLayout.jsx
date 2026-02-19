@@ -52,7 +52,7 @@ const Sidebar = ({ role, activeTab, onTabChange }) => {
           id: "bookings",
           label: "Mes Réservations",
           icon: "📅",
-          path: "/student/bookings", // Using existing generic bookings view
+          path: "/trainer/bookings",
         },
       ],
       professional: [
@@ -112,11 +112,10 @@ const Sidebar = ({ role, activeTab, onTabChange }) => {
           <button
             key={item.id}
             onClick={() => navigate(item.path)}
-            className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-300 font-bold text-sm group ${
-              location.pathname === item.path
-                ? "bg-blue-600 text-white shadow-xl shadow-blue-200 scale-[1.02]"
-                : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
-            }`}
+            className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-300 font-bold text-sm group ${location.pathname === item.path
+              ? "bg-blue-600 text-white shadow-xl shadow-blue-200 scale-[1.02]"
+              : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
+              }`}
           >
             <span
               className={`text-xl transition-transform group-hover:scale-110 ${location.pathname === item.path ? "" : "grayscale"}`}
@@ -151,7 +150,7 @@ const Header = ({ user }) => {
     if (!user?.avatar) return null;
     const url = user.avatar.url || user.avatar.attributes?.url;
     if (!url) return null;
-    return url.startsWith("http") ? url : `http://192.168.100.97:1337${url}`;
+    return url.startsWith("http") ? url : `http://192.168.0.5:1337${url}`;
   };
 
   return (
@@ -172,7 +171,7 @@ const Header = ({ user }) => {
       <div className="flex items-center gap-6">
         {/* Utility buttons could go here */}
         <button
-          onClick={() => navigate("/spaces")}
+          onClick={() => navigate("/explore/5")}
           className="px-6 py-2.5 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all shadow-xl shadow-slate-200 flex items-center gap-2 group"
         >
           Explorer en 3D{" "}

@@ -14,6 +14,7 @@ const Sidebar = () => {
   const menuItems = [
     { path: "/admin", icon: "📊", label: "Tableau de bord" },
     { path: "/admin/users", icon: "👥", label: "Utilisateurs" },
+    { path: "/admin/reservations", icon: "📅", label: "Réservations" },
     { path: "/admin/spaces", icon: "🏢", label: "Espaces" },
     {
       path: "/admin/equipments-services",
@@ -40,11 +41,10 @@ const Sidebar = () => {
               key={item.path}
               to={item.path}
               className={`group flex items-center px-5 py-3.5 text-slate-500 rounded-xl transition-all duration-300 ease-out font-medium
-                    ${
-                      isActive
-                        ? "bg-blue-50 text-blue-600 shadow-md shadow-blue-500/10 ring-1 ring-blue-500/10"
-                        : "hover:bg-white hover:text-blue-500 hover:shadow-sm hover:translate-x-1"
-                    }`}
+                    ${isActive
+                  ? "bg-blue-50 text-blue-600 shadow-md shadow-blue-500/10 ring-1 ring-blue-500/10"
+                  : "hover:bg-white hover:text-blue-500 hover:shadow-sm hover:translate-x-1"
+                }`}
             >
               <span
                 className={`text-xl mr-3 transition-all duration-300 ${isActive ? "grayscale-0" : "grayscale group-hover:grayscale-0"}`}

@@ -31,8 +31,18 @@
     },
     "price_type": {
       "type": "enumeration",
-      "enum": ["hourly", "daily", "one-time"],
+      "enum": [
+        "hourly",
+        "daily",
+        "one-time"
+      ],
       "default": "one-time"
+    },
+    "bookings": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::booking.booking",
+      "mappedBy": "equipments"
     },
     "quantity": {
       "type": "integer",

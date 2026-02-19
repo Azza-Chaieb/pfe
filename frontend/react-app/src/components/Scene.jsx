@@ -16,7 +16,7 @@ export default function Scene() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch("http://192.168.100.97:1337/api/tests?populate=*")
+    fetch("http://192.168.0.5:1337/api/tests?populate=*")
       .then((res) => res.json())
       .then((data) => {
         const list = data?.data || [];

@@ -11,15 +11,19 @@ import {
   getUpcomingSessions,
   getTrainerStudents,
   createCourse,
+  getUserReservations,
 } from "../api";
+import BookingCalendar from "../components/calendar/BookingCalendar";
 
 const TrainerDashboard = ({ activeTab = "dashboard" }) => {
   const [user, setUser] = useState(null);
   const [courses, setCourses] = useState([]);
   const [sessions, setSessions] = useState([]);
   const [students, setStudents] = useState([]);
+  const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [bookingView, setBookingView] = useState("list"); // 'list' or 'calendar'
   const navigate = useNavigate();
 
   const fetchData = async () => {
@@ -80,6 +84,10 @@ const TrainerDashboard = ({ activeTab = "dashboard" }) => {
             })),
           );
         }
+
+        // Fetch bookings too
+        const resBookings = await getUserReservations(parsedUser.id);
+        setBookings(resBookings.data || []);
       } catch (error) {
         console.error("Trainer Dashboard Error:", error);
       } finally {
@@ -111,7 +119,7 @@ const TrainerDashboard = ({ activeTab = "dashboard" }) => {
         </div>
         <div className="flex gap-4">
           <button
-            onClick={() => navigate("/spaces")}
+            onClick={() => navigate("/explore/5")}
             className="px-6 py-3 bg-blue-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-blue-200"
           >
             🏢 Réserver un Espace
@@ -226,11 +234,118 @@ const TrainerDashboard = ({ activeTab = "dashboard" }) => {
     </div>
   );
 
+  const renderBookings = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-3xl font-black text-slate-800 tracking-tight">
+            Mes Réservations 📅
+          </h1>
+          <p className="text-xs text-slate-500 font-medium">
+            Gérez votre calendrier et vos réservations d'espaces.
+          </p>
+        </div>
+        <div className="flex gap-4 items-center">
+          <div className="flex bg-slate-100 p-1 rounded-xl mr-2">
+            <button
+              onClick={() => setBookingView("list")}
+              className={`px-4 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${bookingView === "list" ? "bg-white text-blue-600 shadow-sm" : "text-slate-400 hover:text-slate-600"}`}
+            >
+              Liste
+            </button>
+            <button
+              onClick={() => setBookingView("calendar")}
+              className={`px-4 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${bookingView === "calendar" ? "bg-white text-blue-600 shadow-sm" : "text-slate-400 hover:text-slate-600"}`}
+            >
+              Calendrier
+            </button>
+          </div>
+          <button
+            onClick={() => navigate("/explore/5")}
+            className="px-6 py-2 bg-blue-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg"
+          >
+            + Nouveau
+          </button>
+          <button
+            onClick={() => navigate("/trainer/dashboard")}
+            className="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-[10px] font-black uppercase hover:bg-slate-200 transition-all"
+          >
+            ← Retour
+          </button>
+        </div>
+      </div>
+
+      {bookingView === "calendar" ? (
+        <BookingCalendar userId={user?.id} />
+      ) : (
+        <div className="bg-white/40 backdrop-blur-md p-8 rounded-[32px] border border-white/60 shadow-xl shadow-slate-200/50">
+          <div className="overflow-x-auto text-xs">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="border-b border-slate-100">
+                  <th className="pb-4 font-black text-slate-400 uppercase tracking-widest">
+                    Lieu
+                  </th>
+                  <th className="pb-4 font-black text-slate-400 uppercase tracking-widest text-center">
+                    Date
+                  </th>
+                  <th className="pb-4 font-black text-slate-400 uppercase tracking-widest text-right">
+                    Statut
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-50">
+                {bookings.map((booking) => {
+                  const data = booking.attributes || booking;
+                  const space = data.space?.data?.attributes || data.space || {};
+                  const coworking =
+                    data.coworking_space?.data?.attributes ||
+                    data.coworking_space ||
+                    {};
+                  return (
+                    <tr key={booking.id}>
+                      <td className="py-4 font-bold text-slate-700">
+                        {space.name
+                          ? `${coworking.name || "Espace"} - ${space.name}`
+                          : coworking.name || "Espace"}
+                      </td>
+                      <td className="py-4 text-center text-slate-500">
+                        {new Date(data.date).toLocaleDateString()}
+                      </td>
+                      <td className="py-4 text-right">
+                        <span
+                          className={`px-3 py-1 rounded-full text-[9px] font-black uppercase ${data.status === "confirmed" ? "bg-emerald-50 text-emerald-600" : "bg-orange-50 text-orange-600"}`}
+                        >
+                          {data.status || "En attente"}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+                {bookings.length === 0 && (
+                  <tr>
+                    <td
+                      colSpan="3"
+                      className="py-8 text-center text-slate-400 italic"
+                    >
+                      Aucune réservation.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <DashboardLayout role="trainer" user={user} loading={loading}>
       {activeTab === "dashboard" && renderDashboard()}
       {activeTab === "manage" && renderManage()}
       {activeTab === "students" && renderStudents()}
+      {activeTab === "bookings" && renderBookings()}
       <CreateCourseModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

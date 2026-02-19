@@ -162,7 +162,7 @@ const ModelManagement = () => {
     // Support both Strapi 4 (attributes) and Strapi 5 (flat)
     const file = model.attributes?.file?.data?.attributes || model.file;
     if (!file?.url) return "";
-    return `http://192.168.100.97:1337${file.url}`;
+    return `http://192.168.0.5:1337${file.url}`;
   };
 
   return (
@@ -180,13 +180,12 @@ const ModelManagement = () => {
           {message.text && (
             <div
               className={`px-4 py-2 rounded-lg text-sm font-medium animate-bounce 
-              ${
-                message.type === "error"
+              ${message.type === "error"
                   ? "bg-red-50 text-red-600 border border-red-100"
                   : message.type === "success"
                     ? "bg-emerald-50 text-emerald-600 border border-emerald-100"
                     : "bg-blue-50 text-blue-600 border border-blue-100"
-              }`}
+                }`}
             >
               {message.text}
             </div>

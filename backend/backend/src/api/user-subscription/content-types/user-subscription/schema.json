@@ -1,0 +1,59 @@
+{
+    "kind": "collectionType",
+    "collectionName": "user_subscriptions",
+    "info": {
+        "singularName": "user-subscription",
+        "pluralName": "user-subscriptions",
+        "displayName": "User Subscription",
+        "description": "Tracks active subscriptions for each user"
+    },
+    "options": {
+        "draftAndPublish": false
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "user": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "plugin::users-permissions.user"
+        },
+        "plan": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "api::subscription-plan.subscription-plan"
+        },
+        "start_date": {
+            "type": "date",
+            "required": true
+        },
+        "end_date": {
+            "type": "date",
+            "required": true
+        },
+        "status": {
+            "type": "enumeration",
+            "enum": [
+                "pending",
+                "active",
+                "expired",
+                "cancelled"
+            ],
+            "default": "pending"
+        },
+        "billing_cycle": {
+            "type": "enumeration",
+            "enum": [
+                "monthly",
+                "yearly"
+            ],
+            "default": "monthly"
+        },
+        "remaining_credits": {
+            "type": "integer",
+            "default": 0
+        },
+        "payment_reference": {
+            "type": "string"
+        }
+    }
+}
