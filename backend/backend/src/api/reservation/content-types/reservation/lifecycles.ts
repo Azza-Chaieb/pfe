@@ -72,9 +72,18 @@ async function dispatchNotifications(
       reservationId: reservation.documentId || reservation.id.toString(),
     };
 
-    const {
-      reservationTemplates,
-    } = require("../../../../notification/templates/push-templates");
+    let templates;
+    try {
+      templates = require("../../../notification/templates/push-templates");
+    } catch (e) {
+      try {
+        templates = require("../../../../notification/templates/push-templates");
+      } catch (e2) {
+        strapi.log.error(`[Lifecycle] Failed to load templates: ${e2.message}`);
+        return;
+      }
+    }
+    const { reservationTemplates } = templates;
 
     if (type === "created") {
       strapi.log.info(`[Lifecycle] Dispatching CREATION to ${user.email}`);
