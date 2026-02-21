@@ -1,16 +1,20 @@
-import { emailLayout } from './layout';
+import { emailLayout } from "./layout";
 
 interface ReservationDetails {
-    spaceName: string;
-    date: string;
-    startTime: string;
-    endTime: string;
-    location: string;
-    reservationId: string;
+  spaceName: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  location: string;
+  reservationId: string;
 }
 
-export const reservationConfirmationEmail = (userName: string, reservation: ReservationDetails) => {
-    const content = `
+export const reservationConfirmationEmail = (
+  userName: string,
+  reservation: ReservationDetails,
+  frontendUrl: string = "http://localhost:5173",
+) => {
+  const content = `
     <div class="header">
       <h1>✅ Réservation Confirmée !</h1>
     </div>
@@ -43,7 +47,7 @@ export const reservationConfirmationEmail = (userName: string, reservation: Rese
           </tr>
         </table>
       </div>
-
+      
       <div style="background: #f0f9ff; padding: 20px; border-left: 4px solid #0ea5e9; border-radius: 5px; margin: 25px 0;">
         <p style="margin: 0; font-weight: 600; color: #0369a1;">💡 Informations utiles :</p>
         <ul style="margin-top: 10px; color: #075985;">
@@ -53,17 +57,16 @@ export const reservationConfirmationEmail = (userName: string, reservation: Rese
         </ul>
       </div>
 
-      <div style="text-align: center;">
-        <a href="http://localhost:5173/reservations/${reservation.reservationId}" class="button">Voir ma réservation</a>
-      </div>
-
       <p style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; color: #888; font-size: 13px;">
         📧 Besoin de modifier ou annuler ? Connectez-vous à votre compte.
       </p>
     </div>
   `;
 
-    return emailLayout(content, `Réservation confirmée - ${reservation.spaceName} le ${reservation.date}`);
+  return emailLayout(
+    content,
+    `Réservation confirmée - ${reservation.spaceName} le ${reservation.date}`,
+  );
 };
 
 export default reservationConfirmationEmail;

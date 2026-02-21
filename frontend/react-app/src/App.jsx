@@ -1,5 +1,6 @@
 // src/App.jsx
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import Scene from "./components/Scene";
 
 import {
@@ -10,6 +11,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import Dashboard from "./admin/components/layout/pages/Dashboard";
+
 import Users from "./admin/components/layout/pages/Users";
 import Content from "./admin/components/layout/pages/Content";
 import Settings from "./admin/components/layout/pages/Settings";
@@ -55,6 +57,10 @@ const AdminRoute = ({ children }) => {
   return children;
 };
 
+AdminRoute.propTypes = {
+  children: PropTypes.node,
+};
+
 const UserRoute = ({ children }) => {
   const token = localStorage.getItem("jwt");
   const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -74,6 +80,10 @@ const UserRoute = ({ children }) => {
   return children;
 };
 
+UserRoute.propTypes = {
+  children: PropTypes.node,
+};
+
 function App() {
   const [isFirebaseOpen, setIsFirebaseOpen] = useState(false);
   const [firebaseData, setFirebaseData] = useState([]);
@@ -91,7 +101,18 @@ function App() {
   const location = useLocation();
 
   useEffect(() => {
-    requestNotificationPermission();
+    const syncNotificationToken = async (userId) => {
+      try {
+        const token = await requestNotificationPermission();
+        if (token && userId) {
+          console.log("[App] Syncing FCM token for user:", userId);
+          const { updateFcmToken } = await import("./services/userService");
+          await updateFcmToken(userId, token);
+        }
+      } catch (err) {
+        console.error("[App] Failed to sync FCM token:", err);
+      }
+    };
 
     const token = localStorage.getItem("jwt");
     const userStr = localStorage.getItem("user");
@@ -106,6 +127,9 @@ function App() {
         });
         setFirebaseToken(token);
         setFirebaseStatus("Connecté");
+
+        // Sync token if user is logged in
+        syncNotificationToken(user.id);
       } catch (e) {
         console.error("Error parsing user data", e);
         localStorage.removeItem("jwt");
@@ -183,21 +207,7 @@ function App() {
     }
   };
 
-  const decodeToken = (token) => {
-    if (!token) return null;
-    try {
-      const parts = token.split(".");
-      if (parts.length !== 3) return null;
-      const payload = JSON.parse(atob(parts[1]));
-      return {
-        ...payload,
-        issuedAt: new Date(payload.iat * 1000).toLocaleString(),
-        expiresAt: new Date(payload.exp * 1000).toLocaleString(),
-      };
-    } catch (e) {
-      return null;
-    }
-  };
+  // decodeToken removed (unused) to satisfy lint rules
 
   // Reusable Firebase Widget Component Logic
   const FirebaseWidget = () => (
@@ -338,8 +348,9 @@ function App() {
             <button
               onClick={fetchFirebaseData}
               style={{ flex: 1, padding: "8px", fontSize: "12px" }}
+              disabled={firebaseLoading}
             >
-              Sync
+              {firebaseLoading ? "Chargement..." : "Rafraîchir"}
             </button>
             <button
               onClick={handleLogout}
@@ -583,7 +594,10 @@ function App() {
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="users" element={<Users />} />
-                <Route path="reservations" element={<ReservationManagement />} />
+                <Route
+                  path="reservations"
+                  element={<ReservationManagement />}
+                />
                 <Route path="models" element={<ModelManagement />} />
                 <Route path="content" element={<Content />} />
                 <Route path="spaces" element={<SpaceManagement />} />

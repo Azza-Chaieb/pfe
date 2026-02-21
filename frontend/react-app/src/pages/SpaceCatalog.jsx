@@ -34,8 +34,14 @@ const SpaceCatalog = () => {
   return (
     <div className="min-h-screen bg-slate-50 py-12 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
-        <header className="mb-12 text-center">
-          <h1 className="text-4xl font-black text-slate-900 mb-4 tracking-tight">
+        <header className="mb-12 text-center relative">
+          <button
+            onClick={() => navigate("/")}
+            className="absolute top-0 left-0 px-4 py-2 bg-white text-slate-600 rounded-xl text-xs font-bold shadow-sm hover:bg-slate-100 transition-all flex items-center gap-2"
+          >
+            ← Retour
+          </button>
+          <h1 className="text-4xl font-black text-slate-900 mb-4 tracking-tight pt-8 md:pt-0">
             Explorez nos <span className="text-blue-600">SunSpaces</span>
           </h1>
           <p className="text-slate-500 text-lg max-w-2xl mx-auto font-medium">
@@ -81,7 +87,9 @@ const SpaceCatalog = () => {
 
                   <div className="flex flex-col gap-3">
                     <button
-                      onClick={() => navigate(`/explore/${space.id}`)}
+                      onClick={() =>
+                        navigate(`/explore/${space.documentId || space.id}`)
+                      }
                       className="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition-all hover:bg-slate-800 active:scale-95 shadow-lg shadow-slate-900/10"
                     >
                       <span className="text-lg">🧊</span> Explorer en 3D

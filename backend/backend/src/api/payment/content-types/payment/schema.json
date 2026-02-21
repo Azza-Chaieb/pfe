@@ -15,10 +15,32 @@
       "type": "uid"
     },
     "amount": {
-      "type": "biginteger"
+      "type": "decimal"
     },
-    "statut": {
-      "type": "text"
+    "method": {
+      "type": "enumeration",
+      "enum": ["bank_transfer", "on_site"]
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["pending", "submitted", "confirmed", "rejected", "cancelled"],
+      "default": "pending"
+    },
+    "transaction_ref": {
+      "type": "string",
+      "unique": true
+    },
+    "proof_url": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images", "files"]
+    },
+    "reservation": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::reservation.reservation",
+      "mappedBy": "payment"
     }
   }
 }

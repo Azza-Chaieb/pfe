@@ -14,7 +14,9 @@ const getEmailService = () => {
 };
 
 // Gmail and other providers often require the 'from' to match the authenticated user
-const DEFAULT_FROM = process.env.SMTP_USER || process.env.SMTP_FROM || "noreply@sunspace.com";
+const DEFAULT_FROM =
+  process.env.SMTP_USER || process.env.SMTP_FROM || "noreply@sunspace.com";
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
 
 export default {
   /**
@@ -22,7 +24,7 @@ export default {
    */
   async sendWelcomeEmail(userEmail: string, userName: string) {
     try {
-      const htmlContent = welcomeEmail(userName, userEmail);
+      const htmlContent = welcomeEmail(userName, userEmail, FRONTEND_URL);
       await getEmailService().send({
         to: userEmail,
         from: DEFAULT_FROM,
@@ -54,7 +56,10 @@ export default {
       });
       console.log(`[EmailService] Password reset sent to ${userEmail}`);
     } catch (error) {
-      console.error("[EmailService] Error sending password reset:", error.message);
+      console.error(
+        "[EmailService] Error sending password reset:",
+        error.message,
+      );
       strapi.log.error("Failed to send password reset email:", error);
       throw error;
     }
@@ -73,6 +78,7 @@ export default {
       const htmlContent = reservationConfirmationEmail(
         userName,
         reservationDetails,
+        FRONTEND_URL,
       );
 
       await getEmailService().send({
@@ -102,6 +108,7 @@ export default {
       const htmlContent = reservationCancellationEmail(
         userName,
         reservationDetails,
+        FRONTEND_URL,
       );
 
       await getEmailService().send({
@@ -150,7 +157,11 @@ export default {
     paymentDetails: any,
   ) {
     try {
-      const htmlContent = paymentConfirmationEmail(userName, paymentDetails);
+      const htmlContent = paymentConfirmationEmail(
+        userName,
+        paymentDetails,
+        FRONTEND_URL,
+      );
       await getEmailService().send({
         to: userEmail,
         from: DEFAULT_FROM,

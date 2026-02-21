@@ -32,6 +32,7 @@ export const {
   createReservation,
   updateReservation,
   cancelReservation,
+  confirmPayment,
 } = bookingService;
 export const { uploadFile } = fileService;
 

@@ -1,4 +1,9 @@
-import { getMessaging, getToken, onMessage } from "firebase/messaging";
+import {
+  getMessaging,
+  getToken,
+  onMessage,
+  isSupported,
+} from "firebase/messaging";
 import { initializeApp } from "firebase/app";
 
 const firebaseConfig = {
@@ -12,14 +17,25 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 let messaging = null;
-try {
-  messaging = getMessaging(app);
-} catch (error) {
-  console.warn(
-    "Firebase Messaging is not supported in this browser:",
-    error.message,
-  );
-}
+
+// Use an async approach or just catch the unsupported error during init
+const initMessaging = async () => {
+  try {
+    if (await isSupported()) {
+      messaging = getMessaging(app);
+      return messaging;
+    }
+    console.warn(
+      "Firebase Messaging is not supported in this environment (requires HTTPS or localhost).",
+    );
+  } catch (error) {
+    console.warn("Firebase Messaging initialization error:", error.message);
+  }
+  return null;
+};
+
+// Initialize early
+initMessaging();
 
 // توليد FCM Token
 export const getFcmToken = async () => {

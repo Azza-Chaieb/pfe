@@ -68,7 +68,9 @@ export const getProfessionalBookings = async (userId) => {
 
 export const getAllReservations = async () => {
   try {
-    const response = await api.get("/reservations?populate=*&sort=date:desc");
+    const response = await api.get(
+      "/reservations?populate[0]=user&populate[1]=space&populate[2]=coworking_space&populate[3]=payment&populate[4]=payment.proof_url&sort[0]=date:desc",
+    );
     return response.data;
   } catch (error) {
     console.error("Error fetching all reservations:", error);
@@ -87,6 +89,13 @@ export const createReservation = async (data) => {
     return response.data;
   } catch (error) {
     console.error("Error creating reservation", error);
+    if (error.response) {
+      console.error(
+        "Server response:",
+        error.response.status,
+        error.response.data,
+      );
+    }
     throw error;
   }
 };
@@ -105,4 +114,54 @@ export const updateReservation = async (id, data) => {
 
 export const cancelReservation = async (id) => {
   return updateReservation(id, { status: "cancelled" });
+};
+
+// Payment Services
+export const createPayment = async (data) => {
+  try {
+    const response = await api.post("/payments", {
+      data: {
+        ...data,
+        status: "pending",
+        transaction_ref: `PAY-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error creating payment", error);
+    throw error;
+  }
+};
+
+export const submitPaymentProof = async (paymentId, file) => {
+  try {
+    const formData = new FormData();
+    formData.append("files", file);
+    formData.append("ref", "api::payment.payment");
+    formData.append("refId", paymentId);
+    formData.append("field", "proof_url");
+
+    const uploadResponse = await api.post("/upload", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+
+    const updateResponse = await api.put(`/payments/${paymentId}`, {
+      data: { status: "submitted" },
+    });
+
+    return { upload: uploadResponse.data, payment: updateResponse.data };
+  } catch (error) {
+    console.error("Error submitting proof", error);
+    throw error;
+  }
+};
+
+export const confirmPayment = async (paymentId) => {
+  try {
+    const response = await api.post(`/payments/${paymentId}/confirm`);
+    return response.data;
+  } catch (error) {
+    console.error("Error confirming payment", error);
+    throw error;
+  }
 };

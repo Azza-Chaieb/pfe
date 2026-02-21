@@ -36,7 +36,10 @@ const InteractiveSvgMap = ({
             // PREMIUM: Inject Global SVG Filter for Shadows
             let defs = svgElement.querySelector("defs");
             if (!defs) {
-              defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+              defs = document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "defs",
+              );
               svgElement.insertBefore(defs, svgElement.firstChild);
             }
             defs.innerHTML += `
@@ -55,9 +58,9 @@ const InteractiveSvgMap = ({
 
             const statusColors = {
               AVAILABLE: "#10b981", // Emerald Green (Matched to screenshot)
-              BOOKED: "#ef4444",    // Red
+              BOOKED: "#ef4444", // Red
               PARTIAL: "#f59e0b",
-              SELECTED: "#3b82f6",  // Blue
+              SELECTED: "#3b82f6", // Blue
             };
 
             // PREMIUM: Style Layers
@@ -67,7 +70,10 @@ const InteractiveSvgMap = ({
               const parentId = path.parentElement?.getAttribute("id") || "";
 
               // Style furniture/decor
-              if (!id.startsWith("bureau_") && !parentId.startsWith("bureau_")) {
+              if (
+                !id.startsWith("bureau_") &&
+                !parentId.startsWith("bureau_")
+              ) {
                 path.style.fill = "#ffffff";
                 path.style.stroke = "#e2e8f0";
                 path.style.strokeWidth = "0.5px";
@@ -83,19 +89,50 @@ const InteractiveSvgMap = ({
               "path[id], rect[id], circle[id], use[id]",
             );
 
+            const normalize = (v) => (v || "").toString().toLowerCase();
+            const extractDigits = (v) => {
+              const m = (v || "").match(/\d+/);
+              return m ? m[0] : null;
+            };
+
+            const findSpaceByElementId = (elementId) => {
+              if (!elementId) return null;
+              const elNorm = normalize(elementId);
+              const elDigits = extractDigits(elementId);
+
+              return spaces?.find((s) => {
+                const mesh = normalize(
+                  s.attributes?.mesh_name || s.mesh_name || "",
+                );
+                const sid = s.id ? s.id.toString() : "";
+                const docId = s.attributes?.documentId
+                  ? s.attributes.documentId.toString()
+                  : "";
+
+                if (mesh && mesh === elNorm) return true;
+                if (mesh && mesh.includes(elNorm)) return true;
+                if (elDigits && (sid === elDigits || docId === elDigits))
+                  return true;
+                const name = normalize(s.attributes?.name || s.name || "");
+                if (name && name === elNorm) return true;
+                return false;
+              });
+            };
+
             interactiveElements.forEach((el) => {
               const elementId = el.getAttribute("id");
               if (!elementId || elementId.length < 3) return;
 
-              const spaceData = spaces?.find(
-                (s) => (s.attributes?.mesh_name || s.mesh_name) === elementId
-              );
+              const spaceData = findSpaceByElementId(elementId);
 
               el.style.pointerEvents = "all";
               el.style.transition = "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
 
               const isSelected = selectedSpaceId === elementId;
-              const status = spaceData?.attributes?.status || spaceData?.status || "AVAILABLE";
+              const status =
+                spaceData?.attributes?.status ||
+                spaceData?.status ||
+                "AVAILABLE";
 
               if (isSelected) {
                 el.style.fill = statusColors.SELECTED;
@@ -127,11 +164,13 @@ const InteractiveSvgMap = ({
               el.onmouseenter = (e) => {
                 setHoveredSpace({
                   id: elementId,
-                  name: spaceData?.attributes?.name || spaceData?.name || elementId,
+                  name:
+                    spaceData?.attributes?.name || spaceData?.name || elementId,
                   status: spaceData ? status : "UNKNOWN",
                 });
                 setMousePos({ x: e.clientX, y: e.clientY });
-                el.style.filter = "brightness(1.1) drop-shadow(0 0 8px rgba(59, 130, 246, 0.4))";
+                el.style.filter =
+                  "brightness(1.1) drop-shadow(0 0 8px rgba(59, 130, 246, 0.4))";
               };
 
               el.onmousemove = (e) => {
@@ -169,12 +208,21 @@ const InteractiveSvgMap = ({
         >
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
-              <div className={`w-2 h-2 rounded-full ${hoveredSpace.status === "BOOKED" ? "bg-red-500" :
-                  hoveredSpace.status === "AVAILABLE" ? "bg-emerald-500" : "bg-slate-500"
-                }`} />
+              <div
+                className={`w-2 h-2 rounded-full ${
+                  hoveredSpace.status === "BOOKED"
+                    ? "bg-red-500"
+                    : hoveredSpace.status === "AVAILABLE"
+                      ? "bg-emerald-500"
+                      : "bg-slate-500"
+                }`}
+              />
               <span className="text-[9px] uppercase tracking-widest font-black text-slate-400">
-                {hoveredSpace.status === "UNKNOWN" ? "ID SVG (NON LIÉ)" :
-                  hoveredSpace.status === "BOOKED" ? "Occupé" : "Disponible"}
+                {hoveredSpace.status === "UNKNOWN"
+                  ? "ID SVG (NON LIÉ)"
+                  : hoveredSpace.status === "BOOKED"
+                    ? "Occupé"
+                    : "Disponible"}
               </span>
             </div>
             <span className="text-sm font-bold tracking-tight">
@@ -186,7 +234,10 @@ const InteractiveSvgMap = ({
         </div>
       )}
 
-      <div ref={containerRef} className="w-full h-full p-8 flex items-center justify-center" />
+      <div
+        ref={containerRef}
+        className="w-full h-full p-8 flex items-center justify-center"
+      />
 
       {/* Legend - PREMIUM matched to Screenshot */}
       <div className="absolute bottom-10 left-10 p-6 bg-white/90 backdrop-blur-xl rounded-[2rem] border border-white/20 shadow-2xl pointer-events-none">
@@ -196,7 +247,9 @@ const InteractiveSvgMap = ({
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-3">
             <div className="w-4 h-4 rounded-full bg-blue-500 shadow-lg shadow-blue-500/30"></div>
-            <span className="text-xs font-bold text-slate-700">Sélectionné</span>
+            <span className="text-xs font-bold text-slate-700">
+              Sélectionné
+            </span>
           </div>
           <div className="flex items-center gap-3">
             <div className="w-4 h-4 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/30"></div>

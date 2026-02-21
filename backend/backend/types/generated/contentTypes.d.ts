@@ -763,7 +763,7 @@ export interface ApiPaymentPayment extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
-    amount: Schema.Attribute.BigInteger;
+    amount: Schema.Attribute.Decimal;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
@@ -773,9 +773,19 @@ export interface ApiPaymentPayment extends Struct.CollectionTypeSchema {
       "api::payment.payment"
     > &
       Schema.Attribute.Private;
+    method: Schema.Attribute.Enumeration<["bank_transfer", "on_site"]>;
     payment_id: Schema.Attribute.UID;
+    proof_url: Schema.Attribute.Media<"images" | "files">;
     publishedAt: Schema.Attribute.DateTime;
-    statut: Schema.Attribute.Text;
+    reservation: Schema.Attribute.Relation<
+      "oneToOne",
+      "api::reservation.reservation"
+    >;
+    status: Schema.Attribute.Enumeration<
+      ["pending", "submitted", "confirmed", "rejected", "cancelled"]
+    > &
+      Schema.Attribute.DefaultTo<"pending">;
+    transaction_ref: Schema.Attribute.String & Schema.Attribute.Unique;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
@@ -841,6 +851,7 @@ export interface ApiReservationReservation extends Struct.CollectionTypeSchema {
       "api::reservation.reservation"
     > &
       Schema.Attribute.Private;
+    payment: Schema.Attribute.Relation<"oneToOne", "api::payment.payment">;
     publishedAt: Schema.Attribute.DateTime;
     reservation_id: Schema.Attribute.UID;
     space: Schema.Attribute.Relation<"manyToOne", "api::space.space">;
@@ -1704,6 +1715,7 @@ export interface PluginUsersPermissionsUser
       "oneToOne",
       "api::etudiant-profil.etudiant-profil"
     >;
+    fcmToken: Schema.Attribute.String;
     formateur_profil: Schema.Attribute.Relation<
       "oneToOne",
       "api::formateur-profil.formateur-profil"

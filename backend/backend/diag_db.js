@@ -15,22 +15,25 @@ async function run() {
     await client.connect();
     console.log("--- DATABASE DIAGNOSTIC (Spaces #4) ---");
 
-    const res = await client.query(`
-      SELECT s.id, s.name, s.mesh_name, s.published_at 
-      FROM spaces s
-      JOIN spaces_coworking_space_lnk lnk ON s.id = lnk.space_id
-      WHERE lnk.coworking_space_id = 4
-    `);
+    const centers = await client.query(
+      "SELECT id, name, published_at FROM coworking_spaces",
+    );
+    console.log("--- COWORKING SPACES ---");
+    centers.rows.forEach((r) => {
+      console.log(
+        `ID: ${r.id} | Name: "${r.name}" | Published: ${r.published_at ? "YES" : "NO"}`,
+      );
+    });
 
-    if (res.rows.length === 0) {
-      console.log("❌ No spaces found for center #4.");
-    } else {
-      res.rows.forEach((r) => {
-        console.log(
-          `ID: ${r.id} | Name: "${r.name}" | MeshName: "${r.mesh_name}" | Published: ${r.published_at ? "YES" : "NO"}`,
-        );
-      });
-    }
+    const spaces = await client.query(
+      "SELECT id, name, coworking_space_id FROM spaces",
+    );
+    console.log("\n--- SPACES (Sub-units) ---");
+    spaces.rows.forEach((r) => {
+      console.log(
+        `ID: ${r.id} | Name: "${r.name}" | Parent Coworking ID: ${r.coworking_space_id}`,
+      );
+    });
   } catch (err) {
     console.error("Error:", err.message);
   } finally {

@@ -62,3 +62,15 @@ export const cancelSubscription = async (userId) => {
     throw error;
   }
 };
+
+export const updateFcmToken = async (userId, fcmToken) => {
+  try {
+    const response = await api.put(`/users/${userId}`, {
+      fcmToken: fcmToken,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating FCM token", error);
+    throw error;
+  }
+};

@@ -47,7 +47,7 @@ export default {
             if (
               userPermissionsService &&
               typeof userPermissionsService.createResetPasswordToken ===
-              "function"
+                "function"
             ) {
               resetPasswordToken =
                 userPermissionsService.createResetPasswordToken();
@@ -150,23 +150,27 @@ export default {
       }
 
       // Check if our admin user exists
+      // Read credentials from environment variables (never hardcode these)
+      const adminEmail = process.env.ADMIN_SEED_EMAIL || "admin@sunspacee.com";
+      const adminPassword = process.env.ADMIN_SEED_PASSWORD || "Password123!";
+
       const user = await strapi
         .query("plugin::users-permissions.user")
         .findOne({
-          where: { email: "admin@sunspacee.com" },
+          where: { email: adminEmail },
         });
 
       if (!user) {
         // ... creation logic ...
         await strapi.plugin("users-permissions").service("user").add({
           username: "admin",
-          email: "admin@sunspacee.com",
-          password: "Password123!",
+          email: adminEmail,
+          password: adminPassword,
           role: role.id,
           confirmed: true,
           provider: "local",
         });
-        console.log("✅ Seeded admin user: admin@sunspacee.com / Password123!");
+        console.log(`✅ Seeded admin user: ${adminEmail}`);
       } else {
         // Force confirm the user if it already exists, just in case
         await strapi.query("plugin::users-permissions.user").update({
@@ -191,6 +195,11 @@ export default {
           "api::coworking-space.coworking-space.findOne",
           // Adding custom upload route permission just in case
           "api::coworking-space.coworking-space.upload3DModel",
+          // Payment permissions
+          "api::payment.payment.find",
+          "api::payment.payment.findOne",
+          "api::payment.payment.create",
+          "api::payment.payment.confirm",
         ];
 
         // Grant to both Authenticated and Public for testing
@@ -199,12 +208,18 @@ export default {
           .findMany();
 
         console.log("👥 Found roles in DB:");
-        allRoles.forEach(r => console.log(`  - Role: ${r.name} (Type: ${r.type}, ID: ${r.id})`));
+        allRoles.forEach((r) =>
+          console.log(`  - Role: ${r.name} (Type: ${r.type}, ID: ${r.id})`),
+        );
 
-        const rolesToSync = allRoles.filter(r => ["authenticated", "public", "admin"].includes(r.type || ""));
+        const rolesToSync = allRoles.filter((r) =>
+          ["authenticated", "public", "admin"].includes(r.type || ""),
+        );
 
         for (const r of rolesToSync) {
-          console.log(`🔍 [BOOTSTRAP] Syncing permissions for role: ${r.name} (Type: ${r.type}, ID: ${r.id})`);
+          console.log(
+            `🔍 [BOOTSTRAP] Syncing permissions for role: ${r.name} (Type: ${r.type}, ID: ${r.id})`,
+          );
           for (const action of actionsToGrant) {
             const permission = await strapi
               .query("plugin::users-permissions.permission")
@@ -213,18 +228,28 @@ export default {
               });
 
             if (!permission) {
-              await strapi.query("plugin::users-permissions.permission").create({
-                data: { action, role: r.id, enabled: true },
-              });
-              console.log(`✅ [BOOTSTRAP] GRANTED & ENABLED: "${action}" to ${r.name}`);
+              await strapi
+                .query("plugin::users-permissions.permission")
+                .create({
+                  data: { action, role: r.id, enabled: true },
+                });
+              console.log(
+                `✅ [BOOTSTRAP] GRANTED & ENABLED: "${action}" to ${r.name}`,
+              );
             } else if (!permission.enabled) {
-              await strapi.query("plugin::users-permissions.permission").update({
-                where: { id: permission.id },
-                data: { enabled: true },
-              });
-              console.log(`✅ [BOOTSTRAP] FORCED ENABLED: "${action}" for ${r.name}`);
+              await strapi
+                .query("plugin::users-permissions.permission")
+                .update({
+                  where: { id: permission.id },
+                  data: { enabled: true },
+                });
+              console.log(
+                `✅ [BOOTSTRAP] FORCED ENABLED: "${action}" for ${r.name}`,
+              );
             } else {
-              console.log(`ℹ️ [BOOTSTRAP] OK: "${action}" is already enabled for ${r.name}`);
+              console.log(
+                `ℹ️ [BOOTSTRAP] OK: "${action}" is already enabled for ${r.name}`,
+              );
             }
           }
         }
@@ -258,7 +283,8 @@ export default {
           },
           {
             name: "Premium",
-            description: "Le meilleur rapport qualité/prix pour les professionnels.",
+            description:
+              "Le meilleur rapport qualité/prix pour les professionnels.",
             price: 99,
             duration_days: 30,
             type: "premium",
@@ -320,6 +346,13 @@ export default {
           "api::user-subscription.user-subscription.findOne",
           "api::user-subscription.user-subscription.create",
           "api::user-subscription.user-subscription.update",
+          // Custom subscription controller actions (same API = proper permission mapping)
+          "api::subscription.subscription.getPlans",
+          "api::subscription.subscription.getMySubscription",
+          "api::subscription.subscription.subscribe",
+          "api::subscription.subscription.upgrade",
+          "api::subscription.subscription.cancelSubscription",
+          "api::subscription.subscription.renew",
         ];
 
         const allRoles2 = await strapi
@@ -352,10 +385,12 @@ export default {
         }
         console.log("💳 [BOOTSTRAP] Subscription plans seeding complete.");
       } catch (planErr) {
-        console.warn("⚠️ [BOOTSTRAP] Failed to seed subscription plans:", (planErr as Error).message);
+        console.warn(
+          "⚠️ [BOOTSTRAP] Failed to seed subscription plans:",
+          (planErr as Error).message,
+        );
       }
       // ───────────────────────────────────────────────────────────────────────
-
     } catch (error) {
       console.error("❌ Failed during bootstrap:", error);
     }

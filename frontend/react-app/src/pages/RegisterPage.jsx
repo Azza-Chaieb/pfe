@@ -132,7 +132,7 @@ const RegisterPage = () => {
       if (profileEndpoint) {
         const axios = (await import("axios")).default;
         await axios.post(
-          `http://192.168.0.5:1337/api${profileEndpoint}`,
+          `${import.meta.env.VITE_API_URL || "http://localhost:1337"}/api${profileEndpoint}`,
           { data: profileData },
           {
             headers: { Authorization: `Bearer ${jwt}` },
@@ -430,20 +430,44 @@ const RegisterPage = () => {
                 </div>
 
                 <div className="flex gap-4 pt-4">
-                  <button
-                    type="button"
-                    onClick={prevStep}
-                    className="flex-1 py-4 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all"
-                  >
-                    Retour
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={loading || !captchaToken}
-                    className="flex-[2] py-4 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all disabled:opacity-50"
-                  >
-                    {loading ? "Création..." : "Finaliser"}
-                  </button>
+                  {step === 1 && (
+                    <button
+                      type="button"
+                      onClick={() => navigate("/")}
+                      className="flex-1 py-4 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all"
+                    >
+                      ← Accueil
+                    </button>
+                  )}
+                  {step > 1 && (
+                    <button
+                      type="button"
+                      onClick={prevStep}
+                      className="flex-1 py-4 bg-gray-100 text-gray-600 rounded-2xl font-bold hover:bg-gray-200 transition-all"
+                    >
+                      Retour
+                    </button>
+                  )}
+                  {step === 1 ? (
+                    <button
+                      type="button"
+                      onClick={nextStep}
+                      className="flex-[2] py-4 bg-gray-900 text-white rounded-2xl font-bold hover:bg-black transition-all flex items-center justify-center gap-2 group"
+                    >
+                      Continuer
+                      <span className="group-hover:translate-x-1 transition-transform">
+                        →
+                      </span>
+                    </button>
+                  ) : (
+                    <button
+                      type="submit"
+                      disabled={loading || !captchaToken}
+                      className="flex-[2] py-4 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all disabled:opacity-50"
+                    >
+                      {loading ? "Création..." : "Finaliser"}
+                    </button>
+                  )}
                 </div>
               </div>
             )}

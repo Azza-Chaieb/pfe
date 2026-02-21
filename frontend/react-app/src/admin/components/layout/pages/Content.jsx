@@ -34,7 +34,7 @@ const Content = () => {
             type: "permission",
             message:
               "Accès refusé (403). Vous n'avez pas la permission de voir ce contenu.",
-            detail: `Vérifiez si Strapi est lancé sur http://192.168.0.5:1337/admin`,
+            detail: `Vérifiez si Strapi est lancé sur ${import.meta.env.VITE_API_URL || "http://localhost:1337"}/admin`,
           });
         } else {
           setError({

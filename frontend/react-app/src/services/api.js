@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://192.168.0.5:1337/api",
+  baseURL: `${import.meta.env.VITE_API_URL || "http://localhost:1337"}/api`,
   headers: {
     "Content-Type": "application/json",
   },
@@ -10,7 +10,7 @@ const api = axios.create({
 // Add a request interceptor to attach the token
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("jwt");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -25,14 +25,14 @@ export const login = async (identifier, password) => {
     password,
   });
   if (response.data.jwt) {
-    localStorage.setItem("token", response.data.jwt);
+    localStorage.setItem("jwt", response.data.jwt);
     localStorage.setItem("user", JSON.stringify(response.data.user));
   }
   return response.data;
 };
 
 export const logout = () => {
-  localStorage.removeItem("token");
+  localStorage.removeItem("jwt");
   localStorage.removeItem("user");
   window.location.href = "/login";
 };
@@ -43,7 +43,7 @@ export const getCurrentUser = () => {
 };
 
 export const isAuthenticated = () => {
-  return !!localStorage.getItem("token");
+  return !!localStorage.getItem("jwt");
 };
 
 export default api;

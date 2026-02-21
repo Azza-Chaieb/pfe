@@ -9,7 +9,20 @@ const UserDashboard = () => {
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("identity"); // identity, professional, settings
   const [isEditing, setIsEditing] = useState(false);
-  const [editData, setEditData] = useState({});
+  const [editData, setEditData] = useState({
+    fullname: "",
+    phone: "",
+    bio: "",
+    city: "",
+    social_links: { linkedin: "", twitter: "", instagram: "" },
+    emailPreferences: {
+      reservations: true,
+      payments: true,
+      courses: true,
+      newsletter: false,
+    },
+    profileFields: {},
+  });
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [error, setError] = useState(null);
@@ -45,7 +58,7 @@ const UserDashboard = () => {
         }
       }
 
-      const fullUserData = { ...userBase, profile: profileData };
+      const fullUserData = { ...userBase, profile: profileData || {} };
       setUserData(fullUserData);
       setEditData({
         fullname: fullUserData.fullname || "",
@@ -63,7 +76,10 @@ const UserDashboard = () => {
           courses: true,
           newsletter: false,
         },
-        profileFields: profileData.attributes || profileData || {},
+        profileFields:
+          profileData && profileData.attributes
+            ? profileData.attributes
+            : profileData || {},
       });
     } catch (err) {
       console.error("Fetch error:", err);
@@ -185,7 +201,7 @@ const UserDashboard = () => {
     return url
       ? url.startsWith("http")
         ? url
-        : `http://192.168.0.5:1337${url}`
+        : `${import.meta.env.VITE_API_URL || "http://localhost:1337"}${url}`
       : null;
   };
 
@@ -201,12 +217,13 @@ const UserDashboard = () => {
         {/* Profile Hero Card */}
         <div className="bg-white/40 backdrop-blur-2xl rounded-[40px] border border-white/60 shadow-2xl shadow-slate-200/50 overflow-hidden mb-10 relative group">
           <div
-            className={`h-32 w-full bg-gradient-to-r ${userData.user_type === "student"
-              ? "from-purple-500/20 to-indigo-500/20"
-              : userData.user_type === "trainer"
-                ? "from-orange-500/20 to-red-500/20"
-                : "from-blue-500/20 to-cyan-500/20"
-              }`}
+            className={`h-32 w-full bg-gradient-to-r ${
+              userData.user_type === "student"
+                ? "from-purple-500/20 to-indigo-500/20"
+                : userData.user_type === "trainer"
+                  ? "from-orange-500/20 to-red-500/20"
+                  : "from-blue-500/20 to-cyan-500/20"
+            }`}
           />
 
           <div className="px-10 pb-10 -mt-12 flex flex-col md:flex-row items-end gap-8">
@@ -246,10 +263,11 @@ const UserDashboard = () => {
                   {userData.fullname || userData.username}
                 </h1>
                 <span
-                  className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${userData.user_type === "admin"
-                    ? "bg-red-100 text-red-600"
-                    : "bg-blue-100 text-blue-600"
-                    }`}
+                  className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${
+                    userData.user_type === "admin"
+                      ? "bg-red-100 text-red-600"
+                      : "bg-blue-100 text-blue-600"
+                  }`}
                 >
                   {userData.user_type}
                 </span>
@@ -307,10 +325,11 @@ const UserDashboard = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center gap-3 transition-all ${activeTab === tab.id
-                ? "bg-white text-blue-600 shadow-xl shadow-blue-100"
-                : "text-slate-500 hover:text-slate-800"
-                }`}
+              className={`px-8 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center gap-3 transition-all ${
+                activeTab === tab.id
+                  ? "bg-white text-blue-600 shadow-xl shadow-blue-100"
+                  : "text-slate-500 hover:text-slate-800"
+              }`}
             >
               <span
                 className={activeTab === tab.id ? "" : "grayscale opacity-50"}

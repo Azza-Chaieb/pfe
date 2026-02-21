@@ -143,6 +143,9 @@
       "relation": "oneToMany",
       "target": "api::subscription.subscription",
       "mappedBy": "user"
+    },
+    "fcmToken": {
+      "type": "string"
     }
   }
 }

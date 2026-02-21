@@ -112,10 +112,11 @@ const Sidebar = ({ role, activeTab, onTabChange }) => {
           <button
             key={item.id}
             onClick={() => navigate(item.path)}
-            className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-300 font-bold text-sm group ${location.pathname === item.path
-              ? "bg-blue-600 text-white shadow-xl shadow-blue-200 scale-[1.02]"
-              : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
-              }`}
+            className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-300 font-bold text-sm group ${
+              location.pathname === item.path
+                ? "bg-blue-600 text-white shadow-xl shadow-blue-200 scale-[1.02]"
+                : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
+            }`}
           >
             <span
               className={`text-xl transition-transform group-hover:scale-110 ${location.pathname === item.path ? "" : "grayscale"}`}
@@ -150,7 +151,9 @@ const Header = ({ user }) => {
     if (!user?.avatar) return null;
     const url = user.avatar.url || user.avatar.attributes?.url;
     if (!url) return null;
-    return url.startsWith("http") ? url : `http://192.168.0.5:1337${url}`;
+    return url.startsWith("http")
+      ? url
+      : `${import.meta.env.VITE_API_URL || "http://localhost:1337"}${url}`;
   };
 
   return (

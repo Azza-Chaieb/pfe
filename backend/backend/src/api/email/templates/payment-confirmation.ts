@@ -1,15 +1,19 @@
-import { emailLayout } from './layout';
+import { emailLayout } from "./layout";
 
 interface PaymentDetails {
-    paymentId: string;
-    amount: string;
-    date: string;
-    itemDescription: string;
-    userName: string;
+  paymentId: string;
+  amount: string;
+  date: string;
+  itemDescription: string;
+  userName: string;
 }
 
-export const paymentConfirmationEmail = (userName: string, payment: PaymentDetails) => {
-    const content = `
+export const paymentConfirmationEmail = (
+  userName: string,
+  payment: PaymentDetails,
+  frontendUrl: string = "http://localhost:5173",
+) => {
+  const content = `
     <div class="header">
       <h1>💰 Paiement Confirmé !</h1>
     </div>
@@ -44,17 +48,16 @@ export const paymentConfirmationEmail = (userName: string, payment: PaymentDetai
         <p style="margin-top: 5px; color: #166534; font-size: 14px;">Une facture détaillée est disponible dans votre espace client.</p>
       </div>
 
-      <div style="text-align: center;">
-        <a href="http://localhost:5173/profile" class="button" style="background: #a855f7;">Accéder à mon espace</a>
-      </div>
-
       <p style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; color: #888; font-size: 13px;">
         ❓ Une question sur ce paiement ? Contactez notre support technique.
       </p>
     </div>
   `;
 
-    return emailLayout(content, `Confirmation de paiement - Reçu #${payment.paymentId}`);
+  return emailLayout(
+    content,
+    `Confirmation de paiement - Reçu #${payment.paymentId}`,
+  );
 };
 
 export default paymentConfirmationEmail;

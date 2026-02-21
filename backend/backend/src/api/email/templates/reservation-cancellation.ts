@@ -1,17 +1,21 @@
-import { emailLayout } from './layout';
+import { emailLayout } from "./layout";
 
 interface ReservationDetails {
-    spaceName: string;
-    date: string;
-    startTime: string;
-    endTime: string;
-    location: string;
-    reservationId: string;
-    reason?: string;
+  spaceName: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  location: string;
+  reservationId: string;
+  reason?: string;
 }
 
-export const reservationCancellationEmail = (userName: string, reservation: ReservationDetails) => {
-    const content = `
+export const reservationCancellationEmail = (
+  userName: string,
+  reservation: ReservationDetails,
+  frontendUrl: string = "http://localhost:5173",
+) => {
+  const content = `
     <div class="header" style="background: #fee2e2;">
       <h1 style="color: #991b1b;">❌ Réservation Annulée</h1>
     </div>
@@ -44,14 +48,10 @@ export const reservationCancellationEmail = (userName: string, reservation: Rese
       <p style="color: #666; font-size: 14px;">
         Si vous n'êtes pas à l'origine de cette annulation, cela peut être dû à un conflit d'horaire ou à une maintenance de l'espace. Nous vous invitons à choisir un autre créneau.
       </p>
-
-      <div style="text-align: center; margin-top: 30px;">
-        <a href="http://localhost:3000/explore/5" class="button" style="background: #991b1b;">Réserver un autre créneau</a>
-      </div>
     </div>
   `;
 
-    return emailLayout(content, `Réservation annulée - ${reservation.spaceName}`);
+  return emailLayout(content, `Réservation annulée - ${reservation.spaceName}`);
 };
 
 export default reservationCancellationEmail;

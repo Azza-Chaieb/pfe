@@ -1,7 +1,11 @@
-import { emailLayout } from './layout';
+import { emailLayout } from "./layout";
 
-export const welcomeEmail = (userName: string, userEmail: string) => {
-    const content = `
+export const welcomeEmail = (
+  userName: string,
+  userEmail: string,
+  frontendUrl: string = "http://localhost:5173",
+) => {
+  const content = `
     <div class="header">
       <h1>🎉 Bienvenue sur Sunspace !</h1>
     </div>
@@ -21,11 +25,7 @@ export const welcomeEmail = (userName: string, userEmail: string) => {
         </ul>
       </div>
 
-      <p>Pour commencer votre aventure, connectez-vous dès maintenant :</p>
-      
-      <div style="text-align: center;">
-        <a href="http://localhost:5173/login" class="button">Se Connecter</a>
-      </div>
+      <p>Pour commencer votre aventure, connectez-vous dès maintenant sur le portail Sunspace.</p>
 
       <p style="margin-top: 30px; font-size: 14px; color: #666;">
         <strong>Votre email :</strong> ${userEmail}
@@ -37,7 +37,10 @@ export const welcomeEmail = (userName: string, userEmail: string) => {
     </div>
   `;
 
-    return emailLayout(content, 'Bienvenue sur Sunspace - Commencez votre aventure maintenant !');
+  return emailLayout(
+    content,
+    "Bienvenue sur Sunspace - Commencez votre aventure maintenant !",
+  );
 };
 
 export default welcomeEmail;
