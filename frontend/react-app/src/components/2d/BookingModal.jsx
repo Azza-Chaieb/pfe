@@ -41,8 +41,12 @@ const BookingModal = ({ space, coworkingSpaceId, initialDate, onClose }) => {
     const checkAvailability = async () => {
       setCheckingAvailability(true);
       try {
+        const startOfDay = `${formData.date}T00:00:00.000Z`;
+        const endOfDay = `${formData.date}T23:59:59.999Z`;
+
+        // Better overlap filter for Strapi: (start < endOfDay) AND (end > startOfDay)
         const response = await api.get(
-          `/reservations?filters[space][id][$eq]=${space.id}&filters[date][$eq]=${formData.date}&filters[status][$ne]=cancelled`,
+          `/bookings?filters[space][id][$eq]=${space.id}&filters[start_time][$lt]=${endOfDay}&filters[end_time][$gt]=${startOfDay}&filters[status][$ne]=cancelled`,
         );
         setExistingReservations(response.data?.data || []);
       } catch (err) {
@@ -96,17 +100,23 @@ const BookingModal = ({ space, coworkingSpaceId, initialDate, onClose }) => {
         return;
       }
 
-      const reservationData = {
+      // Format ISO strings for start_time and end_time
+      const datePart = formData.date;
+      const startISO = `${datePart}T${formData.startTime}:00.000Z`;
+      const endISO = formData.allDay
+        ? `${datePart}T23:59:59.999Z`
+        : `${datePart}T${formData.endTime}:00.000Z`;
+
+      const bookingData = {
         user: user.id,
-        coworking_space: coworkingSpaceId,
         space: space.id,
-        date: formData.date,
-        time_slot: formData.allDay
-          ? "Full Day"
-          : `${formData.startTime} - ${formData.endTime}`,
+        start_time: startISO,
+        end_time: endISO,
+        status: "pending",
         total_price: parseFloat(calculateTotalPrice()),
+        equipments: Object.keys(equipmentQuantities).map((id) => parseInt(id)),
         extras: {
-          equipments: equipmentQuantities,
+          equipmentQuantities: equipmentQuantities,
           contact: {
             fullName: formData.fullName,
             email: formData.email,
@@ -116,18 +126,27 @@ const BookingModal = ({ space, coworkingSpaceId, initialDate, onClose }) => {
         },
       };
 
-      console.log("[Booking] Logic: Creating reservation...", reservationData);
-      const res = await createReservation(reservationData);
+      console.log("[Booking] Logic: Creating booking...", bookingData);
+      const res = await createReservation(bookingData);
       setCreatedReservation(res.data);
 
       // Instead of finalizing, show payment selector
       setShowPaymentSelector(true);
       setBookingLoading(false);
     } catch (error) {
-      console.error("Booking Error:", error.response?.data || error.message);
-      const errorMsg =
-        error.response?.data?.error?.message || "Une erreur est survenue.";
-      window.alert(`Oups ! ${errorMsg}`);
+      console.error("Booking Error Full Output:", error);
+      if (error.response) {
+        console.error("Server Error Details:", error.response.data);
+      }
+
+      const serverMsg = error.response?.data?.error?.message;
+      const errorDetails = error.response?.data?.error?.details
+        ? JSON.stringify(error.response.data.error.details)
+        : "";
+
+      const errorMsg = serverMsg || error.message || "Une erreur est survenue.";
+      window.alert(`Oups ! ${errorMsg}\n${errorDetails}`);
+
       setBookingLoading(false);
       isSubmitting.current = false;
     }
@@ -136,12 +155,13 @@ const BookingModal = ({ space, coworkingSpaceId, initialDate, onClose }) => {
   const handlePaymentConfirm = async ({ method, file }) => {
     setBookingLoading(true);
     try {
+      const bookingId = createdReservation.id;
       const paymentData = {
         amount:
           createdReservation.attributes?.total_price ||
           createdReservation.total_price,
         method: method,
-        reservation: createdReservation.id,
+        booking: bookingId,
         status: "pending",
       };
 
@@ -235,17 +255,22 @@ const BookingModal = ({ space, coworkingSpaceId, initialDate, onClose }) => {
   const hasConflict =
     (!formData.allDay &&
       existingReservations.some((res) => {
-        const slotStr = res.attributes?.time_slot || res.time_slot || "";
-        if (slotStr === "Full Day") return true;
+        const resStart = new Date(
+          res.attributes?.start_time || res.start_time,
+        ).getTime();
+        const resEnd = new Date(
+          res.attributes?.end_time || res.end_time,
+        ).getTime();
 
-        const [resStart, resEnd] = slotStr.split(" - ");
-        if (!resStart || !resEnd) return false;
+        const datePart = formData.date;
+        const reqStart = new Date(
+          `${datePart}T${formData.startTime}:00.000Z`,
+        ).getTime();
+        const reqEnd = new Date(
+          `${datePart}T${formData.endTime}:00.000Z`,
+        ).getTime();
 
-        const sA = parseInt(formData.startTime.replace(":", ""));
-        const eA = parseInt(formData.endTime.replace(":", ""));
-        const sB = parseInt(resStart.replace(":", ""));
-        const eB = parseInt(resEnd.replace(":", ""));
-        return sA < eB && sB < eA;
+        return reqStart < resEnd && resStart < reqEnd;
       })) ||
     (formData.allDay && existingReservations.length > 0);
 
@@ -449,9 +474,9 @@ const BookingModal = ({ space, coworkingSpaceId, initialDate, onClose }) => {
               </div>
 
               <div className="grid grid-cols-7 gap-1.5 mb-2">
-                {["L", "M", "M", "J", "V", "S", "D"].map((d) => (
+                {["L", "M", "M", "J", "V", "S", "D"].map((d, idx) => (
                   <div
-                    key={d}
+                    key={`${d}-${idx}`}
                     className="text-[9px] font-black text-slate-300 text-center uppercase"
                   >
                     {d}

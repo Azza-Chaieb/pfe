@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import PropTypes from "prop-types";
 
 const PaymentSelector = ({ amount, onSelect, onCancel }) => {
   const [method, setMethod] = useState("");
@@ -184,12 +183,6 @@ const PaymentSelector = ({ amount, onSelect, onCancel }) => {
       </div>
     </div>
   );
-};
-
-PaymentSelector.propTypes = {
-  amount: PropTypes.number.isRequired,
-  onSelect: PropTypes.func.isRequired,
-  onCancel: PropTypes.func.isRequired,
 };
 
 export default PaymentSelector;

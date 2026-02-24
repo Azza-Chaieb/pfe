@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "../components/layout/DashboardLayout";
 import DashboardStatCard from "../components/layout/DashboardStatCard";
+import { getProfessionalBookings } from "../api";
 import {
-  getProfessionalBookings,
-} from "../api";
-import { getMySubscription, cancelSubscription as cancelSub } from "../services/subscriptionService";
+  getMySubscription,
+  cancelSubscription as cancelSub,
+} from "../services/subscriptionService";
 import BookingCalendar from "../components/calendar/BookingCalendar";
 
 const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
@@ -87,9 +88,9 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
           title="Prochaine Date"
           value={
             bookings.length > 0
-              ? new Date(bookings[0].attributes?.date).toLocaleDateString(
-                "fr-FR",
-              )
+              ? new Date(
+                  bookings[0].attributes?.start_time || bookings[0].start_time,
+                ).toLocaleDateString("fr-FR")
               : "-"
           }
           icon="📅"
@@ -144,7 +145,7 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
                             : coworking.name || "Espace"}
                         </td>
                         <td className="py-4 text-center text-slate-500">
-                          {new Date(data.date).toLocaleDateString()}
+                          {new Date(data.start_time).toLocaleDateString()}
                         </td>
                         <td className="py-4 text-right">
                           <span
@@ -281,7 +282,8 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
               <tbody className="divide-y divide-slate-50">
                 {bookings.map((booking) => {
                   const data = booking.attributes || booking;
-                  const space = data.space?.data?.attributes || data.space || {};
+                  const space =
+                    data.space?.data?.attributes || data.space || {};
                   const coworking =
                     data.coworking_space?.data?.attributes ||
                     data.coworking_space ||
@@ -300,7 +302,7 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
                           : coworking.name || "Espace"}
                       </td>
                       <td className="py-5 text-slate-500">
-                        {new Date(data.date).toLocaleDateString("fr-FR", {
+                        {new Date(data.start_time).toLocaleDateString("fr-FR", {
                           weekday: "long",
                           day: "numeric",
                           month: "long",
@@ -332,22 +334,35 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
   );
 
   const renderSubscription = () => {
-    const subAttrs = subscription ? (subscription.attributes || subscription) : null;
-    const planAttrs = subAttrs?.plan?.data?.attributes || subAttrs?.plan || null;
-    const planName = planAttrs?.name || 'Aucun plan';
-    const planType = planAttrs?.type || 'basic';
-    const endDate = subAttrs?.end_date ? new Date(subAttrs.end_date).toLocaleDateString('fr-FR') : null;
+    const subAttrs = subscription
+      ? subscription.attributes || subscription
+      : null;
+    const planAttrs =
+      subAttrs?.plan?.data?.attributes || subAttrs?.plan || null;
+    const planName = planAttrs?.name || "Aucun plan";
+    const planType = planAttrs?.type || "basic";
+    const endDate = subAttrs?.end_date
+      ? new Date(subAttrs.end_date).toLocaleDateString("fr-FR")
+      : null;
     const credits = subAttrs?.remaining_credits ?? 0;
-    const isActive = subAttrs?.status === 'active';
-    const planColors = { basic: 'from-slate-600 to-slate-800', premium: 'from-blue-600 to-indigo-800', enterprise: 'from-amber-500 to-orange-700' };
+    const isActive = subAttrs?.status === "active";
+    const planColors = {
+      basic: "from-slate-600 to-slate-800",
+      premium: "from-blue-600 to-indigo-800",
+      enterprise: "from-amber-500 to-orange-700",
+    };
     const gradient = planColors[planType] || planColors.basic;
 
     return (
       <div className="max-w-3xl mx-auto py-8 space-y-8">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-black text-slate-800 tracking-tighter">Mon Abonnement 💎</h1>
-            <p className="text-slate-500 text-sm font-medium">Gérez votre plan SunSpace Pro.</p>
+            <h1 className="text-3xl font-black text-slate-800 tracking-tighter">
+              Mon Abonnement 💎
+            </h1>
+            <p className="text-slate-500 text-sm font-medium">
+              Gérez votre plan SunSpace Pro.
+            </p>
           </div>
           <button
             onClick={() => navigate("/professional/dashboard")}
@@ -359,21 +374,29 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
 
         {/* Current Plan Card */}
         {isActive && planAttrs ? (
-          <div className={`rounded-[2.5rem] bg-gradient-to-br ${gradient} p-8 text-white shadow-2xl`}>
+          <div
+            className={`rounded-[2.5rem] bg-gradient-to-br ${gradient} p-8 text-white shadow-2xl`}
+          >
             <div className="flex justify-between items-start">
               <div>
-                <span className="text-[9px] font-black uppercase tracking-widest opacity-70">Plan Actuel</span>
+                <span className="text-[9px] font-black uppercase tracking-widest opacity-70">
+                  Plan Actuel
+                </span>
                 <h2 className="text-3xl font-black mt-1">{planName}</h2>
-                <p className="text-white/70 text-sm mt-1">Expire le {endDate}</p>
+                <p className="text-white/70 text-sm mt-1">
+                  Expire le {endDate}
+                </p>
               </div>
               <div className="bg-white/20 rounded-2xl p-4 text-center">
                 <p className="text-2xl font-black">{credits}</p>
-                <p className="text-[9px] font-black uppercase opacity-70">crédits restants</p>
+                <p className="text-[9px] font-black uppercase opacity-70">
+                  crédits restants
+                </p>
               </div>
             </div>
             <div className="mt-8 flex gap-3">
               <button
-                onClick={() => navigate('/subscription-plans')}
+                onClick={() => navigate("/subscription-plans")}
                 className="flex-1 py-3 bg-white/20 border border-white/30 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-white/30 transition-all"
               >
                 Changer de plan
@@ -389,10 +412,14 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
         ) : (
           <div className="bg-white/40 backdrop-blur border border-white/60 rounded-[2.5rem] p-10 text-center shadow-xl">
             <div className="text-5xl mb-4">📭</div>
-            <h3 className="text-2xl font-black text-slate-800 mb-2">Aucun abonnement actif</h3>
-            <p className="text-slate-400 text-sm mb-8">Choisissez un plan adapté à vos besoins professionnels.</p>
+            <h3 className="text-2xl font-black text-slate-800 mb-2">
+              Aucun abonnement actif
+            </h3>
+            <p className="text-slate-400 text-sm mb-8">
+              Choisissez un plan adapté à vos besoins professionnels.
+            </p>
             <button
-              onClick={() => navigate('/subscription-plans')}
+              onClick={() => navigate("/subscription-plans")}
               className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg hover:scale-105 transition-all"
             >
               Voir les plans 💳
@@ -403,14 +430,34 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
         {/* Quick Info */}
         <div className="grid grid-cols-3 gap-4">
           {[
-            { label: 'Cycle', value: subAttrs?.billing_cycle === 'yearly' ? 'Annuel' : 'Mensuel', icon: '🔄' },
-            { label: 'Statut', value: subAttrs?.status || 'Inactif', icon: '📊' },
-            { label: 'Crédits utilisés', value: `${(planAttrs?.max_credits || 0) - credits} / ${planAttrs?.max_credits || 0}`, icon: '🎯' },
+            {
+              label: "Cycle",
+              value:
+                subAttrs?.billing_cycle === "yearly" ? "Annuel" : "Mensuel",
+              icon: "🔄",
+            },
+            {
+              label: "Statut",
+              value: subAttrs?.status || "Inactif",
+              icon: "📊",
+            },
+            {
+              label: "Crédits utilisés",
+              value: `${(planAttrs?.max_credits || 0) - credits} / ${planAttrs?.max_credits || 0}`,
+              icon: "🎯",
+            },
           ].map((item, i) => (
-            <div key={i} className="bg-white/40 backdrop-blur border border-white/60 rounded-2xl p-5 text-center">
+            <div
+              key={i}
+              className="bg-white/40 backdrop-blur border border-white/60 rounded-2xl p-5 text-center"
+            >
               <p className="text-2xl mb-2">{item.icon}</p>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{item.label}</p>
-              <p className="text-sm font-black text-slate-700 mt-1 capitalize">{item.value}</p>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                {item.label}
+              </p>
+              <p className="text-sm font-black text-slate-700 mt-1 capitalize">
+                {item.value}
+              </p>
             </div>
           ))}
         </div>

@@ -44,18 +44,20 @@ const StudentDashboard = ({ activeTab = "dashboard" }) => {
                 data.coworking_space?.data?.attributes ||
                 data.coworking_space ||
                 {};
+              const startDate = new Date(data.start_time);
+              const endDate = new Date(data.end_time);
 
               return {
                 id: item.id,
                 spaceName: space.name
                   ? `${coworking.name || "Espace"} - ${space.name}`
                   : coworking.name || "Espace inconnu",
-                date: new Date(data.date).toLocaleDateString("fr-FR", {
+                date: startDate.toLocaleDateString("fr-FR", {
                   weekday: "long",
                   day: "numeric",
                   month: "short",
                 }),
-                time: data.time_slot || "Non spécifié",
+                time: `${startDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })} - ${endDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`,
               };
             }),
           );

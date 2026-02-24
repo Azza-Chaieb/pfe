@@ -22,12 +22,16 @@ const ExplorationScene = () => {
     const fetchReservations = async () => {
       if (!numericCoworkingId || !selectedDate) return;
       try {
+        // Use range filters for date to avoid 500 errors with $contains on datetime fields
+        const startOfDay = `${selectedDate}T00:00:00.000Z`;
+        const endOfDay = `${selectedDate}T23:59:59.999Z`;
+
         const response = await api.get(
-          `/reservations?filters[coworking_space][id][$eq]=${numericCoworkingId}&filters[date][$eq]=${selectedDate}&filters[status][$ne]=cancelled`,
+          `/bookings?filters[space][coworking_space][id][$eq]=${numericCoworkingId}&filters[start_time][$gte]=${startOfDay}&filters[start_time][$lt]=${endOfDay}&filters[status][$ne]=cancelled&populate=*`,
         );
         setReservations(response.data?.data || []);
       } catch (err) {
-        console.error("Error fetching reservations:", err);
+        console.error("Error fetching bookings:", err);
       }
     };
     fetchReservations();
@@ -43,132 +47,88 @@ const ExplorationScene = () => {
           ? `filters[documentId][$eq]=${spaceId}`
           : `filters[id][$eq]=${spaceId}`;
 
-        const endpoint = `/coworking-spaces?${query}&populate[spaces][populate]=*`;
+        // Standard Strapi 5 populate
+        const endpoint = `/coworking-spaces?${query}&populate=*`;
         console.log("[DEBUG] Fetching coworking space from:", endpoint);
 
         const response = await api.get(endpoint);
-        console.log(
-          "[DEBUG] API Response Data:",
-          JSON.stringify(response.data, null, 2),
-        );
-
         const results = response.data?.data || [];
-        console.log("[DEBUG] Results length:", results.length);
+
+        console.log("[DEBUG] API Raw Results Length:", results.length);
 
         if (results.length > 0) {
           const coworkingSpace = results[0];
           setNumericCoworkingId(coworkingSpace.id);
-          // In Strapi 5, directly access attributes or use the root object
-          const attrs = coworkingSpace.attributes || coworkingSpace;
-          const spacesData = attrs.spaces?.data || attrs.spaces || [];
+
+          // Strapi 5 often flattens attributes.
+          // Let's check everywhere for 'spaces'
+          const item = coworkingSpace;
+          const attrs = item.attributes || item;
+
+          let spacesData = [];
+          if (attrs.spaces) {
+            spacesData =
+              attrs.spaces.data ||
+              (Array.isArray(attrs.spaces) ? attrs.spaces : []);
+          } else if (item.spaces) {
+            spacesData =
+              item.spaces.data ||
+              (Array.isArray(item.spaces) ? item.spaces : []);
+          }
 
           console.log(
-            "[DEBUG] Found Coworking space:",
-            coworkingSpace.id,
-            attrs.name,
+            `[DEBUG] Coworking Space: ${attrs.name} (ID: ${item.id}). Spaces found: ${spacesData.length}`,
           );
+
+          if (spacesData.length === 0) {
+            console.warn(
+              "[DEBUG] No spaces found in coworking-space object. Trying direct /spaces query...",
+            );
+            try {
+              const filterKey = isNaN(spaceId) ? "documentId" : "id";
+              const spaceRes = await api.get(
+                `/spaces?filters[coworking_space][${filterKey}][$eq]=${spaceId}&populate=*`,
+              );
+              spacesData = spaceRes.data?.data || spaceRes.data || [];
+              console.log(
+                `[DEBUG] Direct /spaces fallback found ${spacesData.length} spaces`,
+              );
+            } catch (fErr) {
+              console.error("[DEBUG] Direct space fallback failed:", fErr);
+            }
+          }
+
           setSpaces(spacesData);
         } else {
           console.warn(
             "[DEBUG] No coworking space found for spaceId:",
             spaceId,
           );
-          // Try fallbacks: direct GET by id, or search spaces collection by id/documentId
+          // Try fallbacks for finding the coworking space itself
           try {
-            // If numeric, try direct fetch by resource id
             if (!isNaN(spaceId)) {
-              console.log(
-                "[DEBUG] Trying fallback: GET /coworking-spaces/{id}",
-              );
               const direct = await api.get(
-                `/coworking-spaces/${spaceId}?populate[spaces][populate]=*`,
+                `/coworking-spaces/${spaceId}?populate=*`,
               );
-              if (direct.data) {
-                const cs = direct.data;
-                // Strapi single-entity response may be in data or root
-                const coworkingSpace = cs.data || cs;
-                if (coworkingSpace) {
-                  const attrs = coworkingSpace.attributes || coworkingSpace;
-                  const spacesData = attrs.spaces?.data || attrs.spaces || [];
-                  if (spacesData && spacesData.length > 0) {
-                    setNumericCoworkingId(coworkingSpace.id || coworkingSpace);
-                    setSpaces(spacesData);
-                    setLoading(false);
-                    return;
-                  }
-                }
-              }
-            }
-
-            // Try to find a space directly in the spaces collection
-            console.log(
-              "[DEBUG] Trying fallback: search /spaces by id or documentId",
-            );
-            const spaceQuery = isNaN(spaceId)
-              ? `/spaces?filters[documentId][$eq]=${spaceId}&populate=*`
-              : `/spaces?filters[id][$eq]=${spaceId}&populate=*`;
-            const spaceRes = await api.get(spaceQuery);
-            const spaceResults = spaceRes.data?.data || [];
-            if (spaceResults.length > 0) {
-              // If we found a space directly, set it as the only space in the view
-              setSpaces(spaceResults);
-              // Try to extract parent coworking space id if available
-              const parentCoworking =
-                spaceResults[0].attributes?.coworking_space?.data?.id ||
-                spaceResults[0].attributes?.coworking_space?.id ||
-                null;
-              if (parentCoworking) setNumericCoworkingId(parentCoworking);
-              setLoading(false);
-              return;
-            }
-            // If still nothing, try direct GET /spaces/{id} (useful when URL contains a space id)
-            if (!isNaN(spaceId)) {
-              try {
-                console.log(
-                  "[DEBUG] Trying fallback: GET /spaces/{id}",
-                  spaceId,
-                );
-                const directSpace = await api.get(
-                  `/spaces/${spaceId}?populate=*`,
-                );
-                const sp = directSpace.data?.data || directSpace.data || null;
-                if (sp) {
-                  // Wrap into array to reuse rendering
-                  setSpaces([sp]);
-                  const parentCoworking =
-                    sp.attributes?.coworking_space?.data?.id ||
-                    sp.attributes?.coworking_space?.id ||
-                    null;
-                  if (parentCoworking) setNumericCoworkingId(parentCoworking);
-                  setLoading(false);
-                  return;
-                }
-              } catch (dErr) {
-                console.warn(
-                  "[DEBUG] Direct space GET failed:",
-                  dErr?.message || dErr,
-                );
+              const cs = direct.data?.data || direct.data;
+              if (cs) {
+                const attrs = cs.attributes || cs;
+                const spacesData =
+                  attrs.spaces?.data ||
+                  (Array.isArray(attrs.spaces) ? attrs.spaces : []);
+                setNumericCoworkingId(cs.id);
+                setSpaces(spacesData);
+                setLoading(false);
+                return;
               }
             }
           } catch (fallbackErr) {
-            console.warn(
-              "[DEBUG] Fallback fetch error:",
-              fallbackErr?.message || fallbackErr,
-            );
+            console.warn("[DEBUG] Fallback fetch error:", fallbackErr.message);
           }
-
-          // If we reach here, nothing matched
           setNoSpaceFound(true);
         }
       } catch (err) {
         console.warn("[DEBUG] API Error:", err.message);
-        if (err.response) {
-          console.warn("[DEBUG] Error status:", err.response.status);
-          console.warn(
-            "[DEBUG] Error data:",
-            JSON.stringify(err.response.data, null, 2),
-          );
-        }
       } finally {
         setLoading(false);
       }
@@ -180,7 +140,9 @@ const ExplorationScene = () => {
   const spacesWithStatus = spaces.map((s) => {
     const spaceIdNumeric = s.id;
     const isBooked = reservations.some((r) => {
-      const resSpaceId = r.attributes?.space?.data?.id || r.space?.id;
+      const rAttrs = r.attributes || r;
+      const resSpaceId =
+        rAttrs.space?.data?.id || rAttrs.space?.id || rAttrs.space;
       return resSpaceId === spaceIdNumeric;
     });
 
@@ -202,8 +164,6 @@ const ExplorationScene = () => {
       </div>
     );
   }
-
-  // If noSpaceFound we still render the map but show a small non-blocking notice.
 
   return (
     <div className="w-full h-screen relative bg-[#050510] overflow-hidden font-inter">
@@ -263,7 +223,7 @@ const ExplorationScene = () => {
         </div>
       )}
 
-      {/* Booking Modal */}
+      {/* Booking Modal Logic */}
       {selectedObject &&
         (() => {
           const normalize = (v) => (v || "").toString().toLowerCase();
@@ -276,30 +236,43 @@ const ExplorationScene = () => {
           const elNorm = normalize(elName);
           const elDigits = extractDigits(elName);
 
+          // Find the space object that matches the clicked SVG element ID
           let matched = spacesWithStatus.find((s) => {
-            const mesh = normalize(
-              s.attributes?.mesh_name || s.mesh_name || "",
-            );
+            const sAttrs = s.attributes || s;
+            const mesh = normalize(sAttrs.mesh_name || "");
             const sid = s.id ? s.id.toString() : "";
-            const docId = s.attributes?.documentId
-              ? s.attributes.documentId.toString()
-              : "";
-            const name = normalize(s.attributes?.name || s.name || "");
+            const docId = sAttrs.documentId ? sAttrs.documentId.toString() : "";
+            const name = normalize(sAttrs.name || "");
 
+            // 1. Precise mesh_name match (highest priority)
             if (mesh && mesh === elNorm) return true;
-            if (mesh && mesh.includes(elNorm)) return true;
+
+            // 2. Element ID contains the numeric ID or documentId
             if (elDigits && (sid === elDigits || docId === elDigits))
               return true;
+
+            // 3. Name match
             if (name && name === elNorm) return true;
+
+            // 4. Fallback: ID exists in the element name string
+            if (sid && elNorm.includes(sid.toLowerCase())) return true;
+
             return false;
           });
 
-          // If still no match, fallback to first space
-          if (!matched && spacesWithStatus.length > 0)
+          // Final fallback to make it usable even if IDs aren't perfectly mapped yet
+          if (!matched && spacesWithStatus.length > 0) {
+            console.warn(
+              "[ExplorationScene] No precise match for element:",
+              elName,
+              ". Using fallback.",
+            );
             matched = spacesWithStatus[0];
+          }
 
           return matched ? (
             <BookingModal
+              key={`modal-${matched.id}`}
               space={matched}
               coworkingSpaceId={numericCoworkingId}
               initialDate={selectedDate}

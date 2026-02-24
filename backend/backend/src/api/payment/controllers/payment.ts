@@ -10,12 +10,12 @@ export default factories.createCoreController(
     async confirm(ctx) {
       const { id } = ctx.params;
 
-      // 1. Fetch the payment with its reservation
+      // 1. Fetch the payment with its booking
       const payment: any = await strapi.entityService.findOne(
         "api::payment.payment",
         id as any,
         {
-          populate: { reservation: true },
+          populate: { booking: true },
         },
       );
 
@@ -39,11 +39,11 @@ export default factories.createCoreController(
         },
       );
 
-      // 3. Update the associated reservation status to confirmed
-      if (payment.reservation) {
+      // 3. Update the associated booking status to confirmed
+      if (payment.booking) {
         await strapi.entityService.update(
-          "api::reservation.reservation",
-          payment.reservation.id,
+          "api::booking.booking",
+          payment.booking.id,
           {
             data: {
               status: "confirmed",
@@ -51,7 +51,7 @@ export default factories.createCoreController(
           },
         );
         strapi.log.info(
-          `✅ Reservation ${payment.reservation.id} confirmed via payment ${id}`,
+          `✅ Booking ${payment.booking.id} confirmed via payment ${id}`,
         );
       }
 

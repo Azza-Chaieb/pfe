@@ -511,6 +511,7 @@ export interface ApiBookingBooking extends Struct.CollectionTypeSchema {
       "manyToMany",
       "api::equipment.equipment"
     >;
+    extras: Schema.Attribute.JSON;
     frequency: Schema.Attribute.Enumeration<["daily", "weekly", "monthly"]>;
     is_recurring: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
@@ -519,6 +520,7 @@ export interface ApiBookingBooking extends Struct.CollectionTypeSchema {
       "api::booking.booking"
     > &
       Schema.Attribute.Private;
+    payment: Schema.Attribute.Relation<"oneToOne", "api::payment.payment">;
     payment_id: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     repeat_until: Schema.Attribute.Date;
@@ -764,6 +766,7 @@ export interface ApiPaymentPayment extends Struct.CollectionTypeSchema {
   };
   attributes: {
     amount: Schema.Attribute.Decimal;
+    booking: Schema.Attribute.Relation<"oneToOne", "api::booking.booking">;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
@@ -777,10 +780,6 @@ export interface ApiPaymentPayment extends Struct.CollectionTypeSchema {
     payment_id: Schema.Attribute.UID;
     proof_url: Schema.Attribute.Media<"images" | "files">;
     publishedAt: Schema.Attribute.DateTime;
-    reservation: Schema.Attribute.Relation<
-      "oneToOne",
-      "api::reservation.reservation"
-    >;
     status: Schema.Attribute.Enumeration<
       ["pending", "submitted", "confirmed", "rejected", "cancelled"]
     > &
@@ -828,46 +827,28 @@ export interface ApiProfessionnelProfessionnel
 export interface ApiReservationReservation extends Struct.CollectionTypeSchema {
   collectionName: "reservations";
   info: {
-    displayName: "Reservation";
+    displayName: "OBSOLETE-Reservation";
     pluralName: "reservations";
     singularName: "reservation";
   };
   options: {
-    draftAndPublish: false;
+    draftAndPublish: true;
   };
   attributes: {
-    coworking_space: Schema.Attribute.Relation<
-      "manyToOne",
-      "api::coworking-space.coworking-space"
-    >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
-    date: Schema.Attribute.Date;
-    extras: Schema.Attribute.JSON;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       "oneToMany",
       "api::reservation.reservation"
     > &
       Schema.Attribute.Private;
-    payment: Schema.Attribute.Relation<"oneToOne", "api::payment.payment">;
+    obsolete_field: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
-    reservation_id: Schema.Attribute.UID;
-    space: Schema.Attribute.Relation<"manyToOne", "api::space.space">;
-    status: Schema.Attribute.Enumeration<
-      ["pending", "confirmed", "cancelled"]
-    > &
-      Schema.Attribute.DefaultTo<"pending">;
-    time_slot: Schema.Attribute.String;
-    total_price: Schema.Attribute.Decimal;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
-    user: Schema.Attribute.Relation<
-      "manyToOne",
-      "plugin::users-permissions.user"
-    >;
   };
 }
 
@@ -1156,7 +1137,7 @@ export interface ApiTrainerProfileTrainerProfile
   extends Struct.CollectionTypeSchema {
   collectionName: "trainer_profiles";
   info: {
-    displayName: "1";
+    displayName: "Trainer Profile";
     pluralName: "trainer-profiles";
     singularName: "trainer-profile";
   };
@@ -1173,10 +1154,16 @@ export interface ApiTrainerProfileTrainerProfile
       "api::trainer-profile.trainer-profile"
     > &
       Schema.Attribute.Private;
+    phone: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
+    specialty: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
+    user: Schema.Attribute.Relation<
+      "oneToOne",
+      "plugin::users-permissions.user"
+    >;
   };
 }
 
@@ -1716,10 +1703,6 @@ export interface PluginUsersPermissionsUser
       "api::etudiant-profil.etudiant-profil"
     >;
     fcmToken: Schema.Attribute.String;
-    formateur_profil: Schema.Attribute.Relation<
-      "oneToOne",
-      "api::formateur-profil.formateur-profil"
-    >;
     fullname: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<

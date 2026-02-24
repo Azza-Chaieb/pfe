@@ -16,10 +16,15 @@ const InteractiveSvgMap = ({
   const [hoveredSpace, setHoveredSpace] = useState(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
+  const [svgLoaded, setSvgLoaded] = useState(false);
+
+  // Effect 1: Fetch and inject SVG content
   useEffect(() => {
     if (!svgUrl) return;
 
     setLoading(true);
+    setSvgLoaded(false);
+
     fetch(svgUrl)
       .then((res) => res.text())
       .then((svgText) => {
@@ -52,24 +57,16 @@ const InteractiveSvgMap = ({
                 <feMerge> 
                   <feMergeNode/>
                   <feMergeNode in="SourceGraphic"/> 
-                </feMerge>
+                  </feMerge>
               </filter>
             `;
 
-            const statusColors = {
-              AVAILABLE: "#10b981", // Emerald Green (Matched to screenshot)
-              BOOKED: "#ef4444", // Red
-              PARTIAL: "#f59e0b",
-              SELECTED: "#3b82f6", // Blue
-            };
-
-            // PREMIUM: Style Layers
+            // Initial Style Layers
             const allPaths = svgElement.querySelectorAll("path, rect, use");
             allPaths.forEach((path) => {
               const id = path.getAttribute("id") || "";
               const parentId = path.parentElement?.getAttribute("id") || "";
 
-              // Style furniture/decor
               if (
                 !id.startsWith("bureau_") &&
                 !parentId.startsWith("bureau_")
@@ -79,118 +76,125 @@ const InteractiveSvgMap = ({
                 path.style.strokeWidth = "0.5px";
                 path.setAttribute("filter", "url(#furnitureShadow)");
               } else if (path.getAttribute("d")?.length > 500) {
-                // Background layers
                 path.style.fill = "#f1f5f9";
                 path.style.stroke = "#cbd5e1";
               }
             });
 
-            const interactiveElements = svgElement.querySelectorAll(
-              "path[id], rect[id], circle[id], use[id]",
-            );
-
-            const normalize = (v) => (v || "").toString().toLowerCase();
-            const extractDigits = (v) => {
-              const m = (v || "").match(/\d+/);
-              return m ? m[0] : null;
-            };
-
-            const findSpaceByElementId = (elementId) => {
-              if (!elementId) return null;
-              const elNorm = normalize(elementId);
-              const elDigits = extractDigits(elementId);
-
-              return spaces?.find((s) => {
-                const mesh = normalize(
-                  s.attributes?.mesh_name || s.mesh_name || "",
-                );
-                const sid = s.id ? s.id.toString() : "";
-                const docId = s.attributes?.documentId
-                  ? s.attributes.documentId.toString()
-                  : "";
-
-                if (mesh && mesh === elNorm) return true;
-                if (mesh && mesh.includes(elNorm)) return true;
-                if (elDigits && (sid === elDigits || docId === elDigits))
-                  return true;
-                const name = normalize(s.attributes?.name || s.name || "");
-                if (name && name === elNorm) return true;
-                return false;
-              });
-            };
-
-            interactiveElements.forEach((el) => {
-              const elementId = el.getAttribute("id");
-              if (!elementId || elementId.length < 3) return;
-
-              const spaceData = findSpaceByElementId(elementId);
-
-              el.style.pointerEvents = "all";
-              el.style.transition = "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
-
-              const isSelected = selectedSpaceId === elementId;
-              const status =
-                spaceData?.attributes?.status ||
-                spaceData?.status ||
-                "AVAILABLE";
-
-              if (isSelected) {
-                el.style.fill = statusColors.SELECTED;
-                el.style.fillOpacity = "0.8";
-                el.style.stroke = "#2563eb";
-                el.style.strokeWidth = "4px";
-                el.setAttribute("filter", "none");
-              } else if (spaceData) {
-                el.style.fill = statusColors[status];
-                el.style.fillOpacity = "0.5";
-                el.style.stroke = statusColors[status];
-                el.style.strokeWidth = "2px";
-                el.setAttribute("filter", "none");
-              } else {
-                el.style.fill = "#ffffff";
-                el.style.fillOpacity = "0.3";
-                el.style.stroke = "rgba(0,0,0,0.1)";
-                el.style.strokeWidth = "1px";
-                el.setAttribute("filter", "url(#furnitureShadow)");
-              }
-
-              el.style.cursor = "pointer";
-
-              el.onclick = (e) => {
-                e.stopPropagation();
-                onSelectSpace(elementId);
-              };
-
-              el.onmouseenter = (e) => {
-                setHoveredSpace({
-                  id: elementId,
-                  name:
-                    spaceData?.attributes?.name || spaceData?.name || elementId,
-                  status: spaceData ? status : "UNKNOWN",
-                });
-                setMousePos({ x: e.clientX, y: e.clientY });
-                el.style.filter =
-                  "brightness(1.1) drop-shadow(0 0 8px rgba(59, 130, 246, 0.4))";
-              };
-
-              el.onmousemove = (e) => {
-                setMousePos({ x: e.clientX, y: e.clientY });
-              };
-
-              el.onmouseleave = () => {
-                setHoveredSpace(null);
-                el.style.filter = "none";
-              };
-            });
+            setSvgLoaded(true);
           }
           setLoading(false);
         }
       })
       .catch((err) => {
+        console.error("SVG Loading Error:", err);
         setError("Erreur chargement plan.");
         setLoading(false);
       });
-  }, [svgUrl, spaces, selectedSpaceId]);
+  }, [svgUrl]);
+
+  // Effect 2: Update interactions and colors when spaces or selection change
+  useEffect(() => {
+    if (!svgLoaded || !containerRef.current) return;
+
+    const svgElement = containerRef.current.querySelector("svg");
+    if (!svgElement) return;
+
+    const statusColors = {
+      AVAILABLE: "#10b981", // Emerald Green
+      BOOKED: "#ef4444", // Red
+      PARTIAL: "#f59e0b",
+      SELECTED: "#3b82f6", // Blue
+    };
+
+    const interactiveElements = svgElement.querySelectorAll(
+      "path[id], rect[id], circle[id], use[id]",
+    );
+
+    const normalize = (v) => (v || "").toString().toLowerCase();
+    const extractDigits = (v) => {
+      const m = (v || "").match(/\d+/);
+      return m ? m[0] : null;
+    };
+
+    const findSpaceByElementId = (elementId) => {
+      if (!elementId) return null;
+      const elNorm = normalize(elementId);
+      const elDigits = extractDigits(elementId);
+
+      return spaces?.find((s) => {
+        const sAttrs = s.attributes || s;
+        const mesh = normalize(sAttrs.mesh_name || "");
+        const sid = s.id ? s.id.toString() : "";
+        const docId = sAttrs.documentId ? sAttrs.documentId.toString() : "";
+
+        if (mesh && mesh === elNorm) return true;
+        if (mesh && mesh.includes(elNorm)) return true;
+        if (elDigits && (sid === elDigits || docId === elDigits)) return true;
+
+        const name = normalize(sAttrs.name || "");
+        if (name && name === elNorm) return true;
+
+        return false;
+      });
+    };
+
+    interactiveElements.forEach((el) => {
+      const elementId = el.getAttribute("id");
+      if (!elementId || elementId.length < 3) return;
+
+      const spaceData = findSpaceByElementId(elementId);
+      const isSelected = selectedSpaceId === elementId;
+      const status =
+        spaceData?.attributes?.status || spaceData?.status || "AVAILABLE";
+
+      el.style.pointerEvents = "all";
+      el.style.transition = "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
+      el.style.cursor = "pointer";
+
+      // Apply Dynamic Styling
+      if (isSelected) {
+        el.style.fill = statusColors.SELECTED;
+        el.style.fillOpacity = "0.8";
+        el.style.stroke = "#2563eb";
+        el.style.strokeWidth = "4px";
+        el.setAttribute("filter", "none");
+      } else if (spaceData) {
+        el.style.fill = statusColors[status];
+        el.style.fillOpacity = "0.5";
+        el.style.stroke = statusColors[status];
+        el.style.strokeWidth = "2px";
+        el.setAttribute("filter", "none");
+      }
+
+      // Event Handlers
+      el.onclick = (e) => {
+        e.stopPropagation();
+        onSelectSpace(elementId);
+      };
+
+      el.onmouseenter = (e) => {
+        setHoveredSpace({
+          id: elementId,
+          name: spaceData?.attributes?.name || spaceData?.name || elementId,
+          status: spaceData ? status : "UNKNOWN",
+        });
+        setMousePos({ x: e.clientX, y: e.clientY });
+        el.style.filter =
+          "brightness(1.1) drop-shadow(0 0 8px rgba(59, 130, 246, 0.4))";
+      };
+
+      el.onmousemove = (e) => {
+        setMousePos({ x: e.clientX, y: e.clientY });
+      };
+
+      el.onmouseleave = () => {
+        setHoveredSpace(null);
+        el.style.filter =
+          isSelected || spaceData ? "none" : "url(#furnitureShadow)";
+      };
+    });
+  }, [svgLoaded, spaces, selectedSpaceId, onSelectSpace]);
 
   return (
     <div className="relative w-full h-full bg-slate-50 rounded-[2.5rem] overflow-hidden border border-slate-200 shadow-inner">

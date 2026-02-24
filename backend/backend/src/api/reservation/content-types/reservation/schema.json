@@ -4,53 +4,14 @@
   "info": {
     "singularName": "reservation",
     "pluralName": "reservations",
-    "displayName": "Reservation"
+    "displayName": "OBSOLETE-Reservation"
   },
   "options": {
-    "draftAndPublish": false
+    "draftAndPublish": true
   },
-  "pluginOptions": {},
   "attributes": {
-    "reservation_id": {
-      "type": "uid"
-    },
-    "date": {
-      "type": "date"
-    },
-    "time_slot": {
+    "obsolete_field": {
       "type": "string"
-    },
-    "status": {
-      "type": "enumeration",
-      "enum": ["pending", "confirmed", "cancelled"],
-      "default": "pending"
-    },
-    "user": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "plugin::users-permissions.user"
-    },
-    "coworking_space": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::coworking-space.coworking-space"
-    },
-    "space": {
-      "type": "relation",
-      "relation": "manyToOne",
-      "target": "api::space.space"
-    },
-    "extras": {
-      "type": "json"
-    },
-    "total_price": {
-      "type": "decimal"
-    },
-    "payment": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::payment.payment",
-      "inversedBy": "reservation"
     }
   }
 }

@@ -76,7 +76,8 @@ const ReservationManagement = () => {
         0,
       ),
     today: reservations.filter((r) => {
-      const date = new Date(r.attributes?.date || r.date);
+      const attrs = r.attributes || r;
+      const date = new Date(attrs.start_time || attrs.start_time);
       const today = new Date();
       return date.toDateString() === today.toDateString();
     }).length,
@@ -103,7 +104,7 @@ const ReservationManagement = () => {
     // Date Range Filter
     let matchesDate = true;
     if (dateRange.start || dateRange.end) {
-      const resDate = new Date(attrs.date);
+      const resDate = new Date(attrs.start_time);
       if (dateRange.start && resDate < new Date(dateRange.start))
         matchesDate = false;
       if (dateRange.end && resDate > new Date(dateRange.end))
@@ -368,7 +369,7 @@ const ReservationManagement = () => {
                         <td className="px-6 py-8">
                           <div className="flex flex-col">
                             <p className="text-sm font-black text-slate-800">
-                              {new Date(attrs.date).toLocaleDateString(
+                              {new Date(attrs.start_time).toLocaleDateString(
                                 "fr-FR",
                                 {
                                   day: "numeric",
@@ -378,7 +379,15 @@ const ReservationManagement = () => {
                               )}
                             </p>
                             <span className="text-[10px] font-black bg-blue-50 text-blue-600 px-2 py-0.5 rounded-md self-start mt-1">
-                              {attrs.time_slot}
+                              {new Date(attrs.start_time).toLocaleTimeString(
+                                "fr-FR",
+                                { hour: "2-digit", minute: "2-digit" },
+                              )}{" "}
+                              -{" "}
+                              {new Date(attrs.end_time).toLocaleTimeString(
+                                "fr-FR",
+                                { hour: "2-digit", minute: "2-digit" },
+                              )}
                             </span>
                           </div>
                         </td>

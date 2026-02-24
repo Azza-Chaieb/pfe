@@ -4,11 +4,25 @@
   "info": {
     "singularName": "trainer-profile",
     "pluralName": "trainer-profiles",
-    "displayName": "1"
+    "displayName": "Trainer Profile"
   },
   "options": {
     "draftAndPublish": true
   },
   "pluginOptions": {},
-  "attributes": {}
+  "attributes": {
+    "specialty": {
+      "type": "string",
+      "required": true
+    },
+    "phone": {
+      "type": "string"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "trainer_profile"
+    }
+  }
 }

@@ -1,72 +1,72 @@
 {
-    "kind": "collectionType",
-    "collectionName": "bookings",
-    "info": {
-        "singularName": "booking",
-        "pluralName": "bookings",
-        "displayName": "Booking",
-        "description": "Comprehensive booking system for spaces and equipments"
+  "kind": "collectionType",
+  "collectionName": "bookings",
+  "info": {
+    "singularName": "booking",
+    "pluralName": "bookings",
+    "displayName": "Booking",
+    "description": "Comprehensive booking system for spaces and equipments"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "start_time": {
+      "type": "datetime",
+      "required": true
     },
-    "options": {
-        "draftAndPublish": true
+    "end_time": {
+      "type": "datetime",
+      "required": true
     },
-    "pluginOptions": {},
-    "attributes": {
-        "start_time": {
-            "type": "datetime",
-            "required": true
-        },
-        "end_time": {
-            "type": "datetime",
-            "required": true
-        },
-        "status": {
-            "type": "enumeration",
-            "enum": [
-                "pending",
-                "confirmed",
-                "cancelled",
-                "completed"
-            ],
-            "default": "pending",
-            "required": true
-        },
-        "total_price": {
-            "type": "decimal"
-        },
-        "payment_id": {
-            "type": "string"
-        },
-        "is_recurring": {
-            "type": "boolean",
-            "default": false
-        },
-        "frequency": {
-            "type": "enumeration",
-            "enum": [
-                "daily",
-                "weekly",
-                "monthly"
-            ]
-        },
-        "repeat_until": {
-            "type": "date"
-        },
-        "space": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "api::space.space"
-        },
-        "user": {
-            "type": "relation",
-            "relation": "manyToOne",
-            "target": "plugin::users-permissions.user"
-        },
-        "equipments": {
-            "type": "relation",
-            "relation": "manyToMany",
-            "target": "api::equipment.equipment",
-            "inversedBy": "bookings"
-        }
+    "status": {
+      "type": "enumeration",
+      "enum": ["pending", "confirmed", "cancelled", "completed"],
+      "default": "pending",
+      "required": true
+    },
+    "total_price": {
+      "type": "decimal"
+    },
+    "payment_id": {
+      "type": "string"
+    },
+    "is_recurring": {
+      "type": "boolean",
+      "default": false
+    },
+    "frequency": {
+      "type": "enumeration",
+      "enum": ["daily", "weekly", "monthly"]
+    },
+    "repeat_until": {
+      "type": "date"
+    },
+    "space": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::space.space"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "equipments": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::equipment.equipment",
+      "inversedBy": "bookings"
+    },
+    "payment": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::payment.payment",
+      "inversedBy": "booking"
+    },
+    "extras": {
+      "type": "json"
     }
+  }
 }

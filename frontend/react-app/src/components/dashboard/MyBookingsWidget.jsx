@@ -36,7 +36,7 @@ const MyBookingsWidget = ({ bookings = [], onSeeAll, fullPage = false }) => {
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-[10px] px-2.5 py-1 bg-white text-blue-700 rounded-full font-black uppercase border border-blue-50 shadow-sm">
-                  {booking.time}
+                  {booking.time || `${booking.startTime} - ${booking.endTime}`}
                 </span>
                 <button
                   onClick={() =>

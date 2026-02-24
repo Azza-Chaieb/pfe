@@ -3,10 +3,10 @@ import api from "./apiClient";
 export const getDashboardStats = async () => {
   // Fetches counts for various collections to display as stats
   try {
-    const [users, reservations, payments, courses] = await Promise.all([
+    const [users, bookings, payments, courses] = await Promise.all([
       api.get("/users/count").catch(() => ({ data: 0 })),
       api
-        .get("/reservations?pagination[pageSize]=1")
+        .get("/bookings?pagination[pageSize]=1")
         .catch(() => ({ data: { meta: { pagination: { total: 0 } } } })),
       api
         .get("/payments?pagination[pageSize]=1")
@@ -18,7 +18,7 @@ export const getDashboardStats = async () => {
 
     return {
       users: users.data?.length || users.data || 0,
-      reservations: reservations.data?.meta?.pagination?.total || 0,
+      reservations: bookings.data?.meta?.pagination?.total || 0,
       payments: payments.data?.meta?.pagination?.total || 0,
       courses: courses.data?.meta?.pagination?.total || 0,
     };
@@ -31,7 +31,7 @@ export const getDashboardStats = async () => {
 export const getRecentActivity = async () => {
   try {
     const response = await api.get(
-      "/reservations?sort=createdAt:desc&pagination[limit]=5&populate=*",
+      "/bookings?sort=createdAt:desc&pagination[limit]=5&populate=*",
     );
     return response.data;
   } catch (error) {
@@ -43,7 +43,7 @@ export const getRecentActivity = async () => {
 export const getUserReservations = async (userId) => {
   try {
     const response = await api.get(
-      `/reservations?filters[user][id][$eq]=${userId}&populate=*`,
+      `/bookings?filters[user][id][$eq]=${userId}&populate=*`,
     );
     return response.data;
   } catch (error) {
@@ -57,7 +57,7 @@ export const getProfessionalBookings = async (userId) => {
     // Assuming bookings are reservations linked to the user
     // We populate coworking_space to show details
     const response = await api.get(
-      `/reservations?filters[user][id][$eq]=${userId}&populate=coworking_space&sort=date:desc`,
+      `/bookings?filters[user][id][$eq]=${userId}&populate=space.coworking_space&sort=start_time:desc`,
     );
     return response.data;
   } catch (error) {
@@ -69,7 +69,7 @@ export const getProfessionalBookings = async (userId) => {
 export const getAllReservations = async () => {
   try {
     const response = await api.get(
-      "/reservations?populate[0]=user&populate[1]=space&populate[2]=coworking_space&populate[3]=payment&populate[4]=payment.proof_url&sort[0]=date:desc",
+      "/bookings?populate[0]=user&populate[1]=space&populate[2]=space.coworking_space&populate[3]=payment&populate[4]=payment.proof_url&sort[0]=start_time:desc",
     );
     return response.data;
   } catch (error) {
@@ -80,7 +80,7 @@ export const getAllReservations = async () => {
 
 export const createReservation = async (data) => {
   try {
-    const response = await api.post("/reservations", {
+    const response = await api.post("/bookings", {
       data: {
         ...data,
         status: "pending", // Default status
@@ -102,7 +102,7 @@ export const createReservation = async (data) => {
 
 export const updateReservation = async (id, data) => {
   try {
-    const response = await api.put(`/reservations/${id}`, {
+    const response = await api.put(`/bookings/${id}`, {
       data: data,
     });
     return response.data;

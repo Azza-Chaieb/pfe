@@ -84,12 +84,6 @@
       "target": "api::etudiant-profil.etudiant-profil",
       "mappedBy": "user"
     },
-    "formateur_profil": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::formateur-profil.formateur-profil",
-      "mappedBy": "user"
-    },
     "association_profil": {
       "type": "relation",
       "relation": "oneToOne",
