@@ -15,7 +15,7 @@ const Sidebar = ({ role, activeTab, onTabChange }) => {
         id: "dashboard",
         label: "Tableau de Bord",
         icon: "🏠",
-        path: `/${role}/dashboard`,
+        path: role === "student" ? "/dashboard" : `/${role}/dashboard`,
       },
       { id: "profile", label: "Mon Profil", icon: "👤", path: "/profile" },
     ];
@@ -172,17 +172,6 @@ const Header = ({ user }) => {
       </div>
 
       <div className="flex items-center gap-6">
-        {/* Utility buttons could go here */}
-        <button
-          onClick={() => navigate("/explore/5")}
-          className="px-6 py-2.5 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all shadow-xl shadow-slate-200 flex items-center gap-2 group"
-        >
-          Explorer en 3D{" "}
-          <span className="group-hover:translate-x-1 transition-transform">
-            →
-          </span>
-        </button>
-
         <div
           onClick={() => navigate("/profile")}
           className="w-12 h-12 bg-white rounded-2xl shadow-lg border-2 border-white overflow-hidden cursor-pointer hover:scale-110 transition-transform ring-4 ring-blue-50"

@@ -21,10 +21,8 @@ const BookingModal = ({ space, coworkingSpaceId, initialDate, onClose }) => {
   // ... rest of state ...
   const [checkingAvailability, setCheckingAvailability] = useState(false);
   const [equipmentQuantities, setEquipmentQuantities] = useState({});
+  const [serviceQuantities, setServiceQuantities] = useState({});
   const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
     participants: 1,
     date: initialDate || new Date().toISOString().split("T")[0],
     startTime: "09:00",
@@ -61,6 +59,7 @@ const BookingModal = ({ space, coworkingSpaceId, initialDate, onClose }) => {
   if (!space) return null;
   const attrs = space.attributes || space;
   const equipmentsList = attrs.equipments?.data || attrs.equipments || [];
+  const servicesList = attrs.services?.data || attrs.services || [];
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -79,6 +78,18 @@ const BookingModal = ({ space, coworkingSpaceId, initialDate, onClose }) => {
         return rest;
       }
       return { ...prev, [eqId]: next };
+    });
+  };
+
+  const updateServiceQuantity = (srvId, delta) => {
+    setServiceQuantities((prev) => {
+      const current = prev[srvId] || 0;
+      const next = Math.max(0, current + delta);
+      if (next === 0) {
+        const { [srvId]: _, ...rest } = prev;
+        return rest;
+      }
+      return { ...prev, [srvId]: next };
     });
   };
 
@@ -115,12 +126,11 @@ const BookingModal = ({ space, coworkingSpaceId, initialDate, onClose }) => {
         status: "pending",
         total_price: parseFloat(calculateTotalPrice()),
         equipments: Object.keys(equipmentQuantities).map((id) => parseInt(id)),
+        services: Object.keys(serviceQuantities).map((id) => parseInt(id)),
         extras: {
           equipmentQuantities: equipmentQuantities,
+          serviceQuantities: serviceQuantities,
           contact: {
-            fullName: formData.fullName,
-            email: formData.email,
-            phone: formData.phone,
             participants: formData.participants,
           },
         },
@@ -246,6 +256,19 @@ const BookingModal = ({ space, coworkingSpaceId, initialDate, onClose }) => {
       }
     });
 
+    // Service Price
+    servicesList.forEach((srv) => {
+      const srvAttrs = srv.attributes || srv;
+      const qty = serviceQuantities[srv.id] || 0;
+      const pSrv = parseFloat(srvAttrs.price || 0);
+      if (qty > 0 && pSrv > 0) {
+        const pt = srvAttrs.price_type || "one-time";
+        if (pt === "hourly") total += durationHours * pSrv * qty;
+        else if (pt === "daily") total += durationDays * pSrv * qty;
+        else total += pSrv * qty;
+      }
+    });
+
     console.log(
       `[Booking] Calculated Price: ${total}, Hours: ${durationHours}`,
     );
@@ -340,7 +363,8 @@ const BookingModal = ({ space, coworkingSpaceId, initialDate, onClose }) => {
                 👤 MAX {attrs.capacity || 20}
               </span>
               <span className="flex items-center gap-1.5 text-emerald-600">
-                💰 {attrs.pricing_hourly}DT/H · {attrs.pricing_daily}DT/JOUR
+                💰 {attrs.pricing_hourly || 0}DT/H · {attrs.pricing_daily || 0}
+                DT/JOUR
               </span>
             </div>
           </header>
@@ -410,38 +434,69 @@ const BookingModal = ({ space, coworkingSpaceId, initialDate, onClose }) => {
             </div>
           </section>
 
+          <section className="mb-10">
+            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">
+              Services
+            </h4>
+            <div className="grid grid-cols-1 gap-2">
+              {servicesList.length > 0 ? (
+                servicesList.map((srv) => {
+                  const id = srv.id;
+                  const qty = serviceQuantities[id] || 0;
+                  return (
+                    <div
+                      key={id}
+                      className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${qty > 0 ? "bg-blue-50 border-blue-200" : "bg-white border-slate-100"}`}
+                    >
+                      <div className="flex flex-col">
+                        <span className="text-xs font-bold text-slate-700">
+                          {srv.attributes?.name || srv.name}
+                        </span>
+                        <span className="text-[10px] text-blue-600 font-black uppercase">
+                          {srv.attributes?.price || srv.price}DT
+                          {srv.attributes?.price_type === "hourly"
+                            ? "/H"
+                            : srv.attributes?.price_type === "daily"
+                              ? "/JOUR"
+                              : ""}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <button
+                          onClick={() => updateServiceQuantity(id, -1)}
+                          className="w-8 h-8 rounded-lg bg-white border border-slate-200 font-black"
+                        >
+                          -
+                        </button>
+                        <span className="text-sm font-black text-blue-600">
+                          {qty}
+                        </span>
+                        <button
+                          onClick={() => updateServiceQuantity(id, 1)}
+                          className="w-8 h-8 rounded-lg bg-white border border-slate-200 font-black"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <span className="text-xs italic text-slate-400">
+                  Aucun service disponible.
+                </span>
+              )}
+            </div>
+          </section>
+
           <section className="space-y-4">
             <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-              Coordonnées
+              Nombre de participants
             </h4>
-            <div className="grid grid-cols-2 gap-4">
-              <input
-                type="text"
-                placeholder="Nom Complet"
-                name="fullName"
-                value={formData.fullName}
-                onChange={handleInputChange}
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-bold"
-              />
-              <input
-                type="email"
-                placeholder="Email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-bold"
-              />
-              <input
-                type="tel"
-                placeholder="Téléphone"
-                name="phone"
-                value={formData.phone}
-                onChange={handleInputChange}
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-bold"
-              />
+            <div className="grid grid-cols-1 gap-4">
               <input
                 type="number"
-                placeholder="Personnes"
+                placeholder="Nombre de personnes"
                 name="participants"
                 value={formData.participants}
                 onChange={handleInputChange}

@@ -36,29 +36,6 @@ export default function Scene() {
 
   return (
     <>
-      <div
-        style={{ position: "absolute", zIndex: 1, color: "#fff", padding: 8 }}
-      >
-        <h3>Tests: {items.length}</h3>
-        {items.map((item) => (
-          <div
-            key={item.id}
-            style={{
-              marginTop: 10,
-              padding: 10,
-              backgroundColor: "#333",
-              borderRadius: 5,
-            }}
-          >
-            <p>
-              <strong>Name:</strong> {item.name}
-            </p>
-            <p>
-              <strong>Password:</strong> {item.password}
-            </p>
-          </div>
-        ))}
-      </div>
       <Canvas
         camera={{ position: [3, 3, 3], fov: 60 }}
         shadows

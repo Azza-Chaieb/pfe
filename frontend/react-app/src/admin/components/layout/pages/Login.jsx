@@ -1,7 +1,7 @@
 // admin/pages/Login.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login } from "../../../../api";
+import { login } from "../../../../services/authService";
 
 const Login = () => {
   const [identifier, setIdentifier] = useState("");

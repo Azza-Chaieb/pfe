@@ -37,6 +37,12 @@
       "relation": "manyToMany",
       "target": "api::space.space",
       "mappedBy": "services"
+    },
+    "bookings": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::booking.booking",
+      "mappedBy": "services"
     }
   }
 }

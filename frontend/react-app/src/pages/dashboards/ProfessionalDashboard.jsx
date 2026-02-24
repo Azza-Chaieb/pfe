@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import DashboardLayout from "../components/layout/DashboardLayout";
-import DashboardStatCard from "../components/layout/DashboardStatCard";
-import { getProfessionalBookings } from "../api";
+import DashboardLayout from "../../components/layout/DashboardLayout";
+import DashboardStatCard from "../../components/layout/DashboardStatCard";
+import { getProfessionalBookings } from "../../services/bookingService";
 import {
   getMySubscription,
   cancelSubscription as cancelSub,
-} from "../services/subscriptionService";
-import BookingCalendar from "../components/calendar/BookingCalendar";
+} from "../../services/subscriptionService";
+import BookingCalendar from "../../components/calendar/BookingCalendar";
 
 const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
   const [user, setUser] = useState(null);
   const [bookings, setBookings] = useState([]);
   const [subscription, setSubscription] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [bookingView, setBookingView] = useState("list"); // 'list' or 'calendar'
+  const [bookingView, setBookingView] = useState("list");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -60,7 +60,6 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
 
   const renderDashboard = () => (
     <>
-      {/* Welcome Section */}
       <div className="mb-8">
         <h1 className="text-3xl font-black text-slate-800 tracking-tight mb-1">
           Espace <span className="text-blue-600">Professionnel</span> 👋
@@ -70,7 +69,6 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
         </p>
       </div>
 
-      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
         <DashboardStatCard
           title="Réservations"
@@ -112,7 +110,6 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
                 Gérer tout →
               </button>
             </div>
-
             <div className="overflow-x-auto text-xs">
               <table className="w-full text-left">
                 <thead>
@@ -172,7 +169,6 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
             </div>
           </div>
         </div>
-
         <div className="lg:col-span-1 space-y-8">
           <div className="bg-white/40 backdrop-blur-md p-6 rounded-[28px] border border-white/60 shadow-xl shadow-slate-200/50 relative overflow-hidden group">
             <h3 className="text-lg font-black text-slate-800 tracking-tight mb-4">
@@ -238,7 +234,6 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
           </button>
         </div>
       </div>
-
       {bookingView === "calendar" ? (
         <BookingCalendar userId={user?.id} />
       ) : (
@@ -272,7 +267,6 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
                     {};
                   const extras = data.extras || {};
                   const extrasCount = Object.keys(extras).length;
-
                   return (
                     <tr
                       key={booking.id}
@@ -354,7 +348,6 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
           </button>
         </div>
 
-        {/* Current Plan Card */}
         {isActive && planAttrs ? (
           <div
             className={`rounded-[2.5rem] bg-gradient-to-br ${gradient} p-8 text-white shadow-2xl`}
@@ -385,7 +378,7 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
               </button>
               <button
                 onClick={handleCancelSubscription}
-                className="px-5 py-3 bg-red-500/20 border border-red-300/30 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-red-500/30 transition-all"
+                className="px-5 py-3 bg-red-500/20 border border-red-300/30 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-red-500/30 transition-all text-white"
               >
                 Annuler
               </button>
@@ -408,41 +401,6 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
             </button>
           </div>
         )}
-
-        {/* Quick Info */}
-        <div className="grid grid-cols-3 gap-4">
-          {[
-            {
-              label: "Cycle",
-              value:
-                subAttrs?.billing_cycle === "yearly" ? "Annuel" : "Mensuel",
-              icon: "🔄",
-            },
-            {
-              label: "Statut",
-              value: subAttrs?.status || "Inactif",
-              icon: "📊",
-            },
-            {
-              label: "Crédits utilisés",
-              value: `${(planAttrs?.max_credits || 0) - credits} / ${planAttrs?.max_credits || 0}`,
-              icon: "🎯",
-            },
-          ].map((item, i) => (
-            <div
-              key={i}
-              className="bg-white/40 backdrop-blur border border-white/60 rounded-2xl p-5 text-center"
-            >
-              <p className="text-2xl mb-2">{item.icon}</p>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                {item.label}
-              </p>
-              <p className="text-sm font-black text-slate-700 mt-1 capitalize">
-                {item.value}
-              </p>
-            </div>
-          ))}
-        </div>
       </div>
     );
   };

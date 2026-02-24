@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Scene from "../components/Scene";
-import Navbar from "../components/layout/Navbar";
+import Scene from "../../components/Scene";
+import Navbar from "../../components/layout/Navbar";
 import "./Home.css";
 
 const Home = () => {

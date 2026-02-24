@@ -5,11 +5,13 @@ import {
   createEquipment,
   updateEquipment,
   deleteEquipment,
+} from "../../../../services/equipmentService";
+import {
   getServicesList,
   createService,
   updateService,
   deleteService,
-} from "../../../../api";
+} from "../../../../services/serviceService";
 import SearchBar from "../../common/SearchBar";
 
 /**

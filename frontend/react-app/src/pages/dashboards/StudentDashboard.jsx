@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import DashboardLayout from "../components/layout/DashboardLayout";
-import DashboardStatCard from "../components/layout/DashboardStatCard";
-import EnrolledCoursesWidget from "../components/dashboard/EnrolledCoursesWidget";
-import UpcomingSessionsWidget from "../components/dashboard/UpcomingSessionsWidget";
-import MyBookingsWidget from "../components/dashboard/MyBookingsWidget";
+import DashboardLayout from "../../components/layout/DashboardLayout";
+import DashboardStatCard from "../../components/layout/DashboardStatCard";
+import EnrolledCoursesWidget from "../../components/dashboard/EnrolledCoursesWidget";
+import UpcomingSessionsWidget from "../../components/dashboard/UpcomingSessionsWidget";
+import MyBookingsWidget from "../../components/dashboard/MyBookingsWidget";
+import { getUserReservations } from "../../services/bookingService";
 import {
-  getUserReservations,
   getEnrolledCourses,
   getUpcomingSessions,
-} from "../api";
-import BookingCalendar from "../components/calendar/BookingCalendar";
+} from "../../services/courseService";
+import BookingCalendar from "../../components/calendar/BookingCalendar";
 
 const StudentDashboard = ({ activeTab = "dashboard" }) => {
   const [user, setUser] = useState(null);
@@ -18,7 +18,7 @@ const StudentDashboard = ({ activeTab = "dashboard" }) => {
   const [sessions, setSessions] = useState([]);
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [bookingView, setBookingView] = useState("list"); // 'list' or 'calendar'
+  const [bookingView, setBookingView] = useState("list");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -112,7 +112,7 @@ const StudentDashboard = ({ activeTab = "dashboard" }) => {
           </span>{" "}
           !
         </h1>
-        <p className="text-xs text-slate-500 font-medium">
+        <p className="text-xs text-slate-500 font-medium whitespace-nowrap">
           Voici un aperçu de vos activités d'apprentissage et de vos
           réservations.
         </p>
@@ -160,7 +160,6 @@ const StudentDashboard = ({ activeTab = "dashboard" }) => {
             />
           </div>
         </div>
-
         <div className="lg:col-span-1 space-y-10">
           <div className="bg-white/40 backdrop-blur-md p-2 rounded-[32px] border border-white/60 shadow-xl shadow-slate-200/50">
             <UpcomingSessionsWidget sessions={sessions} />
@@ -193,6 +192,7 @@ const StudentDashboard = ({ activeTab = "dashboard" }) => {
       </div>
     </div>
   );
+
   const renderBookings = () => (
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-6">

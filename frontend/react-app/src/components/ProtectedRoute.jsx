@@ -1,41 +1,87 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
+import api from "../services/apiClient";
+
+/**
+ * Validates the JWT token against the backend and returns the verified user.
+ * Returns null if the token is absent, expired, or invalid.
+ */
+const useAuthVerification = () => {
+  const [status, setStatus] = useState("loading"); // "loading" | "valid" | "invalid"
+  const [verifiedUser, setVerifiedUser] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("jwt");
+    if (!token) {
+      setStatus("invalid");
+      return;
+    }
+
+    // Verify token against the backend — prevents localStorage tampering
+    api
+      .get("/users/me?populate=role")
+      .then((res) => {
+        setVerifiedUser(res.data);
+        setStatus("valid");
+      })
+      .catch(() => {
+        // Token is expired or invalid — clear stale data
+        localStorage.removeItem("jwt");
+        localStorage.removeItem("user");
+        setStatus("invalid");
+      });
+  }, []);
+
+  return { status, verifiedUser };
+};
 
 export const AdminRoute = ({ children }) => {
-  const token = localStorage.getItem("jwt");
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
-  let userType = (user.user_type || "").toLowerCase();
+  const { status, verifiedUser } = useAuthVerification();
 
-  // Fallback for primary admin
-  if (user.username?.toLowerCase() === "admin") userType = "admin";
+  if (status === "loading") {
+    return (
+      <div className="w-screen h-screen flex items-center justify-center bg-slate-900">
+        <div className="text-white text-sm font-bold animate-pulse">
+          Vérification en cours...
+        </div>
+      </div>
+    );
+  }
 
-  console.log("AdminRoute check", { username: user.username, userType });
+  if (status === "invalid") return <Navigate to="/login" replace />;
 
-  if (!token) return <Navigate to="/login" />;
+  // Check admin status from verified server data
+  const userType = (verifiedUser?.user_type || "").toLowerCase();
+  const isAdmin =
+    userType === "admin" || verifiedUser?.username?.toLowerCase() === "admin";
 
-  if (userType !== "admin") {
-    console.warn("AdminRoute access denied. Redirecting to /profile");
-    return <Navigate to="/profile" />;
+  if (!isAdmin) {
+    return <Navigate to="/profile" replace />;
   }
 
   return children;
 };
 
 export const UserRoute = ({ children }) => {
-  const token = localStorage.getItem("jwt");
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
-  let userType = (user.user_type || "").toLowerCase();
+  const { status, verifiedUser } = useAuthVerification();
 
-  // Fallback for primary admin
-  if (user.username?.toLowerCase() === "admin") userType = "admin";
-
-  console.log("UserRoute check", { username: user.username, userType });
-
-  if (!token) return <Navigate to="/login" />;
-
-  if (userType === "admin") {
-    console.log("Admin detected on UserRoute. Redirecting to /admin");
-    return <Navigate to="/admin" />;
+  if (status === "loading") {
+    return (
+      <div className="w-screen h-screen flex items-center justify-center bg-slate-900">
+        <div className="text-white text-sm font-bold animate-pulse">
+          Vérification en cours...
+        </div>
+      </div>
+    );
   }
+
+  if (status === "invalid") return <Navigate to="/login" replace />;
+
+  const userType = (verifiedUser?.user_type || "").toLowerCase();
+  const isAdmin =
+    userType === "admin" || verifiedUser?.username?.toLowerCase() === "admin";
+
+  if (isAdmin) return <Navigate to="/admin" replace />;
+
   return children;
 };

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { AdminLayout } from "../AdminLayout.jsx";
-import api, { getContent } from "../../../../api";
+import api from "../../../../services/apiClient";
+import { getContent } from "../../../../services/courseService";
 
 const Content = () => {
   const [content, setContent] = useState([]);

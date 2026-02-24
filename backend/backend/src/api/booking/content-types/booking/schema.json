@@ -8,7 +8,7 @@
     "description": "Comprehensive booking system for spaces and equipments"
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "pluginOptions": {},
   "attributes": {
@@ -28,9 +28,6 @@
     },
     "total_price": {
       "type": "decimal"
-    },
-    "payment_id": {
-      "type": "string"
     },
     "is_recurring": {
       "type": "boolean",
@@ -57,6 +54,12 @@
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::equipment.equipment",
+      "inversedBy": "bookings"
+    },
+    "services": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::service.service",
       "inversedBy": "bookings"
     },
     "payment": {

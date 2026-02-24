@@ -5,7 +5,7 @@ import {
   updateReservation,
   cancelReservation,
   confirmPayment,
-} from "../../../../api";
+} from "../../../../services/bookingService";
 
 const ReservationManagement = () => {
   const [reservations, setReservations] = useState([]);

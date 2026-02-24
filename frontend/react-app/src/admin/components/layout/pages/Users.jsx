@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { AdminLayout } from "../AdminLayout.jsx";
-import { getUsers, deleteUser, updateUser } from "../../../../api";
+import {
+  getUsers,
+  deleteUser,
+  updateUser,
+} from "../../../../services/userService";
 import SearchBar from "../../common/SearchBar";
 
 const Users = () => {

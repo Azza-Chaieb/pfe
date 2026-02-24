@@ -48,13 +48,6 @@ const DashboardStatCard = ({
           {value}
         </p>
       </div>
-
-      <div className="mt-4 flex items-center gap-2">
-        <div className="w-1 h-1 bg-blue-500 rounded-full animate-pulse" />
-        <span className="text-[8px] font-bold text-slate-300 uppercase tracking-widest">
-          Mis à jour
-        </span>
-      </div>
     </div>
   );
 };

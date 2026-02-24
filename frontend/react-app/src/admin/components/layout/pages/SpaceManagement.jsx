@@ -5,10 +5,10 @@ import {
   deleteSpace,
   createSpace,
   updateSpace,
-  getEquipments,
-  getServicesList,
-  getCoworkingSpacesList,
-} from "../../../../api";
+} from "../../../../services/spaceService";
+import { getCoworkingSpacesList } from "../../../../services/3DService";
+import { getEquipments } from "../../../../services/equipmentService";
+import { getServicesList } from "../../../../services/serviceService";
 import SearchBar from "../../common/SearchBar";
 
 const SpaceManagement = () => {

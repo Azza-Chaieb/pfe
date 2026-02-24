@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { getRecentActivity } from "../api";
+import { getRecentActivity } from "../services/bookingService";
 
 const FirebaseWidget = ({ userSession, firebaseToken }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -62,7 +62,7 @@ const FirebaseWidget = ({ userSession, firebaseToken }) => {
       style={{
         position: "fixed",
         bottom: "20px",
-        left: "20px",
+        right: "20px",
         zIndex: 10000,
       }}
     >
@@ -102,7 +102,7 @@ const FirebaseWidget = ({ userSession, firebaseToken }) => {
           style={{
             position: "absolute",
             bottom: "70px",
-            left: "0",
+            right: "0",
             width: "400px",
             background: "white",
             borderRadius: "15px",

@@ -430,33 +430,6 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
-export interface ApiAdminProfilAdminProfil extends Struct.CollectionTypeSchema {
-  collectionName: "admin_profils";
-  info: {
-    displayName: "admin_profil";
-    pluralName: "admin-profils";
-    singularName: "admin-profil";
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
-      Schema.Attribute.Private;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      "oneToMany",
-      "api::admin-profil.admin-profil"
-    > &
-      Schema.Attribute.Private;
-    publishedAt: Schema.Attribute.DateTime;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
-      Schema.Attribute.Private;
-  };
-}
-
 export interface ApiAssociationProfilAssociationProfil
   extends Struct.CollectionTypeSchema {
   collectionName: "association_profils";
@@ -500,7 +473,7 @@ export interface ApiBookingBooking extends Struct.CollectionTypeSchema {
     singularName: "booking";
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     createdAt: Schema.Attribute.DateTime;
@@ -521,9 +494,9 @@ export interface ApiBookingBooking extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     payment: Schema.Attribute.Relation<"oneToOne", "api::payment.payment">;
-    payment_id: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     repeat_until: Schema.Attribute.Date;
+    services: Schema.Attribute.Relation<"manyToMany", "api::service.service">;
     space: Schema.Attribute.Relation<"manyToOne", "api::space.space">;
     start_time: Schema.Attribute.DateTime & Schema.Attribute.Required;
     status: Schema.Attribute.Enumeration<
@@ -762,7 +735,7 @@ export interface ApiPaymentPayment extends Struct.CollectionTypeSchema {
     singularName: "payment";
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
     amount: Schema.Attribute.Decimal;
@@ -824,34 +797,6 @@ export interface ApiProfessionnelProfessionnel
   };
 }
 
-export interface ApiReservationReservation extends Struct.CollectionTypeSchema {
-  collectionName: "reservations";
-  info: {
-    displayName: "OBSOLETE-Reservation";
-    pluralName: "reservations";
-    singularName: "reservation";
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
-      Schema.Attribute.Private;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      "oneToMany",
-      "api::reservation.reservation"
-    > &
-      Schema.Attribute.Private;
-    obsolete_field: Schema.Attribute.String;
-    publishedAt: Schema.Attribute.DateTime;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
-      Schema.Attribute.Private;
-  };
-}
-
 export interface ApiServiceService extends Struct.CollectionTypeSchema {
   collectionName: "services";
   info: {
@@ -864,6 +809,7 @@ export interface ApiServiceService extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
+    bookings: Schema.Attribute.Relation<"manyToMany", "api::booking.booking">;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
@@ -1091,77 +1037,6 @@ export interface ApiSubscriptionSubscription
       Schema.Attribute.Private;
     user: Schema.Attribute.Relation<
       "manyToOne",
-      "plugin::users-permissions.user"
-    >;
-  };
-}
-
-export interface ApiTestTest extends Struct.CollectionTypeSchema {
-  collectionName: "tests";
-  info: {
-    displayName: "test";
-    pluralName: "tests";
-    singularName: "test";
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
-      Schema.Attribute.Private;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<"oneToMany", "api::test.test"> &
-      Schema.Attribute.Private;
-    name: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.Unique &
-      Schema.Attribute.SetMinMaxLength<{
-        maxLength: 50;
-        minLength: 3;
-      }>;
-    password: Schema.Attribute.Text &
-      Schema.Attribute.Required &
-      Schema.Attribute.Private &
-      Schema.Attribute.SetMinMaxLength<{
-        minLength: 8;
-      }>;
-    publishedAt: Schema.Attribute.DateTime;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
-      Schema.Attribute.Private;
-  };
-}
-
-export interface ApiTrainerProfileTrainerProfile
-  extends Struct.CollectionTypeSchema {
-  collectionName: "trainer_profiles";
-  info: {
-    displayName: "Trainer Profile";
-    pluralName: "trainer-profiles";
-    singularName: "trainer-profile";
-  };
-  options: {
-    draftAndPublish: true;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
-      Schema.Attribute.Private;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      "oneToMany",
-      "api::trainer-profile.trainer-profile"
-    > &
-      Schema.Attribute.Private;
-    phone: Schema.Attribute.String;
-    publishedAt: Schema.Attribute.DateTime;
-    specialty: Schema.Attribute.String & Schema.Attribute.Required;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
-      Schema.Attribute.Private;
-    user: Schema.Attribute.Relation<
-      "oneToOne",
       "plugin::users-permissions.user"
     >;
   };
@@ -1703,6 +1578,10 @@ export interface PluginUsersPermissionsUser
       "api::etudiant-profil.etudiant-profil"
     >;
     fcmToken: Schema.Attribute.String;
+    formateur_profil: Schema.Attribute.Relation<
+      "oneToOne",
+      "api::formateur-profil.formateur-profil"
+    >;
     fullname: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
@@ -1738,10 +1617,6 @@ export interface PluginUsersPermissionsUser
       "oneToMany",
       "api::subscription.subscription"
     >;
-    trainer_profile: Schema.Attribute.Relation<
-      "oneToOne",
-      "api::trainer-profile.trainer-profile"
-    >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
@@ -1768,7 +1643,6 @@ declare module "@strapi/strapi" {
       "admin::transfer-token": AdminTransferToken;
       "admin::transfer-token-permission": AdminTransferTokenPermission;
       "admin::user": AdminUser;
-      "api::admin-profil.admin-profil": ApiAdminProfilAdminProfil;
       "api::association-profil.association-profil": ApiAssociationProfilAssociationProfil;
       "api::booking.booking": ApiBookingBooking;
       "api::course.course": ApiCourseCourse;
@@ -1779,15 +1653,12 @@ declare module "@strapi/strapi" {
       "api::model.model": ApiModelModel;
       "api::payment.payment": ApiPaymentPayment;
       "api::professionnel.professionnel": ApiProfessionnelProfessionnel;
-      "api::reservation.reservation": ApiReservationReservation;
       "api::service.service": ApiServiceService;
       "api::session.session": ApiSessionSession;
       "api::space-schedule.space-schedule": ApiSpaceScheduleSpaceSchedule;
       "api::space.space": ApiSpaceSpace;
       "api::subscription-plan.subscription-plan": ApiSubscriptionPlanSubscriptionPlan;
       "api::subscription.subscription": ApiSubscriptionSubscription;
-      "api::test.test": ApiTestTest;
-      "api::trainer-profile.trainer-profile": ApiTrainerProfileTrainerProfile;
       "api::user-subscription.user-subscription": ApiUserSubscriptionUserSubscription;
       "plugin::content-releases.release": PluginContentReleasesRelease;
       "plugin::content-releases.release-action": PluginContentReleasesReleaseAction;

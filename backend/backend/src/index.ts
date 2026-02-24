@@ -150,9 +150,16 @@ export default {
       }
 
       // Check if our admin user exists
-      // Read credentials from environment variables (never hardcode these)
-      const adminEmail = process.env.ADMIN_SEED_EMAIL || "admin@sunspacee.com";
-      const adminPassword = process.env.ADMIN_SEED_PASSWORD || "Password123!";
+      // Read credentials ONLY from environment variables — never hardcode these
+      const adminEmail = process.env.ADMIN_SEED_EMAIL;
+      const adminPassword = process.env.ADMIN_SEED_PASSWORD;
+
+      if (!adminEmail || !adminPassword) {
+        console.error(
+          "❌ [BOOTSTRAP] ADMIN_SEED_EMAIL or ADMIN_SEED_PASSWORD is not defined in .env. Skipping admin user seeding.",
+        );
+        return;
+      }
 
       const user = await strapi
         .query("plugin::users-permissions.user")
@@ -182,84 +189,86 @@ export default {
         });
       }
 
-      // Proactively grant upload permissions to Authenticated role
-      try {
-        const actionsToGrant = [
-          "plugin::upload.content-api.upload",
-          "plugin::upload.content-api.find",
-          "plugin::upload.content-api.findOne",
-          "api::model.model.find",
-          "api::model.model.findOne",
-          "api::model.model.delete",
-          "api::coworking-space.coworking-space.find",
-          "api::coworking-space.coworking-space.findOne",
-          // Adding custom upload route permission just in case
-          "api::coworking-space.coworking-space.upload3DModel",
-          // Payment permissions
-          "api::payment.payment.find",
-          "api::payment.payment.findOne",
-          "api::payment.payment.create",
-          "api::payment.payment.confirm",
-        ];
+      // Permissions for Authenticated users only (requires login)
+      const authenticatedActions = [
+        "plugin::upload.content-api.upload",
+        "plugin::upload.content-api.find",
+        "plugin::upload.content-api.findOne",
+        "api::model.model.find",
+        "api::model.model.findOne",
+        "api::model.model.delete",
+        "api::coworking-space.coworking-space.find",
+        "api::coworking-space.coworking-space.findOne",
+        "api::coworking-space.coworking-space.upload3DModel",
+        "api::payment.payment.find",
+        "api::payment.payment.findOne",
+        "api::payment.payment.create",
+        "api::payment.payment.confirm",
+        "api::booking.booking.find",
+        "api::booking.booking.findOne",
+        "api::booking.booking.create",
+        "api::booking.booking.update",
+      ];
 
-        // Grant to both Authenticated and Public for testing
-        const allRoles = await strapi
-          .query("plugin::users-permissions.role")
-          .findMany();
+      // Permissions for Public (non-logged in) — read-only, no sensitive actions
+      const publicActions = [
+        "api::coworking-space.coworking-space.find",
+        "api::coworking-space.coworking-space.findOne",
+        "api::space.space.find",
+        "api::space.space.findOne",
+      ];
 
-        console.log("👥 Found roles in DB:");
-        allRoles.forEach((r) =>
-          console.log(`  - Role: ${r.name} (Type: ${r.type}, ID: ${r.id})`),
+      const allRoles = await strapi
+        .query("plugin::users-permissions.role")
+        .findMany();
+
+      console.log("👥 Found roles in DB:");
+      allRoles.forEach((r) =>
+        console.log(`  - Role: ${r.name} (Type: ${r.type}, ID: ${r.id})`),
+      );
+
+      const grantPermissions = async (role: any, actions: string[]) => {
+        console.log(
+          `🔍 [BOOTSTRAP] Syncing permissions for role: ${role.name} (Type: ${role.type}, ID: ${role.id})`,
         );
+        for (const action of actions) {
+          const permission = await strapi
+            .query("plugin::users-permissions.permission")
+            .findOne({
+              where: { action, role: role.id },
+            });
 
-        const rolesToSync = allRoles.filter((r) =>
-          ["authenticated", "public", "admin"].includes(r.type || ""),
-        );
-
-        for (const r of rolesToSync) {
-          console.log(
-            `🔍 [BOOTSTRAP] Syncing permissions for role: ${r.name} (Type: ${r.type}, ID: ${r.id})`,
-          );
-          for (const action of actionsToGrant) {
-            const permission = await strapi
-              .query("plugin::users-permissions.permission")
-              .findOne({
-                where: { action, role: r.id },
-              });
-
-            if (!permission) {
-              await strapi
-                .query("plugin::users-permissions.permission")
-                .create({
-                  data: { action, role: r.id, enabled: true },
-                });
-              console.log(
-                `✅ [BOOTSTRAP] GRANTED & ENABLED: "${action}" to ${r.name}`,
-              );
-            } else if (!permission.enabled) {
-              await strapi
-                .query("plugin::users-permissions.permission")
-                .update({
-                  where: { id: permission.id },
-                  data: { enabled: true },
-                });
-              console.log(
-                `✅ [BOOTSTRAP] FORCED ENABLED: "${action}" for ${r.name}`,
-              );
-            } else {
-              console.log(
-                `ℹ️ [BOOTSTRAP] OK: "${action}" is already enabled for ${r.name}`,
-              );
-            }
+          if (!permission) {
+            await strapi.query("plugin::users-permissions.permission").create({
+              data: { action, role: role.id, enabled: true },
+            });
+            console.log(
+              `✅ [BOOTSTRAP] GRANTED & ENABLED: "${action}" to ${role.name}`,
+            );
+          } else if (!permission.enabled) {
+            await strapi.query("plugin::users-permissions.permission").update({
+              where: { id: permission.id },
+              data: { enabled: true },
+            });
+            console.log(
+              `✅ [BOOTSTRAP] FORCED ENABLED: "${action}" for ${role.name}`,
+            );
+          } else {
+            console.log(
+              `ℹ️ [BOOTSTRAP] OK: "${action}" is already enabled for ${role.name}`,
+            );
           }
         }
-        console.log("🚀 [BOOTSTRAP] Permissions synchronization complete.");
-      } catch (uploadErr) {
-        console.warn(
-          "⚠️ Failed to auto-grant upload permission:",
-          uploadErr.message,
-        );
+      };
+
+      for (const r of allRoles) {
+        if (r.type === "public") {
+          await grantPermissions(r, publicActions);
+        } else if (r.type === "authenticated") {
+          await grantPermissions(r, authenticatedActions);
+        }
       }
+      console.log("🚀 [BOOTSTRAP] Permissions synchronization complete.");
 
       // ─── Seed Subscription Plans (TÂCHE-056) ───────────────────────────────
       try {

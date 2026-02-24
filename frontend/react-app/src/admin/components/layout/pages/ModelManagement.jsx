@@ -12,10 +12,10 @@ import {
 } from "@react-three/drei";
 import {
   getModels,
-  getCoworkingSpacesList,
   upload3DModelToSpace,
   deleteModel,
-} from "../../../../api";
+  getCoworkingSpacesList,
+} from "../../../../services/3DService";
 
 // ──────────────────────────── Reusable components from Tester ────────────────────────────
 function LoadingScreen() {

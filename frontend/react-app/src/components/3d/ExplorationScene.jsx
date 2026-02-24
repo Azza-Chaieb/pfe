@@ -47,9 +47,12 @@ const ExplorationScene = () => {
           ? `filters[documentId][$eq]=${spaceId}`
           : `filters[id][$eq]=${spaceId}`;
 
-        // Standard Strapi 5 populate
-        const endpoint = `/coworking-spaces?${query}&populate=*`;
-        console.log("[DEBUG] Fetching coworking space from:", endpoint);
+        // Deep Strapi 5 populate: Get spaces AND their equipments/services
+        const endpoint = `/coworking-spaces?${query}&populate[spaces][populate][0]=equipments&populate[spaces][populate][1]=services`;
+        console.log(
+          "[DEBUG] Fetching coworking space with deep populate from:",
+          endpoint,
+        );
 
         const response = await api.get(endpoint);
         const results = response.data?.data || [];
@@ -87,7 +90,7 @@ const ExplorationScene = () => {
             try {
               const filterKey = isNaN(spaceId) ? "documentId" : "id";
               const spaceRes = await api.get(
-                `/spaces?filters[coworking_space][${filterKey}][$eq]=${spaceId}&populate=*`,
+                `/spaces?filters[coworking_space][${filterKey}][$eq]=${spaceId}&populate[0]=equipments&populate[1]=services`,
               );
               spacesData = spaceRes.data?.data || spaceRes.data || [];
               console.log(

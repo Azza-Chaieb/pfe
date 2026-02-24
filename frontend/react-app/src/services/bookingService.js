@@ -40,10 +40,10 @@ export const getRecentActivity = async () => {
   }
 };
 
-export const getUserReservations = async (userId) => {
+export const getUserReservations = async (userId, page = 1, pageSize = 25) => {
   try {
     const response = await api.get(
-      `/bookings?filters[user][id][$eq]=${userId}&populate=*`,
+      `/bookings?filters[user][id][$eq]=${userId}&populate[0]=space&populate[1]=payment&sort=start_time:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}`,
     );
     return response.data;
   } catch (error) {
@@ -52,12 +52,14 @@ export const getUserReservations = async (userId) => {
   }
 };
 
-export const getProfessionalBookings = async (userId) => {
+export const getProfessionalBookings = async (
+  userId,
+  page = 1,
+  pageSize = 25,
+) => {
   try {
-    // Assuming bookings are reservations linked to the user
-    // We populate coworking_space to show details
     const response = await api.get(
-      `/bookings?filters[user][id][$eq]=${userId}&populate=space.coworking_space&sort=start_time:desc`,
+      `/bookings?filters[user][id][$eq]=${userId}&populate[0]=space&populate[1]=payment&sort=start_time:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}`,
     );
     return response.data;
   } catch (error) {
@@ -66,10 +68,10 @@ export const getProfessionalBookings = async (userId) => {
   }
 };
 
-export const getAllReservations = async () => {
+export const getAllReservations = async (page = 1, pageSize = 50) => {
   try {
     const response = await api.get(
-      "/bookings?populate[0]=user&populate[1]=space&populate[2]=space.coworking_space&populate[3]=payment&populate[4]=payment.proof_url&sort[0]=start_time:desc",
+      `/bookings?populate[0]=user&populate[1]=space&populate[2]=space.coworking_space&populate[3]=payment&populate[4]=payment.proof_url&sort[0]=start_time:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}`,
     );
     return response.data;
   } catch (error) {

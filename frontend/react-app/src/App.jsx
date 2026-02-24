@@ -1,6 +1,6 @@
 // src/App.jsx
 import React, { useState, useEffect } from "react";
-import Scene from "./components/Scene";
+import Home from "./pages/public/Home";
 import FirebaseWidget from "./components/FirebaseWidget";
 
 import {
@@ -18,26 +18,38 @@ import Settings from "./admin/components/layout/pages/Settings";
 import Login from "./admin/components/layout/pages/Login";
 import ReservationManagement from "./admin/components/layout/pages/ReservationManagement";
 import EquipmentServiceManagement from "./admin/components/layout/pages/EquipmentServiceManagement";
-import UserDashboard from "./pages/UserDashboard";
-import RegisterPage from "./pages/RegisterPage";
-import StudentDashboard from "./pages/StudentDashboard";
-import TrainerDashboard from "./pages/TrainerDashboard";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
-import ProfessionalDashboard from "./pages/ProfessionalDashboard";
+import UserDashboard from "./pages/dashboards/UserDashboard";
+import RegisterPage from "./pages/auth/RegisterPage";
+import StudentDashboard from "./pages/dashboards/StudentDashboard";
+import TrainerDashboard from "./pages/dashboards/TrainerDashboard";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import ResetPassword from "./pages/auth/ResetPassword";
+import ProfessionalDashboard from "./pages/dashboards/ProfessionalDashboard";
 import ModelTestPage from "./pages/ModelTestPage";
 import ModelManagement from "./admin/components/layout/pages/ModelManagement";
 import ExplorationScene from "./components/3d/ExplorationScene";
 
 import SpaceManagement from "./admin/components/layout/pages/SpaceManagement";
-import SpaceCatalog from "./pages/SpaceCatalog";
-import AssociationDashboard from "./pages/AssociationDashboard";
-import SubscriptionPlans from "./pages/SubscriptionPlans";
-import { getRecentActivity } from "./api";
+import SpaceCatalog from "./pages/public/SpaceCatalog";
+import AssociationDashboard from "./pages/dashboards/AssociationDashboard";
+import SubscriptionPlans from "./pages/public/SubscriptionPlans";
+import { getRecentActivity } from "./services/bookingService";
 
 import { requestNotificationPermission } from "./services/notificationService";
 
 import { AdminRoute, UserRoute } from "./components/ProtectedRoute";
+
+function getUserDashboardRoute(user) {
+  const userType = (user?.user_type || "").toLowerCase();
+  if (userType === "admin" || user?.username?.toLowerCase() === "admin")
+    return "/admin";
+  if (userType === "etudiant" || userType === "student") return "/dashboard";
+  if (userType === "formateur" || userType === "trainer")
+    return "/trainer/dashboard";
+  if (userType === "professional") return "/professional/dashboard";
+  if (userType === "association") return "/association/dashboard";
+  return "/profile";
+}
 
 function App() {
   const [firebaseToken, setFirebaseToken] = useState("");
@@ -56,12 +68,11 @@ function App() {
       try {
         const token = await requestNotificationPermission();
         if (token && userId) {
-          console.log("[App] Syncing FCM token for user:", userId);
           const { updateFcmToken } = await import("./services/userService");
           await updateFcmToken(userId, token);
         }
       } catch (err) {
-        console.error("[App] Failed to sync FCM token:", err);
+        // silent — FCM is non-critical
       }
     };
 
@@ -71,113 +82,41 @@ function App() {
     if (token && userStr) {
       try {
         const user = JSON.parse(userStr);
-        setUserSession({
-          isLoggedIn: true,
-          user: user,
-          token: token,
-        });
+        setUserSession({ isLoggedIn: true, user, token });
         setFirebaseToken(token);
-
-        // Sync token if user is logged in
         syncNotificationToken(user.id);
       } catch (e) {
-        console.error("Error parsing user data", e);
         localStorage.removeItem("jwt");
         localStorage.removeItem("user");
       }
     } else {
-      setUserSession({
-        isLoggedIn: false,
-        user: null,
-        token: null,
-      });
+      setUserSession({ isLoggedIn: false, user: null, token: null });
     }
   }, [location.pathname]);
 
   const handleLogout = () => {
     localStorage.removeItem("jwt");
     localStorage.removeItem("user");
-    setUserSession({
-      isLoggedIn: false,
-      user: null,
-      token: null,
-    });
+    setUserSession({ isLoggedIn: false, user: null, token: null });
     setFirebaseToken("");
     navigate("/login");
   };
 
-  // decodeToken removed (unused) to satisfy lint rules
-
   return (
     <div className="w-screen h-screen relative">
       <Routes>
-        <Route
-          path="/"
-          element={
-            <>
-              <Scene />
-
-              <div className="absolute bottom-5 right-5 z-50 flex gap-2.5">
-                {!userSession.isLoggedIn ? (
-                  <button
-                    onClick={() => navigate("/login")}
-                    className="px-6 py-3.5 bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white border-none rounded-xl cursor-pointer text-lg font-bold shadow-lg hover:opacity-90 transition-all"
-                  >
-                    Connexion
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => {
-                      const user = JSON.parse(
-                        localStorage.getItem("user") || "{}",
-                      );
-                      const userType = (user.user_type || "").toLowerCase();
-                      if (
-                        userType === "admin" ||
-                        user.username?.toLowerCase() === "admin"
-                      ) {
-                        navigate("/admin");
-                      } else if (
-                        userType === "etudiant" ||
-                        userType === "student"
-                      ) {
-                        navigate("/dashboard");
-                      } else if (
-                        userType === "formateur" ||
-                        userType === "trainer"
-                      ) {
-                        navigate("/trainer/dashboard");
-                      } else if (userType === "professional") {
-                        navigate("/professional/dashboard");
-                      } else if (userType === "association") {
-                        navigate("/association/dashboard");
-                      } else {
-                        navigate("/profile");
-                      }
-                    }}
-                    className="px-6 py-3.5 bg-gradient-to-br from-[#00C9FF] to-[#92FE9D] text-white border-none rounded-xl cursor-pointer text-lg font-bold shadow-lg hover:opacity-90 transition-all"
-                  >
-                    {(() => {
-                      const user = JSON.parse(
-                        localStorage.getItem("user") || "{}",
-                      );
-                      const userType = (user.user_type || "").toLowerCase();
-                      return userType === "admin" ||
-                        user.username?.toLowerCase() === "admin"
-                        ? "Dashboard Admin"
-                        : "Mon Profil";
-                    })()}
-                  </button>
-                )}
-              </div>
-            </>
-          }
-        />
+        <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/spaces" element={<SpaceCatalog />} />
         <Route path="/explore/:spaceId" element={<ExplorationScene />} />
-
-        <Route path="/test-3d" element={<ModelTestPage />} />
+        <Route
+          path="/test-3d"
+          element={
+            <UserRoute>
+              <ModelTestPage />
+            </UserRoute>
+          }
+        />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/reset_password" element={<ResetPassword />} />

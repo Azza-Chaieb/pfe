@@ -96,10 +96,10 @@
       "target": "api::professionnel.professionnel",
       "mappedBy": "user"
     },
-    "trainer_profile": {
+    "formateur_profil": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "api::trainer-profile.trainer-profile",
+      "target": "api::formateur-profil.formateur-profil",
       "mappedBy": "user"
     },
     "bio": {
