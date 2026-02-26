@@ -1,4 +1,3 @@
-import emailService from '../services/email-service';
 
 export default {
   async sendTest(ctx) {
@@ -35,6 +34,8 @@ export default {
       const { to, name } = ctx.request.body;
       if (!to || !name) return ctx.badRequest('Email and name required');
 
+      const emailService = strapi.service('api::email.email-service');
+      // @ts-ignore
       await emailService.sendWelcomeEmail(to, name);
       ctx.send({ success: true, message: 'Welcome email sent' });
     } catch (error) {
@@ -48,6 +49,8 @@ export default {
       const { to, name, token } = ctx.request.body;
       if (!to || !name || !token) return ctx.badRequest('Email, name, and token required');
 
+      const emailService = strapi.service('api::email.email-service');
+      // @ts-ignore
       await emailService.sendPasswordResetEmail(to, name, token);
       ctx.send({ success: true, message: 'Password reset email sent' });
     } catch (error) {
@@ -61,6 +64,8 @@ export default {
       const { to, name, reservation } = ctx.request.body;
       if (!to || !name || !reservation) return ctx.badRequest('Email, name, and reservation details required');
 
+      const emailService = strapi.service('api::email.email-service');
+      // @ts-ignore
       await emailService.sendReservationConfirmation(to, name, reservation);
       ctx.send({ success: true, message: 'Reservation confirmation sent' });
     } catch (error) {
@@ -74,6 +79,8 @@ export default {
       const { to, name, session } = ctx.request.body;
       if (!to || !name || !session) return ctx.badRequest('Email, name, and session details required');
 
+      const emailService = strapi.service('api::email.email-service');
+      // @ts-ignore
       await emailService.sendSessionReminder(to, name, session);
       ctx.send({ success: true, message: 'Session reminder sent' });
     } catch (error) {

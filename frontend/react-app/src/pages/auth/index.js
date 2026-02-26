@@ -1,2 +1,2 @@
-// Dossier auth créé
-export const _ = null;
+import GoogleCallback from "./GoogleCallback";
+export { GoogleCallback };

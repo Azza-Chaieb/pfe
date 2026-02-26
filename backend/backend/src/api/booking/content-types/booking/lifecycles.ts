@@ -24,6 +24,28 @@ export default {
     const { result } = event;
     await sendConfirmationEmail(result);
   },
+
+  async afterUpdate(event) {
+    const { result, params } = event;
+
+    // Detect if status changed to 'cancelled'
+    if (
+      params.data &&
+      params.data.status === "cancelled" &&
+      result.status === "cancelled"
+    ) {
+      await sendCancellationEmail(result);
+    }
+
+    // Detect if status changed to 'confirmed' (Admin approval)
+    if (
+      params.data &&
+      params.data.status === "confirmed" &&
+      result.status === "confirmed"
+    ) {
+      await sendConfirmationEmail(result);
+    }
+  },
 };
 
 async function handleBookingLogic(event) {
@@ -250,6 +272,15 @@ async function sendConfirmationEmail(result) {
 
     if (!fullBooking || !fullBooking.user || !fullBooking.user.email) return;
 
+    // Check email preferences
+    const emailPreferences = fullBooking.user.emailPreferences as any;
+    if (emailPreferences && emailPreferences.reservations === false) {
+      strapi.log.info(
+        `[Booking Lifecycle] Skipping confirmation email for ${fullBooking.user.email} (disabled in preferences)`,
+      );
+      return;
+    }
+
     const emailService = strapi.service("api::email.email-service");
     if (emailService) {
       const reservationDetails = {
@@ -275,5 +306,55 @@ async function sendConfirmationEmail(result) {
     }
   } catch (error) {
     strapi.log.error("Failed to send booking confirmation email:", error);
+  }
+}
+
+async function sendCancellationEmail(result) {
+  try {
+    const fullBooking: any = await strapi.entityService.findOne(
+      "api::booking.booking",
+      result.id,
+      {
+        populate: ["user", "space"],
+      },
+    );
+
+    if (!fullBooking || !fullBooking.user || !fullBooking.user.email) return;
+
+    // Check email preferences (Cancellation is tied to reservations pref)
+    const emailPreferences = fullBooking.user.emailPreferences as any;
+    if (emailPreferences && emailPreferences.reservations === false) {
+      strapi.log.info(
+        `[Booking Lifecycle] Skipping cancellation email for ${fullBooking.user.email} (disabled in preferences)`,
+      );
+      return;
+    }
+
+    const emailService = strapi.service("api::email.email-service");
+    if (emailService) {
+      const reservationDetails = {
+        spaceName: fullBooking.space?.name || "Espace de coworking",
+        date: new Date(fullBooking.start_time).toLocaleDateString("fr-FR"),
+        startTime: new Date(fullBooking.start_time).toLocaleTimeString(
+          "fr-FR",
+          { hour: "2-digit", minute: "2-digit" },
+        ),
+        endTime: new Date(fullBooking.end_time).toLocaleTimeString("fr-FR", {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        location: "Sunspace Tunis",
+        reservationId: fullBooking.id.toString(),
+      };
+
+      await emailService.sendReservationCancellation(
+        fullBooking.user.email,
+        fullBooking.user.fullname || fullBooking.user.username,
+        reservationDetails,
+      );
+      strapi.log.info(`[Booking Lifecycle] Cancellation email sent to ${fullBooking.user.email}`);
+    }
+  } catch (error) {
+    strapi.log.error("Failed to send booking cancellation email:", error);
   }
 }

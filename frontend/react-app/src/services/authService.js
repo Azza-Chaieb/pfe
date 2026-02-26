@@ -34,7 +34,9 @@ export const forgotPassword = async (email) => {
     const response = await api.post("/auth/forgot-password", { email });
     return response.data;
   } catch (error) {
-    console.error("Forgot password error", error);
+    if (error.response?.data) {
+      console.error("🛠️ [FRONTEND] Server error payload:", error.response.data);
+    }
     throw error;
   }
 };

@@ -93,6 +93,10 @@ const Sidebar = ({ role, activeTab, onTabChange }) => {
   const handleLogout = () => {
     localStorage.removeItem("jwt");
     localStorage.removeItem("user");
+
+    // Explicitly clean up API client headers
+    delete api.defaults.headers.common["Authorization"];
+
     navigate("/login");
   };
 
@@ -112,11 +116,10 @@ const Sidebar = ({ role, activeTab, onTabChange }) => {
           <button
             key={item.id}
             onClick={() => navigate(item.path)}
-            className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-300 font-bold text-sm group ${
-              location.pathname === item.path
+            className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-300 font-bold text-sm group ${location.pathname === item.path
                 ? "bg-blue-600 text-white shadow-xl shadow-blue-200 scale-[1.02]"
                 : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
-            }`}
+              }`}
           >
             <span
               className={`text-xl transition-transform group-hover:scale-110 ${location.pathname === item.path ? "" : "grayscale"}`}

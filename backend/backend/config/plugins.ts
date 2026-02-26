@@ -8,7 +8,7 @@ export default {
         expiresIn: "7d",
       },
       passwordResetToken: {
-        url: "http://192.168.100.97:3000/reset-password",
+        url: `${process.env.FRONTEND_URL || "http://localhost:3000"}/reset-password`,
       },
     },
   },

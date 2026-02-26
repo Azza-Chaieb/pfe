@@ -50,14 +50,18 @@ const ForgotPassword = () => {
 
                 {message && (
                     <div style={{
-                        background: '#dcfce7',
-                        border: '1px solid #22c55e',
-                        color: '#15803d',
-                        padding: '0.75rem',
-                        borderRadius: '0.375rem',
-                        marginBottom: '1.5rem',
-                        fontSize: '0.875rem'
+                        background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
+                        color: 'white',
+                        padding: '2rem',
+                        borderRadius: '16px',
+                        marginBottom: '2rem',
+                        fontSize: '1.1rem',
+                        lineHeight: '1.6',
+                        boxShadow: '0 10px 25px rgba(79, 70, 229, 0.4)',
+                        textAlign: 'center'
                     }}>
+                        <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>✨</div>
+                        <h3 style={{ margin: '0 0 0.5rem 0', color: 'white' }}>Email envoyé !</h3>
                         {message}
                     </div>
                 )}

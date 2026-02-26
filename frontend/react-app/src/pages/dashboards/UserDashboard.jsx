@@ -422,18 +422,82 @@ const UserDashboard = () => {
                 </div>
               </div>
             )}
+            {activeTab === "settings" && (
+              <div className="bg-white/40 backdrop-blur-md p-10 rounded-[40px] border border-white/60 shadow-xl shadow-slate-200/50 space-y-8 animate-fade-in">
+                <h3 className="text-xl font-black text-slate-800 tracking-tight mb-8">
+                  Notifications & Messagerie
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {[
+                    { id: "reservations", label: "Réservations", icon: "📅" },
+                    { id: "payments", label: "Paiements", icon: "💰" },
+                    { id: "courses", label: "Cours", icon: "📚" },
+                    { id: "newsletter", label: "Actualités", icon: "✨" },
+                  ].map((pref) => (
+                    <div
+                      key={pref.id}
+                      className="p-6 bg-white/60 rounded-[32px] border border-slate-50 flex items-center justify-between group hover:bg-white transition-all"
+                    >
+                      <div className="flex items-center gap-4">
+                        <span className="text-2xl group-hover:scale-110 transition-transform">
+                          {pref.icon}
+                        </span>
+                        <div>
+                          <h4 className="font-black text-slate-700 text-xs uppercase tracking-widest">
+                            {pref.label}
+                          </h4>
+                          <p className="text-[10px] text-slate-400 font-bold italic">
+                            Via Email
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() =>
+                          isEditing && handlePreferenceToggle(pref.id)
+                        }
+                        className={`w-12 h-6 rounded-full transition-all duration-500 relative ${editData.emailPreferences?.[pref.id] ? "bg-emerald-500" : "bg-slate-300"}`}
+                      >
+                        <div
+                          className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-500 ${editData.emailPreferences?.[pref.id] ? "left-7" : "left-1"}`}
+                        />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
           <div className="lg:col-span-1 space-y-8">
-            <div className="bg-gradient-to-br from-indigo-600 to-blue-800 rounded-[40px] p-10 text-white shadow-2xl relative overflow-hidden group">
-              <h3 className="text-2xl font-black mb-4 tracking-tight">
-                Support VIP 👑
-              </h3>
-              <p className="text-indigo-100 text-sm leading-relaxed mb-8 font-medium italic">
-                "Parce que votre réussite est notre priorité absolue."
-              </p>
-              <button className="w-full py-4 bg-white/20 backdrop-blur-md border border-white/30 rounded-[20px] text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:bg-white/30">
-                Contact Direct
-              </button>
+            <div className="bg-white/40 backdrop-blur-md p-8 rounded-[40px] border border-white/60 shadow-xl shadow-slate-200/50">
+              <h4 className="text-sm font-black text-slate-800 uppercase tracking-widest mb-6 px-2">
+                Activité de session
+              </h4>
+              <div className="space-y-6">
+                <div className="flex gap-4">
+                  <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full mt-2 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
+                  <div>
+                    <p className="text-xs font-bold text-slate-700">
+                      Dernière mise à jour
+                    </p>
+                    <p className="text-[10px] text-slate-400 font-medium tracking-tight">
+                      {userData.updatedAt
+                        ? new Date(userData.updatedAt).toLocaleString("fr-FR")
+                        : "À l'instant"}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 shadow-[0_0_8px_rgba(59,130,246,0.5)]"></div>
+                  <div>
+                    <p className="text-xs font-bold text-slate-700">
+                      Réseau actuel
+                    </p>
+                    <p className="text-[10px] text-slate-400 font-medium tracking-tight">
+                      SunSpace Secure Gateway
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

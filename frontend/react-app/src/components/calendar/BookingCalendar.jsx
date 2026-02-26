@@ -131,11 +131,32 @@ const BookingCalendar = ({ userId }) => {
   const handleUpdate = async () => {
     try {
       setActionLoading(true);
-      const docId = selectedEvent.extendedProps.documentId;
-      await updateReservation(docId, {
-        start_time: `${editData.date}T${editData.timeSlot.split(" - ")[0]}:00`,
-        end_time: `${editData.date}T${editData.timeSlot.split(" - ")[1]}:00`,
+      // Try to use documentId, fallback to id
+      const resId =
+        selectedEvent.extendedProps.documentId || selectedEvent.id;
+
+      let start_time, end_time;
+
+      if (editData.timeSlot === "Full Day") {
+        start_time = `${editData.date}T08:00:00.000Z`;
+        end_time = `${editData.date}T19:00:00.000Z`;
+      } else {
+        const times = editData.timeSlot.split(" - ");
+        if (times.length === 2) {
+          start_time = `${editData.date}T${times[0]}:00.000Z`;
+          end_time = `${editData.date}T${times[1]}:00.000Z`;
+        } else {
+          start_time = `${editData.date}T08:00:00.000Z`;
+          end_time = `${editData.date}T19:00:00.000Z`;
+        }
+      }
+
+      await updateReservation(resId, {
+        start_time,
+        end_time,
+        status: selectedEvent.extendedProps.status || "pending",
       });
+
       setIsEditing(false);
       setSelectedEvent(null);
       await fetchReservations();
@@ -188,13 +209,12 @@ const BookingCalendar = ({ userId }) => {
               <div className="flex justify-between items-start mb-6">
                 <div>
                   <span
-                    className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${
-                      selectedEvent.extendedProps.status === "confirmed"
-                        ? "bg-emerald-50 text-emerald-600"
-                        : selectedEvent.extendedProps.status === "pending"
-                          ? "bg-amber-50 text-amber-600"
-                          : "bg-red-50 text-red-600"
-                    }`}
+                    className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${selectedEvent.extendedProps.status === "confirmed"
+                      ? "bg-emerald-50 text-emerald-600"
+                      : selectedEvent.extendedProps.status === "pending"
+                        ? "bg-amber-50 text-amber-600"
+                        : "bg-red-50 text-red-600"
+                      }`}
                   >
                     {selectedEvent.extendedProps.status || "En attente"}
                   </span>

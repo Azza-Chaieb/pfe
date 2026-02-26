@@ -26,8 +26,9 @@ import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 import ProfessionalDashboard from "./pages/dashboards/ProfessionalDashboard";
 import ModelTestPage from "./pages/ModelTestPage";
-import ModelManagement from "./admin/components/layout/pages/ModelManagement";
 import ExplorationScene from "./components/3d/ExplorationScene";
+import { GoogleCallback } from "./pages/auth";
+import RoleSelection from "./pages/auth/RoleSelection";
 
 import SpaceManagement from "./admin/components/layout/pages/SpaceManagement";
 import SpaceCatalog from "./pages/public/SpaceCatalog";
@@ -94,9 +95,14 @@ function App() {
     }
   }, [location.pathname]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     localStorage.removeItem("jwt");
     localStorage.removeItem("user");
+
+    // Explicitly clean up API client headers
+    const api = (await import("./services/apiClient")).default;
+    delete api.defaults.headers.common["Authorization"];
+
     setUserSession({ isLoggedIn: false, user: null, token: null });
     setFirebaseToken("");
     navigate("/login");
@@ -146,6 +152,8 @@ function App() {
           }
         />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/connect/google/redirect" element={<GoogleCallback />} />
+        <Route path="/select-role" element={<RoleSelection />} />
         <Route
           path="/profile"
           element={
@@ -245,7 +253,6 @@ function App() {
                   path="reservations"
                   element={<ReservationManagement />}
                 />
-                <Route path="models" element={<ModelManagement />} />
                 <Route path="content" element={<Content />} />
                 <Route path="spaces" element={<SpaceManagement />} />
                 <Route

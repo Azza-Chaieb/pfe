@@ -21,7 +21,6 @@ const Sidebar = () => {
       icon: "⚡",
       label: "Équipements & Services",
     },
-    { path: "/admin/models", icon: "🧊", label: "Gestion 3D" },
     { path: "/admin/settings", icon: "⚙️", label: "Paramètres" },
   ];
 

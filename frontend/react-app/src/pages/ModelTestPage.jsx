@@ -11,6 +11,7 @@ import {
     Center,
     useProgress,
 } from "@react-three/drei";
+import WebGLErrorBoundary from "../components/3d/WebGLErrorBoundary";
 
 // ──────────────────────────── Sample Models ────────────────────────────
 const SAMPLE_MODELS = [
@@ -491,51 +492,53 @@ export default function ModelTestPage() {
 
             {/* ──── 3D Viewport ──── */}
             <div style={{ flex: 1, position: "relative" }}>
-                <Canvas
-                    camera={{ position: [3, 2, 5], fov: 50 }}
-                    shadows
-                    gl={{ antialias: true }}
-                    onCreated={({ gl }) => {
-                        gl.setClearColor("#0a0a0f");
-                    }}
-                >
-                    <ambientLight intensity={0.4} />
-                    <directionalLight
-                        position={[5, 8, 3]}
-                        intensity={1.2}
-                        castShadow
-                        shadow-mapSize={[1024, 1024]}
-                    />
-                    <pointLight position={[-5, 3, -5]} intensity={0.5} color="#667eea" />
-
-                    <Suspense fallback={<LoadingScreen />}>
-                        <GLTFModel
-                            key={currentUrl}
-                            url={currentUrl}
-                            onLoaded={handleModelLoaded}
+                <WebGLErrorBoundary>
+                    <Canvas
+                        camera={{ position: [3, 2, 5], fov: 50 }}
+                        shadows
+                        gl={{ antialias: true }}
+                        onCreated={({ gl }) => {
+                            gl.setClearColor("#0a0a0f");
+                        }}
+                    >
+                        <ambientLight intensity={0.4} />
+                        <directionalLight
+                            position={[5, 8, 3]}
+                            intensity={1.2}
+                            castShadow
+                            shadow-mapSize={[1024, 1024]}
                         />
-                        <Environment preset="city" />
-                    </Suspense>
+                        <pointLight position={[-5, 3, -5]} intensity={0.5} color="#667eea" />
 
-                    <Grid
-                        infiniteGrid
-                        fadeDistance={30}
-                        fadeStrength={3}
-                        cellSize={1}
-                        sectionSize={5}
-                        cellColor="#1a1a2e"
-                        sectionColor="#2a2a4e"
-                    />
+                        <Suspense fallback={<LoadingScreen />}>
+                            <GLTFModel
+                                key={currentUrl}
+                                url={currentUrl}
+                                onLoaded={handleModelLoaded}
+                            />
+                            <Environment preset="city" />
+                        </Suspense>
 
-                    <SceneInfo />
-                    <OrbitControls
-                        makeDefault
-                        enableDamping
-                        dampingFactor={0.1}
-                        minDistance={1}
-                        maxDistance={20}
-                    />
-                </Canvas>
+                        <Grid
+                            infiniteGrid
+                            fadeDistance={30}
+                            fadeStrength={3}
+                            cellSize={1}
+                            sectionSize={5}
+                            cellColor="#1a1a2e"
+                            sectionColor="#2a2a4e"
+                        />
+
+                        <SceneInfo />
+                        <OrbitControls
+                            makeDefault
+                            enableDamping
+                            dampingFactor={0.1}
+                            minDistance={1}
+                            maxDistance={20}
+                        />
+                    </Canvas>
+                </WebGLErrorBoundary>
 
                 {/* Format badge */}
                 <div

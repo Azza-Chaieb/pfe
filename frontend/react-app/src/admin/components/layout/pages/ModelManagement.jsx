@@ -15,7 +15,8 @@ import {
   upload3DModelToSpace,
   deleteModel,
   getCoworkingSpacesList,
-} from "../../../../services/3DService";
+} from "../../../../api";
+import WebGLErrorBoundary from "../../../../components/3d/WebGLErrorBoundary";
 
 // ──────────────────────────── Reusable components from Tester ────────────────────────────
 function LoadingScreen() {
@@ -159,7 +160,6 @@ const ModelManagement = () => {
   };
 
   const getFileUrl = (model) => {
-    // Support both Strapi 4 (attributes) and Strapi 5 (flat)
     const file = model.attributes?.file?.data?.attributes || model.file;
     if (!file?.url) return "";
     return `${import.meta.env.VITE_API_URL || "http://localhost:1337"}${file.url}`;
@@ -180,13 +180,12 @@ const ModelManagement = () => {
           {message.text && (
             <div
               className={`px-4 py-2 rounded-lg text-sm font-medium animate-bounce 
-              ${
-                message.type === "error"
+              ${message.type === "error"
                   ? "bg-red-50 text-red-600 border border-red-100"
                   : message.type === "success"
                     ? "bg-emerald-50 text-emerald-600 border border-emerald-100"
                     : "bg-blue-50 text-blue-600 border border-blue-100"
-              }`}
+                }`}
             >
               {message.text}
             </div>
@@ -194,7 +193,6 @@ const ModelManagement = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* ────── Upload Section ────── */}
           <div className="lg:col-span-1 border-r border-slate-200 pr-0 lg:pr-8">
             <div className="bg-white/80 backdrop-blur-xl rounded-2xl p-6 shadow-xl shadow-slate-200/50 border border-white/60 sticky top-4">
               <h3 className="font-bold text-slate-700 mb-4 flex items-center gap-2">
@@ -256,7 +254,6 @@ const ModelManagement = () => {
             </div>
           </div>
 
-          {/* ────── Models List Section ────── */}
           <div className="lg:col-span-2">
             <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-6 shadow-xl shadow-slate-200/50 border border-white/60">
               <h3 className="font-bold text-slate-700 mb-6 flex items-center gap-2">
@@ -285,7 +282,7 @@ const ModelManagement = () => {
                     </thead>
                     <tbody>
                       {models.map((model) => {
-                        const m = model.attributes || model; // Support both structures
+                        const m = model.attributes || model;
                         return (
                           <tr
                             key={model.id}
@@ -350,7 +347,6 @@ const ModelManagement = () => {
         </div>
       </div>
 
-      {/* ────── Preview Modal ────── */}
       {previewModel && (
         <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4">
           <div
@@ -358,7 +354,6 @@ const ModelManagement = () => {
             onClick={() => setPreviewModel(null)}
           ></div>
           <div className="relative bg-white w-full max-w-5xl h-[80vh] rounded-[40px] shadow-2xl overflow-hidden animate-zoom-in flex flex-col border border-white/20">
-            {/* Modal Header */}
             <div className="px-10 py-6 border-b border-slate-100 flex justify-between items-center bg-white/50 backdrop-blur-sm z-10">
               <div>
                 <h3 className="text-2xl font-black text-slate-800 tracking-tight">
@@ -376,27 +371,28 @@ const ModelManagement = () => {
               </button>
             </div>
 
-            {/* Modal Body (Viewport) */}
             <div className="flex-1 bg-[#0a0a0f] relative group">
-              <Canvas camera={{ position: [5, 5, 5], fov: 45 }} shadows>
-                <ambientLight intensity={0.5} />
-                <directionalLight
-                  position={[10, 10, 5]}
-                  intensity={1}
-                  castShadow
-                />
-                <Suspense fallback={<LoadingScreen />}>
-                  <GLTFModel url={getFileUrl(previewModel)} />
-                  <Environment preset="city" />
-                </Suspense>
-                <Grid
-                  infiniteGrid
-                  fadeDistance={20}
-                  cellColor="#1a1a2e"
-                  sectionColor="#2a2a4e"
-                />
-                <OrbitControls makeDefault enableDamping dampingFactor={0.1} />
-              </Canvas>
+              <WebGLErrorBoundary>
+                <Canvas camera={{ position: [5, 5, 5], fov: 45 }} shadows>
+                  <ambientLight intensity={0.5} />
+                  <directionalLight
+                    position={[10, 10, 5]}
+                    intensity={1}
+                    castShadow
+                  />
+                  <Suspense fallback={<LoadingScreen />}>
+                    <GLTFModel url={getFileUrl(previewModel)} />
+                    <Environment preset="city" />
+                  </Suspense>
+                  <Grid
+                    infiniteGrid
+                    fadeDistance={20}
+                    cellColor="#1a1a2e"
+                    sectionColor="#2a2a4e"
+                  />
+                  <OrbitControls makeDefault enableDamping dampingFactor={0.1} />
+                </Canvas>
+              </WebGLErrorBoundary>
 
               <div className="absolute bottom-6 left-6 text-[10px] text-white/30 font-mono tracking-widest uppercase pointer-events-none">
                 Renderer: WebGL2 • Drei Controls Enabled
