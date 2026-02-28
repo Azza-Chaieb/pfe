@@ -14,7 +14,7 @@
       "name": "Apache 2.0",
       "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "x-generation-date": "2026-02-24T16:49:56.057Z"
+    "x-generation-date": "2026-02-28T10:04:44.608Z"
   },
   "x-strapi-config": {
     "plugins": [
@@ -24,7 +24,7 @@
   },
   "servers": [
     {
-      "url": "http://192.168.100.97:1337/api",
+      "url": "http://localhost:1337/api",
       "description": "Development server"
     }
   ],
@@ -11939,6 +11939,9 @@
               "fcmToken": {
                 "type": "string"
               },
+              "otp_code": {
+                "type": "string"
+              },
               "createdAt": {
                 "type": "string",
                 "format": "date-time"
@@ -14194,6 +14197,9 @@
                                 }
                               },
                               "fcmToken": {
+                                "type": "string"
+                              },
+                              "otp_code": {
                                 "type": "string"
                               },
                               "createdAt": {
@@ -17543,6 +17549,9 @@
               "fcmToken": {
                 "type": "string"
               },
+              "otp_code": {
+                "type": "string"
+              },
               "createdAt": {
                 "type": "string",
                 "format": "date-time"
@@ -20095,6 +20104,9 @@
                                             }
                                           },
                                           "fcmToken": {
+                                            "type": "string"
+                                          },
+                                          "otp_code": {
                                             "type": "string"
                                           },
                                           "createdAt": {
@@ -23332,6 +23344,9 @@
                                   }
                                 },
                                 "fcmToken": {
+                                  "type": "string"
+                                },
+                                "otp_code": {
                                   "type": "string"
                                 },
                                 "createdAt": {
@@ -26635,6 +26650,9 @@
               "fcmToken": {
                 "type": "string"
               },
+              "otp_code": {
+                "type": "string"
+              },
               "createdAt": {
                 "type": "string",
                 "format": "date-time"
@@ -28596,6 +28614,9 @@
                 }
               },
               "fcmToken": {
+                "type": "string"
+              },
+              "otp_code": {
                 "type": "string"
               },
               "createdAt": {
@@ -31243,6 +31264,9 @@
                                       }
                                     },
                                     "fcmToken": {
+                                      "type": "string"
+                                    },
+                                    "otp_code": {
                                       "type": "string"
                                     },
                                     "createdAt": {
@@ -35432,6 +35456,9 @@
                   "fcmToken": {
                     "type": "string"
                   },
+                  "otp_code": {
+                    "type": "string"
+                  },
                   "createdAt": {
                     "type": "string",
                     "format": "date-time"
@@ -37813,6 +37840,9 @@
               "fcmToken": {
                 "type": "string"
               },
+              "otp_code": {
+                "type": "string"
+              },
               "createdAt": {
                 "type": "string",
                 "format": "date-time"
@@ -40002,6 +40032,9 @@
                                   }
                                 },
                                 "fcmToken": {
+                                  "type": "string"
+                                },
+                                "otp_code": {
                                   "type": "string"
                                 },
                                 "createdAt": {
@@ -43315,6 +43348,9 @@
                   "fcmToken": {
                     "type": "string"
                   },
+                  "otp_code": {
+                    "type": "string"
+                  },
                   "createdAt": {
                     "type": "string",
                     "format": "date-time"
@@ -46357,6 +46393,9 @@
                                       "fcmToken": {
                                         "type": "string"
                                       },
+                                      "otp_code": {
+                                        "type": "string"
+                                      },
                                       "createdAt": {
                                         "type": "string",
                                         "format": "date-time"
@@ -49287,6 +49326,9 @@
                                 }
                               },
                               "fcmToken": {
+                                "type": "string"
+                              },
+                              "otp_code": {
                                 "type": "string"
                               },
                               "createdAt": {
@@ -52506,6 +52548,9 @@
               "fcmToken": {
                 "type": "string"
               },
+              "otp_code": {
+                "type": "string"
+              },
               "createdAt": {
                 "type": "string",
                 "format": "date-time"
@@ -55162,6 +55207,9 @@
                 }
               },
               "fcmToken": {
+                "type": "string"
+              },
+              "otp_code": {
                 "type": "string"
               },
               "createdAt": {

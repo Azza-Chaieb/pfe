@@ -58,12 +58,6 @@ const Navbar = () => {
               >
                 Connexion
               </button>
-              <button
-                onClick={() => navigate("/register")}
-                className="btn-premium-action"
-              >
-                S'inscrire
-              </button>
             </>
           ) : (
             <div className="flex items-center gap-4">

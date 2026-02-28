@@ -49,7 +49,7 @@ const Home = () => {
           </div>
 
           <h1 className="hero-title text-6xl md:text-8xl lg:text-9xl mb-10 animate-up leading-[0.8] tracking-tighter">
-            PROSPACE <br />
+            SUNSPACE <br />
             <span className="text-vibrant-sun block mt-4">EVOLVE.</span>
           </h1>
 
@@ -122,7 +122,7 @@ const Home = () => {
             </span>
           </div>
           <p className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.5em]">
-            © 2024 SunSpace Pro
+            © 2026 SunSpace
           </p>
           <div className="flex gap-10">
             <a
@@ -134,16 +134,6 @@ const Home = () => {
               className="text-slate-500 hover:text-white transition-colors text-[10px] font-black uppercase tracking-widest"
             >
               Connexion
-            </a>
-            <a
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                navigate("/register");
-              }}
-              className="text-slate-500 hover:text-white transition-colors text-[10px] font-black uppercase tracking-widest"
-            >
-              S'inscrire
             </a>
           </div>
         </div>

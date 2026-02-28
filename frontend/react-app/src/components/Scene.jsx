@@ -18,9 +18,12 @@ export default function Scene() {
 
   useEffect(() => {
     fetch(
-      `${import.meta.env.VITE_API_URL || "http://localhost:1337"}/api/tests?populate=*`,
+      `${import.meta.env.VITE_API_URL || "http://localhost:1337"}/api/equipments?populate=*`,
     )
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error(`API Error: ${res.status}`);
+        return res.json();
+      })
       .then((data) => {
         const list = data?.data || [];
         setItems(list);
@@ -38,12 +41,29 @@ export default function Scene() {
   return (
     <>
       <div
-        style={{ position: "absolute", zIndex: 1, color: "#fff", padding: 8, width: "300px" }}
+        style={{
+          position: "absolute",
+          zIndex: 1,
+          color: "#fff",
+          padding: 8,
+          width: "300px",
+        }}
       >
-        <h3 style={{ fontSize: '14px', fontWeight: '900', marginBottom: '15px', color: '#6366f1', textTransform: 'uppercase', letterSpacing: '2px' }}>
+        <h3
+          style={{
+            fontSize: "14px",
+            fontWeight: "900",
+            marginBottom: "15px",
+            color: "#6366f1",
+            textTransform: "uppercase",
+            letterSpacing: "2px",
+          }}
+        >
           Données de Test
         </h3>
-        <div style={{ maxHeight: '70vh', overflowY: 'auto', paddingRight: '10px' }}>
+        <div
+          style={{ maxHeight: "70vh", overflowY: "auto", paddingRight: "10px" }}
+        >
           {items.map((item) => (
             <div
               key={item.id}
@@ -75,18 +95,50 @@ export default function Scene() {
                 />
               )}
               <div style={{ flex: 1 }}>
-                <p style={{ margin: 0, fontWeight: "800", color: "#fff", fontSize: '13px' }}>
+                <p
+                  style={{
+                    margin: 0,
+                    fontWeight: "800",
+                    color: "#fff",
+                    fontSize: "13px",
+                  }}
+                >
                   {item.name}
                 </p>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px' }}>
-                  <span style={{ fontSize: "9px", opacity: 0.4, fontWeight: 'bold' }}>ID: {item.id}</span>
-                  <span style={{ fontSize: "9px", color: '#10b981', fontWeight: '900' }}>ONLINE</span>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginTop: "4px",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "9px",
+                      opacity: 0.4,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    ID: {item.id}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "9px",
+                      color: "#10b981",
+                      fontWeight: "900",
+                    }}
+                  >
+                    ONLINE
+                  </span>
                 </div>
               </div>
             </div>
           ))}
           {items.length === 0 && (
-            <p style={{ fontSize: '11px', opacity: 0.5, fontStyle: 'italic' }}>Aucune donnée trouvée...</p>
+            <p style={{ fontSize: "11px", opacity: 0.5, fontStyle: "italic" }}>
+              Aucune donnée trouvée...
+            </p>
           )}
         </div>
       </div>

@@ -69,7 +69,8 @@
     },
     "phone": {
       "type": "biginteger",
-      "required": true
+      "required": true,
+      "unique": true
     },
     "fullname": {
       "type": "string"
@@ -140,6 +141,11 @@
     },
     "fcmToken": {
       "type": "string"
+    },
+    "otp_code": {
+      "type": "string",
+      "configurable": false,
+      "private": true
     }
   }
 }
