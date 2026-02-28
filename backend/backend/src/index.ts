@@ -37,7 +37,8 @@ export default {
             return ctx.send({ ok: true });
           }
 
-          const resetPasswordToken = strapi.service("plugin::users-permissions.user").createToken();
+          const crypto = require('crypto');
+          const resetPasswordToken = crypto.randomBytes(64).toString('hex');
           await strapi.query("plugin::users-permissions.user").update({
             where: { id: user.id },
             data: { resetPasswordToken },
