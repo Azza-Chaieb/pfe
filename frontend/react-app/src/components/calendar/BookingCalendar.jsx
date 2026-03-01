@@ -132,8 +132,7 @@ const BookingCalendar = ({ userId }) => {
     try {
       setActionLoading(true);
       // Try to use documentId, fallback to id
-      const resId =
-        selectedEvent.extendedProps.documentId || selectedEvent.id;
+      const resId = selectedEvent.extendedProps.documentId || selectedEvent.id;
 
       let start_time, end_time;
 
@@ -154,7 +153,7 @@ const BookingCalendar = ({ userId }) => {
       await updateReservation(resId, {
         start_time,
         end_time,
-        status: selectedEvent.extendedProps.status || "pending",
+        status: "pending", // Reset to pending for re-validation if modified
       });
 
       setIsEditing(false);
@@ -209,12 +208,13 @@ const BookingCalendar = ({ userId }) => {
               <div className="flex justify-between items-start mb-6">
                 <div>
                   <span
-                    className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${selectedEvent.extendedProps.status === "confirmed"
-                      ? "bg-emerald-50 text-emerald-600"
-                      : selectedEvent.extendedProps.status === "pending"
-                        ? "bg-amber-50 text-amber-600"
-                        : "bg-red-50 text-red-600"
-                      }`}
+                    className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${
+                      selectedEvent.extendedProps.status === "confirmed"
+                        ? "bg-emerald-50 text-emerald-600"
+                        : selectedEvent.extendedProps.status === "pending"
+                          ? "bg-amber-50 text-amber-600"
+                          : "bg-red-50 text-red-600"
+                    }`}
                   >
                     {selectedEvent.extendedProps.status || "En attente"}
                   </span>
@@ -318,7 +318,8 @@ const BookingCalendar = ({ userId }) => {
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {selectedEvent.extendedProps.status === "pending" && (
+                  {(selectedEvent.extendedProps.status === "pending" ||
+                    selectedEvent.extendedProps.status === "confirmed") && (
                     <div className="flex gap-3">
                       <button
                         onClick={() => {

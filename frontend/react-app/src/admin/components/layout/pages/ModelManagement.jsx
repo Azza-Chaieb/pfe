@@ -373,7 +373,7 @@ const ModelManagement = () => {
 
             <div className="flex-1 bg-[#0a0a0f] relative group">
               <WebGLErrorBoundary>
-                <Canvas camera={{ position: [5, 5, 5], fov: 45 }} shadows>
+                <Canvas eventSource={typeof document !== 'undefined' ? document.body : undefined} camera={{ position: [5, 5, 5], fov: 45 }} shadows>
                   <ambientLight intensity={0.5} />
                   <directionalLight
                     position={[10, 10, 5]}

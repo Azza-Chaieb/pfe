@@ -139,6 +139,11 @@ const ExplorationScene = () => {
     if (spaceId) fetchSpaceData();
   }, [spaceId]);
 
+  // Get the current user type
+  const userStr = localStorage.getItem("user");
+  const user = userStr ? JSON.parse(userStr) : null;
+  const userType = (user?.user_type || "").toLowerCase();
+
   // Map occupancy status to spaces
   const spacesWithStatus = spaces.map((s) => {
     const spaceIdNumeric = s.id;
@@ -149,9 +154,30 @@ const ExplorationScene = () => {
       return resSpaceId === spaceIdNumeric;
     });
 
+    const sAttrs = s.attributes || s;
+    const accessibleBy = sAttrs.accessible_by || s.accessible_by || [];
+
+    // Check if the current user is allowed to book this space.
+    // If accessibleBy is completely empty and it isn't specifically empty by design, maybe grant access or block? 
+    // From requirements: Restrooms, etc. have empty array `[]` meaning NOT bookable. Default to unbookable if not explicitly in `accessible_by`.
+    // Exception for 'admin' who could book anything if needed, but let's strictly stick to the types.
+    let isAccessible = true;
+    if (Array.isArray(accessibleBy)) {
+      if (accessibleBy.length === 0) {
+        isAccessible = false;
+      } else if (userType !== "admin" && !accessibleBy.includes(userType)) {
+        isAccessible = false;
+      }
+    }
+
+    let status = isBooked ? "BOOKED" : "AVAILABLE";
+    if (!isAccessible) {
+      status = "INACCESSIBLE";
+    }
+
     return {
       ...s,
-      status: isBooked ? "BOOKED" : "AVAILABLE",
+      status: status,
     };
   });
 
@@ -247,33 +273,22 @@ const ExplorationScene = () => {
             const docId = sAttrs.documentId ? sAttrs.documentId.toString() : "";
             const name = normalize(sAttrs.name || "");
 
-            // 1. Precise mesh_name match (highest priority)
+            // 1. Precise mesh_name match
             if (mesh && mesh === elNorm) return true;
+            if (mesh && mesh.includes(elNorm)) return true;
 
-            // 2. Element ID contains the numeric ID or documentId
+            // 2. Element ID digits match numeric ID or documentId
             if (elDigits && (sid === elDigits || docId === elDigits))
               return true;
 
             // 3. Name match
             if (name && name === elNorm) return true;
 
-            // 4. Fallback: ID exists in the element name string
-            if (sid && elNorm.includes(sid.toLowerCase())) return true;
-
             return false;
           });
 
-          // Final fallback to make it usable even if IDs aren't perfectly mapped yet
-          if (!matched && spacesWithStatus.length > 0) {
-            console.warn(
-              "[ExplorationScene] No precise match for element:",
-              elName,
-              ". Using fallback.",
-            );
-            matched = spacesWithStatus[0];
-          }
-
-          return matched ? (
+          // Only allow booking if status isn't INACCESSIBLE and we have a valid match
+          return matched && matched.status !== "INACCESSIBLE" ? (
             <BookingModal
               key={`modal-${matched.id}`}
               space={matched}

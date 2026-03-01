@@ -494,6 +494,7 @@ export default function ModelTestPage() {
             <div style={{ flex: 1, position: "relative" }}>
                 <WebGLErrorBoundary>
                     <Canvas
+                        eventSource={document.getElementById('root')}
                         camera={{ position: [3, 2, 5], fov: 50 }}
                         shadows
                         gl={{ antialias: true }}

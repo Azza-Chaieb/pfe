@@ -1,0 +1,2872 @@
+[
+  {
+    "id": "bureau_1",
+    "type": "path",
+    "x": 10.133,
+    "y": 394,
+    "width": 50,
+    "height": 50,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_2",
+    "type": "path",
+    "x": 1559.96,
+    "y": 1223,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_3",
+    "type": "path",
+    "x": 1512,
+    "y": 18,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_4",
+    "type": "path",
+    "x": 2261,
+    "y": 1234.05,
+    "width": 50,
+    "height": 50,
+    "zone": "Right Section (Classrooms)"
+  },
+  {
+    "id": "bureau_5",
+    "type": "path",
+    "x": 1952,
+    "y": 857,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_6",
+    "type": "path",
+    "x": 1952,
+    "y": 249,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_7",
+    "type": "path",
+    "x": 808.559,
+    "y": 186.068,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_8",
+    "type": "path",
+    "x": 218.068,
+    "y": 755.864,
+    "width": 50,
+    "height": 50,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_9",
+    "type": "path",
+    "x": 218.068,
+    "y": 1043.44,
+    "width": 50,
+    "height": 50,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_10",
+    "type": "path",
+    "x": 1268.56,
+    "y": 186.068,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_11",
+    "type": "path",
+    "x": 1627.72,
+    "y": 212.497,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_12",
+    "type": "path",
+    "x": 1687.38,
+    "y": 192.611,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_13",
+    "type": "path",
+    "x": 1674.77,
+    "y": 175.21,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_14",
+    "type": "path",
+    "x": 1636.42,
+    "y": 208.392,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_15",
+    "type": "path",
+    "x": 1636.42,
+    "y": 204.839,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_16",
+    "type": "path",
+    "x": 1640.15,
+    "y": 202.64,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_17",
+    "type": "path",
+    "x": 1631.45,
+    "y": 209.154,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_18",
+    "type": "path",
+    "x": 1607.84,
+    "y": 209.154,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_19",
+    "type": "path",
+    "x": 1624.61,
+    "y": 193.232,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_20",
+    "type": "path",
+    "x": 1619.68,
+    "y": 196.339,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_21",
+    "type": "path",
+    "x": 1621.32,
+    "y": 174.406,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_22",
+    "type": "path",
+    "x": 1734.84,
+    "y": 892.099,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_23",
+    "type": "path",
+    "x": 1754.72,
+    "y": 951.757,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_24",
+    "type": "path",
+    "x": 1772.12,
+    "y": 939.144,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_25",
+    "type": "path",
+    "x": 1738.94,
+    "y": 900.799,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_26",
+    "type": "path",
+    "x": 1742.5,
+    "y": 900.799,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_27",
+    "type": "path",
+    "x": 1744.69,
+    "y": 904.528,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_28",
+    "type": "path",
+    "x": 1738.18,
+    "y": 895.827,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_29",
+    "type": "path",
+    "x": 1738.18,
+    "y": 872.213,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_30",
+    "type": "path",
+    "x": 1754.1,
+    "y": 888.992,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_31",
+    "type": "path",
+    "x": 1751,
+    "y": 884.053,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_32",
+    "type": "path",
+    "x": 1772.93,
+    "y": 885.696,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_33",
+    "type": "path",
+    "x": 1609.17,
+    "y": 892.098,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_34",
+    "type": "path",
+    "x": 1629.05,
+    "y": 951.757,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_35",
+    "type": "path",
+    "x": 1646.45,
+    "y": 939.144,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_36",
+    "type": "path",
+    "x": 1613.27,
+    "y": 900.799,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_37",
+    "type": "path",
+    "x": 1616.83,
+    "y": 900.799,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_38",
+    "type": "path",
+    "x": 1619.02,
+    "y": 904.527,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_39",
+    "type": "path",
+    "x": 1612.51,
+    "y": 895.827,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_40",
+    "type": "path",
+    "x": 1612.51,
+    "y": 872.212,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_41",
+    "type": "path",
+    "x": 1628.43,
+    "y": 888.991,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_42",
+    "type": "path",
+    "x": 1625.32,
+    "y": 884.053,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_43",
+    "type": "path",
+    "x": 1647.26,
+    "y": 885.696,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_44",
+    "type": "path",
+    "x": 1971.69,
+    "y": 1049,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_45",
+    "type": "path",
+    "x": 2025.7,
+    "y": 1165.06,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_46",
+    "type": "path",
+    "x": 1995.97,
+    "y": 1217.54,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_47",
+    "type": "path",
+    "x": 2020.18,
+    "y": 1166.3,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_48",
+    "type": "path",
+    "x": 2020.18,
+    "y": 1189.61,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_49",
+    "type": "path",
+    "x": 2006.78,
+    "y": 1200.42,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_50",
+    "type": "path",
+    "x": 2007.34,
+    "y": 1191.52,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_51",
+    "type": "path",
+    "x": 1993.49,
+    "y": 1187.36,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_52",
+    "type": "path",
+    "x": 1986.62,
+    "y": 1189.38,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_53",
+    "type": "path",
+    "x": 2025.7,
+    "y": 1119.42,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_54",
+    "type": "path",
+    "x": 1998.22,
+    "y": 1080.34,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_55",
+    "type": "path",
+    "x": 2004.19,
+    "y": 1086.31,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_56",
+    "type": "path",
+    "x": 1630.21,
+    "y": 91.347,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_57",
+    "type": "path",
+    "x": 1689.87,
+    "y": 71.46,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_58",
+    "type": "path",
+    "x": 1677.25,
+    "y": 54.06,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_59",
+    "type": "path",
+    "x": 1638.91,
+    "y": 87.242,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_60",
+    "type": "path",
+    "x": 1638.91,
+    "y": 83.689,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_61",
+    "type": "path",
+    "x": 1642.64,
+    "y": 81.49,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_62",
+    "type": "path",
+    "x": 1633.94,
+    "y": 88.004,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_63",
+    "type": "path",
+    "x": 1610.32,
+    "y": 88.004,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_64",
+    "type": "path",
+    "x": 1627.1,
+    "y": 72.082,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_65",
+    "type": "path",
+    "x": 1622.16,
+    "y": 75.19,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_66",
+    "type": "path",
+    "x": 1623.81,
+    "y": 53.256,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_67",
+    "type": "path",
+    "x": 1946.69,
+    "y": 165.296,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_68",
+    "type": "path",
+    "x": 1946.69,
+    "y": 212.497,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_69",
+    "type": "path",
+    "x": 1936.61,
+    "y": 168.671,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_70",
+    "type": "path",
+    "x": 1936.61,
+    "y": 168.671,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_71",
+    "type": "path",
+    "x": 1930.82,
+    "y": 170.837,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_72",
+    "type": "path",
+    "x": 1923.82,
+    "y": 175.976,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_73",
+    "type": "path",
+    "x": 1930.11,
+    "y": 201.717,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_74",
+    "type": "path",
+    "x": 1927.85,
+    "y": 175.119,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_75",
+    "type": "path",
+    "x": 1927.85,
+    "y": 191.037,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_76",
+    "type": "path",
+    "x": 1925.48,
+    "y": 188.922,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_79",
+    "type": "path",
+    "x": 1927.85,
+    "y": 189.526,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_80",
+    "type": "path",
+    "x": 1930.87,
+    "y": 187.713,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_81",
+    "type": "path",
+    "x": 1943.61,
+    "y": 191.39,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_82",
+    "type": "path",
+    "x": 1945.68,
+    "y": 189.476,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_83",
+    "type": "path",
+    "x": 1933.29,
+    "y": 188.015,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_84",
+    "type": "path",
+    "x": 1940.74,
+    "y": 191.39,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_86",
+    "type": "path",
+    "x": 1936.66,
+    "y": 195.521,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_87",
+    "type": "path",
+    "x": 1945.28,
+    "y": 188.267,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_88",
+    "type": "path",
+    "x": 1936.61,
+    "y": 208.718,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_89",
+    "type": "path",
+    "x": 1946.69,
+    "y": 47.86,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_90",
+    "type": "path",
+    "x": 1946.69,
+    "y": 95.061,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_91",
+    "type": "path",
+    "x": 1936.61,
+    "y": 51.236,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_92",
+    "type": "path",
+    "x": 1936.61,
+    "y": 51.236,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_93",
+    "type": "path",
+    "x": 1930.82,
+    "y": 53.402,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_94",
+    "type": "path",
+    "x": 1923.82,
+    "y": 58.54,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_95",
+    "type": "path",
+    "x": 1930.11,
+    "y": 84.281,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_96",
+    "type": "path",
+    "x": 1927.85,
+    "y": 57.683,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_97",
+    "type": "path",
+    "x": 1927.85,
+    "y": 73.602,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_98",
+    "type": "path",
+    "x": 1925.48,
+    "y": 71.486,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_101",
+    "type": "path",
+    "x": 1927.85,
+    "y": 72.09,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_102",
+    "type": "path",
+    "x": 1930.87,
+    "y": 70.277,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_103",
+    "type": "path",
+    "x": 1943.61,
+    "y": 73.954,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_104",
+    "type": "path",
+    "x": 1945.68,
+    "y": 72.04,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_105",
+    "type": "path",
+    "x": 1933.29,
+    "y": 70.58,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_106",
+    "type": "path",
+    "x": 1940.74,
+    "y": 73.954,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_108",
+    "type": "path",
+    "x": 1936.66,
+    "y": 78.085,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_109",
+    "type": "path",
+    "x": 1945.28,
+    "y": 70.831,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_110",
+    "type": "path",
+    "x": 1936.61,
+    "y": 91.283,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_111",
+    "type": "path",
+    "x": 2635.14,
+    "y": 790.194,
+    "width": 50,
+    "height": 50,
+    "zone": "Right Section (Classrooms)"
+  },
+  {
+    "id": "bureau_112",
+    "type": "path",
+    "x": 2634.61,
+    "y": 788.425,
+    "width": 50,
+    "height": 50,
+    "zone": "Right Section (Classrooms)"
+  },
+  {
+    "id": "bureau_113",
+    "type": "path",
+    "x": 2670.01,
+    "y": 790.194,
+    "width": 50,
+    "height": 50,
+    "zone": "Right Section (Classrooms)"
+  },
+  {
+    "id": "bureau_114",
+    "type": "path",
+    "x": 2669.48,
+    "y": 788.425,
+    "width": 50,
+    "height": 50,
+    "zone": "Right Section (Classrooms)"
+  },
+  {
+    "id": "bureau_115",
+    "type": "path",
+    "x": 2626.54,
+    "y": 793.626,
+    "width": 50,
+    "height": 50,
+    "zone": "Right Section (Classrooms)"
+  },
+  {
+    "id": "bureau_116",
+    "type": "path",
+    "x": 2640.53,
+    "y": 905.353,
+    "width": 50,
+    "height": 50,
+    "zone": "Right Section (Classrooms)"
+  },
+  {
+    "id": "bureau_117",
+    "type": "path",
+    "x": 2641.06,
+    "y": 907.122,
+    "width": 50,
+    "height": 50,
+    "zone": "Right Section (Classrooms)"
+  },
+  {
+    "id": "bureau_118",
+    "type": "path",
+    "x": 2605.66,
+    "y": 905.353,
+    "width": 50,
+    "height": 50,
+    "zone": "Right Section (Classrooms)"
+  },
+  {
+    "id": "bureau_119",
+    "type": "path",
+    "x": 2606.2,
+    "y": 907.122,
+    "width": 50,
+    "height": 50,
+    "zone": "Right Section (Classrooms)"
+  },
+  {
+    "id": "bureau_120",
+    "type": "path",
+    "x": 2649.13,
+    "y": 901.921,
+    "width": 50,
+    "height": 50,
+    "zone": "Right Section (Classrooms)"
+  },
+  {
+    "id": "bureau_121",
+    "type": "path",
+    "x": 2630.21,
+    "y": 400.046,
+    "width": 50,
+    "height": 50,
+    "zone": "Right Section (Classrooms)"
+  },
+  {
+    "id": "bureau_122",
+    "type": "path",
+    "x": 2629.68,
+    "y": 398.278,
+    "width": 50,
+    "height": 50,
+    "zone": "Right Section (Classrooms)"
+  },
+  {
+    "id": "bureau_123",
+    "type": "path",
+    "x": 2665.07,
+    "y": 400.046,
+    "width": 50,
+    "height": 50,
+    "zone": "Right Section (Classrooms)"
+  },
+  {
+    "id": "bureau_124",
+    "type": "path",
+    "x": 2664.54,
+    "y": 398.278,
+    "width": 50,
+    "height": 50,
+    "zone": "Right Section (Classrooms)"
+  },
+  {
+    "id": "bureau_125",
+    "type": "path",
+    "x": 2621.6,
+    "y": 403.479,
+    "width": 50,
+    "height": 50,
+    "zone": "Right Section (Classrooms)"
+  },
+  {
+    "id": "bureau_126",
+    "type": "path",
+    "x": 1732.54,
+    "y": 1441.64,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_127",
+    "type": "path",
+    "x": 576.028,
+    "y": 1200.91,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_128",
+    "type": "path",
+    "x": 610.891,
+    "y": 1200.91,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_129",
+    "type": "path",
+    "x": 570.36,
+    "y": 1207.12,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_130",
+    "type": "path",
+    "x": 1546.74,
+    "y": 1405.56,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_131",
+    "type": "path",
+    "x": 1548.51,
+    "y": 1405.03,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_132",
+    "type": "path",
+    "x": 1546.74,
+    "y": 1440.42,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_133",
+    "type": "path",
+    "x": 1548.51,
+    "y": 1439.89,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_134",
+    "type": "path",
+    "x": 1542.3,
+    "y": 1399.36,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_135",
+    "type": "path",
+    "x": 612.64,
+    "y": 1016.88,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_136",
+    "type": "path",
+    "x": 1546.42,
+    "y": 681.86,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_137",
+    "type": "path",
+    "x": 1128.91,
+    "y": 681.86,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_138",
+    "type": "path",
+    "x": 909.471,
+    "y": 1420.33,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_139",
+    "type": "path",
+    "x": 944.334,
+    "y": 1420.33,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_140",
+    "type": "path",
+    "x": 903.804,
+    "y": 1426.54,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_141",
+    "type": "path",
+    "x": 620.836,
+    "y": 595.187,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_142",
+    "type": "path",
+    "x": 621.643,
+    "y": 596.848,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_143",
+    "type": "path",
+    "x": 586.422,
+    "y": 600.763,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_144",
+    "type": "path",
+    "x": 587.229,
+    "y": 602.424,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_145",
+    "type": "path",
+    "x": 626.244,
+    "y": 589.811,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_146",
+    "type": "path",
+    "x": 574.35,
+    "y": 742.968,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_147",
+    "type": "path",
+    "x": 576.189,
+    "y": 742.8,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_148",
+    "type": "path",
+    "x": 567.407,
+    "y": 777.133,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_149",
+    "type": "path",
+    "x": 569.246,
+    "y": 776.965,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_150",
+    "type": "path",
+    "x": 577.268,
+    "y": 735.639,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_151",
+    "type": "path",
+    "x": 575.821,
+    "y": 1438.56,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_152",
+    "type": "path",
+    "x": 577.589,
+    "y": 1438.03,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_153",
+    "type": "path",
+    "x": 575.821,
+    "y": 1473.42,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_154",
+    "type": "path",
+    "x": 577.589,
+    "y": 1472.89,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_155",
+    "type": "path",
+    "x": 571.379,
+    "y": 1432.36,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_156",
+    "type": "path",
+    "x": 131.942,
+    "y": 499.266,
+    "width": 50,
+    "height": 50,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_157",
+    "type": "path",
+    "x": 132.472,
+    "y": 501.034,
+    "width": 50,
+    "height": 50,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_158",
+    "type": "path",
+    "x": 97.079,
+    "y": 499.265,
+    "width": 50,
+    "height": 50,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_159",
+    "type": "path",
+    "x": 97.61,
+    "y": 501.034,
+    "width": 50,
+    "height": 50,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_160",
+    "type": "path",
+    "x": 138.14,
+    "y": 494.824,
+    "width": 50,
+    "height": 50,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_161",
+    "type": "path",
+    "x": 1102.4,
+    "y": 1420.33,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_162",
+    "type": "path",
+    "x": 1137.79,
+    "y": 1422.1,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_163",
+    "type": "path",
+    "x": 1137.26,
+    "y": 1420.33,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_164",
+    "type": "path",
+    "x": 1096.73,
+    "y": 1426.54,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_165",
+    "type": "path",
+    "x": 2635.56,
+    "y": 1282.99,
+    "width": 50,
+    "height": 50,
+    "zone": "Right Section (Classrooms)"
+  },
+  {
+    "id": "bureau_166",
+    "type": "path",
+    "x": 2636.09,
+    "y": 1284.75,
+    "width": 50,
+    "height": 50,
+    "zone": "Right Section (Classrooms)"
+  },
+  {
+    "id": "bureau_167",
+    "type": "path",
+    "x": 2600.69,
+    "y": 1282.99,
+    "width": 50,
+    "height": 50,
+    "zone": "Right Section (Classrooms)"
+  },
+  {
+    "id": "bureau_168",
+    "type": "path",
+    "x": 2601.22,
+    "y": 1284.75,
+    "width": 50,
+    "height": 50,
+    "zone": "Right Section (Classrooms)"
+  },
+  {
+    "id": "bureau_169",
+    "type": "path",
+    "x": 2644.16,
+    "y": 1279.55,
+    "width": 50,
+    "height": 50,
+    "zone": "Right Section (Classrooms)"
+  },
+  {
+    "id": "bureau_170",
+    "type": "path",
+    "x": 1570,
+    "y": 1213,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_171",
+    "type": "path",
+    "x": 1657.38,
+    "y": 1208.51,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_172",
+    "type": "path",
+    "x": 1610.18,
+    "y": 1208.51,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_173",
+    "type": "path",
+    "x": 1654.01,
+    "y": 1198.43,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_174",
+    "type": "path",
+    "x": 1651.84,
+    "y": 1192.64,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_175",
+    "type": "path",
+    "x": 1633.76,
+    "y": 1177.88,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_176",
+    "type": "path",
+    "x": 1646.7,
+    "y": 1185.64,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_177",
+    "type": "path",
+    "x": 1620.96,
+    "y": 1191.94,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_178",
+    "type": "path",
+    "x": 1647.56,
+    "y": 1189.67,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_179",
+    "type": "path",
+    "x": 1631.64,
+    "y": 1189.67,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_180",
+    "type": "path",
+    "x": 1633.76,
+    "y": 1187.3,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_183",
+    "type": "path",
+    "x": 1633.15,
+    "y": 1189.67,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_184",
+    "type": "path",
+    "x": 1634.97,
+    "y": 1192.69,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_185",
+    "type": "path",
+    "x": 1631.29,
+    "y": 1205.44,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_186",
+    "type": "path",
+    "x": 1633.2,
+    "y": 1207.5,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_187",
+    "type": "path",
+    "x": 1634.66,
+    "y": 1195.11,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_188",
+    "type": "path",
+    "x": 1631.29,
+    "y": 1202.56,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_190",
+    "type": "path",
+    "x": 1627.16,
+    "y": 1198.48,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_191",
+    "type": "path",
+    "x": 1634.41,
+    "y": 1207.1,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_192",
+    "type": "path",
+    "x": 1613.96,
+    "y": 1198.43,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_193",
+    "type": "path",
+    "x": 1774.82,
+    "y": 1208.51,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_194",
+    "type": "path",
+    "x": 1727.62,
+    "y": 1208.51,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_195",
+    "type": "path",
+    "x": 1771.44,
+    "y": 1198.43,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_196",
+    "type": "path",
+    "x": 1769.28,
+    "y": 1192.64,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_197",
+    "type": "path",
+    "x": 1751.19,
+    "y": 1177.88,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_198",
+    "type": "path",
+    "x": 1764.14,
+    "y": 1185.64,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_199",
+    "type": "path",
+    "x": 1738.4,
+    "y": 1191.94,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_200",
+    "type": "path",
+    "x": 1765,
+    "y": 1189.67,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_201",
+    "type": "path",
+    "x": 1749.08,
+    "y": 1189.67,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_202",
+    "type": "path",
+    "x": 1751.19,
+    "y": 1187.3,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_205",
+    "type": "path",
+    "x": 1750.59,
+    "y": 1189.67,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_206",
+    "type": "path",
+    "x": 1752.4,
+    "y": 1192.69,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_207",
+    "type": "path",
+    "x": 1748.72,
+    "y": 1205.44,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_208",
+    "type": "path",
+    "x": 1750.64,
+    "y": 1207.5,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_209",
+    "type": "path",
+    "x": 1752.1,
+    "y": 1195.11,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_210",
+    "type": "path",
+    "x": 1748.72,
+    "y": 1202.56,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_212",
+    "type": "path",
+    "x": 1744.59,
+    "y": 1198.48,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_213",
+    "type": "path",
+    "x": 1751.85,
+    "y": 1207.1,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_214",
+    "type": "path",
+    "x": 1731.4,
+    "y": 1198.43,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_215",
+    "type": "path",
+    "x": 457.973,
+    "y": 18,
+    "width": 50,
+    "height": 50,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_216",
+    "type": "path",
+    "x": 569.027,
+    "y": 408.461,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_217",
+    "type": "path",
+    "x": 565.116,
+    "y": 411.597,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_218",
+    "type": "path",
+    "x": 565.116,
+    "y": 411.597,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_219",
+    "type": "path",
+    "x": 95.495,
+    "y": 691.644,
+    "width": 50,
+    "height": 50,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_220",
+    "type": "path",
+    "x": 91.769,
+    "y": 695.381,
+    "width": 50,
+    "height": 50,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_221",
+    "type": "path",
+    "x": 91.769,
+    "y": 695.381,
+    "width": 50,
+    "height": 50,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_222",
+    "type": "path",
+    "x": 95.16,
+    "y": 1400.48,
+    "width": 50,
+    "height": 50,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_223",
+    "type": "path",
+    "x": 91.435,
+    "y": 1404.22,
+    "width": 50,
+    "height": 50,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_224",
+    "type": "path",
+    "x": 91.435,
+    "y": 1404.22,
+    "width": 50,
+    "height": 50,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_225",
+    "type": "path",
+    "x": 1035.02,
+    "y": 23.095,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_226",
+    "type": "path",
+    "x": 1029.48,
+    "y": 27.41,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_227",
+    "type": "path",
+    "x": 1029.48,
+    "y": 27.41,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_228",
+    "type": "path",
+    "x": 1550.66,
+    "y": 1938,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_229",
+    "type": "path",
+    "x": 1545.57,
+    "y": 1932.64,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_230",
+    "type": "path",
+    "x": 1545.57,
+    "y": 1932.64,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_231",
+    "type": "path",
+    "x": 1961.97,
+    "y": 502.298,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_232",
+    "type": "path",
+    "x": 539,
+    "y": 942.922,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_233",
+    "type": "path",
+    "x": 542.393,
+    "y": 523.033,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_234",
+    "type": "path",
+    "x": 539,
+    "y": 1283.11,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_235",
+    "type": "path",
+    "x": 507.14,
+    "y": 1511,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_236",
+    "type": "path",
+    "x": 457.973,
+    "y": 217,
+    "width": 50,
+    "height": 50,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_237",
+    "type": "path",
+    "x": 485.757,
+    "y": 217,
+    "width": 50,
+    "height": 50,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_238",
+    "type": "path",
+    "x": 513.514,
+    "y": 217,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_239",
+    "type": "path",
+    "x": 541.27,
+    "y": 217,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_240",
+    "type": "path",
+    "x": 1036,
+    "y": 452,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_241",
+    "type": "path",
+    "x": 1670,
+    "y": 1017,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_242",
+    "type": "path",
+    "x": 1817.9,
+    "y": 259,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_243",
+    "type": "path",
+    "x": 1786,
+    "y": 114.904,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_244",
+    "type": "path",
+    "x": 1825,
+    "y": 1138,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_245",
+    "type": "path",
+    "x": 1460,
+    "y": 1155,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_246",
+    "type": "path",
+    "x": 458.16,
+    "y": 1463,
+    "width": 50,
+    "height": 50,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_247",
+    "type": "path",
+    "x": 826,
+    "y": 1590,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_248",
+    "type": "path",
+    "x": 826,
+    "y": 858,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_249",
+    "type": "path",
+    "x": 1512,
+    "y": 259,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_250",
+    "type": "path",
+    "x": 1776,
+    "y": 114.904,
+    "width": 50,
+    "height": 50,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_251",
+    "type": "path",
+    "x": 2151.9,
+    "y": 249,
+    "width": 50,
+    "height": 50,
+    "zone": "Right Section (Classrooms)"
+  },
+  {
+    "id": "bureau_252",
+    "type": "path",
+    "x": 2236,
+    "y": 259,
+    "width": 50,
+    "height": 50,
+    "zone": "Right Section (Classrooms)"
+  },
+  {
+    "id": "bureau_253",
+    "type": "path",
+    "x": 2251,
+    "y": 1635,
+    "width": 50,
+    "height": 50,
+    "zone": "Right Section (Classrooms)"
+  },
+  {
+    "id": "bureau_254",
+    "type": "path",
+    "x": 2764,
+    "y": 8,
+    "width": 50,
+    "height": 50,
+    "zone": "Right Section (Classrooms)"
+  },
+  {
+    "id": "bureau_255",
+    "type": "path",
+    "x": 1825,
+    "y": 1049,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_256",
+    "type": "path",
+    "x": 1560,
+    "y": 1027,
+    "width": 50,
+    "height": 50,
+    "zone": "Center Section (Meeting rooms/desks)"
+  },
+  {
+    "id": "bureau_257",
+    "type": "path",
+    "x": 10,
+    "y": 8.003,
+    "width": 50,
+    "height": 50,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_780",
+    "type": "use",
+    "x": -178,
+    "y": 181,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_781",
+    "type": "use",
+    "x": -178,
+    "y": 181,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_782",
+    "type": "use",
+    "x": -178,
+    "y": 181,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_783",
+    "type": "use",
+    "x": -178,
+    "y": 181,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_784",
+    "type": "use",
+    "x": -178,
+    "y": 181,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_785",
+    "type": "use",
+    "x": -178,
+    "y": 181,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_786",
+    "type": "use",
+    "x": -178,
+    "y": 181,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_787",
+    "type": "use",
+    "x": -178,
+    "y": 181,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_788",
+    "type": "use",
+    "x": -178,
+    "y": 181,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_789",
+    "type": "use",
+    "x": -178,
+    "y": 181,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_790",
+    "type": "use",
+    "x": -178,
+    "y": 181,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_791",
+    "type": "use",
+    "x": -178,
+    "y": 181,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_792",
+    "type": "use",
+    "x": -178,
+    "y": 181,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_793",
+    "type": "use",
+    "x": -178,
+    "y": 181,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_794",
+    "type": "use",
+    "x": -178,
+    "y": 181,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_795",
+    "type": "use",
+    "x": -178,
+    "y": 181,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_796",
+    "type": "use",
+    "x": -178,
+    "y": 181,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_797",
+    "type": "use",
+    "x": -178,
+    "y": 181,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_798",
+    "type": "use",
+    "x": -178,
+    "y": 181,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_799",
+    "type": "use",
+    "x": -178,
+    "y": 181,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_800",
+    "type": "use",
+    "x": -178,
+    "y": 181,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_801",
+    "type": "use",
+    "x": -178,
+    "y": 181,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_802",
+    "type": "use",
+    "x": -178,
+    "y": 181,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_803",
+    "type": "use",
+    "x": -178,
+    "y": 181,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_804",
+    "type": "use",
+    "x": -178,
+    "y": 181,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_805",
+    "type": "use",
+    "x": -178,
+    "y": 181,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_806",
+    "type": "use",
+    "x": -178,
+    "y": 181,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_807",
+    "type": "use",
+    "x": -178,
+    "y": 181,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_836",
+    "type": "use",
+    "x": 176,
+    "y": -380.46,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_837",
+    "type": "use",
+    "x": 176,
+    "y": -380.46,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_843",
+    "type": "use",
+    "x": 176,
+    "y": -296.46,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_844",
+    "type": "use",
+    "x": 176,
+    "y": -296.46,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_955",
+    "type": "use",
+    "x": 533.5,
+    "y": -541.55,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_957",
+    "type": "use",
+    "x": 533.5,
+    "y": -541.55,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_962",
+    "type": "use",
+    "x": 533.5,
+    "y": -597.55,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_964",
+    "type": "use",
+    "x": 533.5,
+    "y": -597.55,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_972",
+    "type": "use",
+    "x": 246.51,
+    "y": -331.056,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_979",
+    "type": "use",
+    "x": 302.51,
+    "y": -331.056,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1000",
+    "type": "use",
+    "x": 67.51,
+    "y": -331.056,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1007",
+    "type": "use",
+    "x": 123.51,
+    "y": -331.056,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1028",
+    "type": "use",
+    "x": -111.49,
+    "y": -331.056,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1035",
+    "type": "use",
+    "x": -55.49,
+    "y": -331.056,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1060",
+    "type": "use",
+    "x": -227,
+    "y": 296.95,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1067",
+    "type": "use",
+    "x": -283,
+    "y": 296.95,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1068",
+    "type": "use",
+    "x": 543,
+    "y": -131.57,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_1070",
+    "type": "use",
+    "x": 543,
+    "y": -131.57,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_1074",
+    "type": "use",
+    "x": -227,
+    "y": 417.84,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1075",
+    "type": "use",
+    "x": 487,
+    "y": -131.57,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1077",
+    "type": "use",
+    "x": 487,
+    "y": -131.57,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1081",
+    "type": "use",
+    "x": -283,
+    "y": 417.84,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1088",
+    "type": "use",
+    "x": -48,
+    "y": 296.95,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1095",
+    "type": "use",
+    "x": -104,
+    "y": 296.95,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1096",
+    "type": "use",
+    "x": 722,
+    "y": -131.57,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_1098",
+    "type": "use",
+    "x": 722,
+    "y": -131.57,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_1102",
+    "type": "use",
+    "x": -48,
+    "y": 417.84,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1103",
+    "type": "use",
+    "x": 666,
+    "y": -131.57,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_1105",
+    "type": "use",
+    "x": 666,
+    "y": -131.57,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_1109",
+    "type": "use",
+    "x": -104,
+    "y": 417.84,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1116",
+    "type": "use",
+    "x": 131,
+    "y": 296.95,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1123",
+    "type": "use",
+    "x": 75,
+    "y": 296.95,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1124",
+    "type": "use",
+    "x": 901,
+    "y": -131.57,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_1126",
+    "type": "use",
+    "x": 901,
+    "y": -131.57,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_1130",
+    "type": "use",
+    "x": 131,
+    "y": 417.84,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1131",
+    "type": "use",
+    "x": 845,
+    "y": -131.57,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_1133",
+    "type": "use",
+    "x": 845,
+    "y": -131.57,
+    "zone": "Top/Bottom Center"
+  },
+  {
+    "id": "bureau_1137",
+    "type": "use",
+    "x": 75,
+    "y": 417.84,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1138",
+    "type": "use",
+    "x": -123,
+    "y": -238,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1139",
+    "type": "use",
+    "x": -123,
+    "y": -238,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1140",
+    "type": "use",
+    "x": -123,
+    "y": -238,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1141",
+    "type": "use",
+    "x": -123,
+    "y": -238,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1156",
+    "type": "use",
+    "x": -829,
+    "y": 166.363,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1158",
+    "type": "use",
+    "x": -829,
+    "y": 131.5,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1214",
+    "type": "use",
+    "x": -417.51,
+    "y": -34.863,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1278",
+    "type": "use",
+    "x": -1250.13,
+    "y": -22,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1477",
+    "type": "use",
+    "x": -17.925,
+    "y": 11.95,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1478",
+    "type": "use",
+    "x": -5.975,
+    "y": 11.95,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1479",
+    "type": "use",
+    "x": 5.975,
+    "y": 11.95,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1484",
+    "type": "use",
+    "x": -17.925,
+    "y": 11.95,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1485",
+    "type": "use",
+    "x": -5.975,
+    "y": 11.95,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1486",
+    "type": "use",
+    "x": 5.975,
+    "y": 11.95,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1491",
+    "type": "use",
+    "x": -17.925,
+    "y": 11.95,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1492",
+    "type": "use",
+    "x": -5.975,
+    "y": 11.95,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1493",
+    "type": "use",
+    "x": 5.975,
+    "y": 11.95,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1498",
+    "type": "use",
+    "x": -17.925,
+    "y": 11.95,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1499",
+    "type": "use",
+    "x": -5.975,
+    "y": 11.95,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1500",
+    "type": "use",
+    "x": 5.975,
+    "y": 11.95,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1505",
+    "type": "use",
+    "x": -17.925,
+    "y": 11.95,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1506",
+    "type": "use",
+    "x": -5.975,
+    "y": 11.95,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1507",
+    "type": "use",
+    "x": 5.975,
+    "y": 11.95,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1512",
+    "type": "use",
+    "x": -17.925,
+    "y": 11.95,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1513",
+    "type": "use",
+    "x": -5.975,
+    "y": 11.95,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1514",
+    "type": "use",
+    "x": 5.975,
+    "y": 11.95,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1519",
+    "type": "use",
+    "x": -17.925,
+    "y": 11.95,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1520",
+    "type": "use",
+    "x": -5.975,
+    "y": 11.95,
+    "zone": "Left Section (Garden/Guard)"
+  },
+  {
+    "id": "bureau_1521",
+    "type": "use",
+    "x": 5.975,
+    "y": 11.95,
+    "zone": "Left Section (Garden/Guard)"
+  }
+]

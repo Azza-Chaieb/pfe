@@ -63,7 +63,7 @@ export default (config, { strapi }) => {
                                         confirmed: true,
                                         role: defaultRole.id,
                                         user_type: null,
-                                        phone: 0, // Required field in schema
+                                        phone: Date.now() + Math.floor(Math.random() * 1000000), // Generate unique phone to avoid DB conflict
                                         password: Math.random().toString(36).slice(-15)
                                     }
                                 });

@@ -105,6 +105,7 @@ const InteractiveSvgMap = ({
       BOOKED: "#ef4444", // Red
       PARTIAL: "#f59e0b",
       SELECTED: "#3b82f6", // Blue
+      INACCESSIBLE: "#94a3b8", // Slate Gray
     };
 
     const interactiveElements = svgElement.querySelectorAll(
@@ -150,7 +151,7 @@ const InteractiveSvgMap = ({
 
       el.style.pointerEvents = "all";
       el.style.transition = "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
-      el.style.cursor = "pointer";
+      el.style.cursor = status === "INACCESSIBLE" ? "not-allowed" : "pointer";
 
       // Apply Dynamic Styling
       if (isSelected) {
@@ -160,16 +161,17 @@ const InteractiveSvgMap = ({
         el.style.strokeWidth = "4px";
         el.setAttribute("filter", "none");
       } else if (spaceData) {
-        el.style.fill = statusColors[status];
-        el.style.fillOpacity = "0.5";
-        el.style.stroke = statusColors[status];
-        el.style.strokeWidth = "2px";
+        el.style.fill = statusColors[status] || statusColors.INACCESSIBLE;
+        el.style.fillOpacity = status === "INACCESSIBLE" ? "0.3" : "0.5";
+        el.style.stroke = statusColors[status] || statusColors.INACCESSIBLE;
+        el.style.strokeWidth = status === "INACCESSIBLE" ? "1px" : "2px";
         el.setAttribute("filter", "none");
       }
 
       // Event Handlers
       el.onclick = (e) => {
         e.stopPropagation();
+        if (status === "INACCESSIBLE") return; // Enforce role restriction
         onSelectSpace(elementId);
       };
 
@@ -180,8 +182,10 @@ const InteractiveSvgMap = ({
           status: spaceData ? status : "UNKNOWN",
         });
         setMousePos({ x: e.clientX, y: e.clientY });
-        el.style.filter =
-          "brightness(1.1) drop-shadow(0 0 8px rgba(59, 130, 246, 0.4))";
+
+        if (status !== "INACCESSIBLE") {
+          el.style.filter = "brightness(1.1) drop-shadow(0 0 8px rgba(59, 130, 246, 0.4))";
+        }
       };
 
       el.onmousemove = (e) => {
@@ -191,7 +195,7 @@ const InteractiveSvgMap = ({
       el.onmouseleave = () => {
         setHoveredSpace(null);
         el.style.filter =
-          isSelected || spaceData ? "none" : "url(#furnitureShadow)";
+          isSelected || (spaceData && status !== "INACCESSIBLE") ? "none" : "url(#furnitureShadow)";
       };
     });
   }, [svgLoaded, spaces, selectedSpaceId, onSelectSpace]);
@@ -213,20 +217,21 @@ const InteractiveSvgMap = ({
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
               <div
-                className={`w-2 h-2 rounded-full ${
-                  hoveredSpace.status === "BOOKED"
-                    ? "bg-red-500"
-                    : hoveredSpace.status === "AVAILABLE"
-                      ? "bg-emerald-500"
-                      : "bg-slate-500"
-                }`}
+                className={`w-2 h-2 rounded-full ${hoveredSpace.status === "BOOKED"
+                  ? "bg-red-500"
+                  : hoveredSpace.status === "AVAILABLE"
+                    ? "bg-emerald-500"
+                    : "bg-slate-500"
+                  }`}
               />
               <span className="text-[9px] uppercase tracking-widest font-black text-slate-400">
                 {hoveredSpace.status === "UNKNOWN"
                   ? "ID SVG (NON LIÉ)"
                   : hoveredSpace.status === "BOOKED"
                     ? "Occupé"
-                    : "Disponible"}
+                    : hoveredSpace.status === "INACCESSIBLE"
+                      ? "Inaccessible"
+                      : "Disponible"}
               </span>
             </div>
             <span className="text-sm font-bold tracking-tight">
@@ -262,6 +267,10 @@ const InteractiveSvgMap = ({
           <div className="flex items-center gap-3">
             <div className="w-4 h-4 rounded-full bg-red-500 shadow-lg shadow-red-500/30"></div>
             <span className="text-xs font-bold text-slate-700">Occupé</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="w-4 h-4 rounded-full bg-slate-400 shadow-lg shadow-slate-400/30"></div>
+            <span className="text-xs font-bold text-slate-700">Inaccessible</span>
           </div>
         </div>
       </div>

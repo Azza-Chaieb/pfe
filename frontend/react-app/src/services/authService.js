@@ -54,3 +54,29 @@ export const resetPassword = async (code, password, passwordConfirmation) => {
     throw error;
   }
 };
+export const verifyOtp = async (email, otp) => {
+  try {
+    const response = await api.post("/auth-custom/verify-otp", { email, otp });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const resendOtp = async (email) => {
+  try {
+    const response = await api.post("/auth-custom/resend-otp", { email });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const checkPhone = async (phone) => {
+  try {
+    const response = await api.post("/auth-custom/check-phone", { phone });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

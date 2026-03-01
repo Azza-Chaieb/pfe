@@ -18,7 +18,12 @@
     },
     "type": {
       "type": "enumeration",
-      "enum": ["hot-desk", "fixed-desk", "meeting-room", "event-space"],
+      "enum": [
+        "hot-desk",
+        "fixed-desk",
+        "meeting-room",
+        "event-space"
+      ],
       "required": true
     },
     "capacity": {
@@ -66,6 +71,9 @@
     },
     "mesh_name": {
       "type": "string"
+    },
+    "accessible_by": {
+      "type": "json"
     }
   }
 }

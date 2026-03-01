@@ -14,7 +14,7 @@
       "name": "Apache 2.0",
       "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "x-generation-date": "2026-02-28T11:50:40.658Z"
+    "x-generation-date": "2026-03-01T02:51:29.162Z"
   },
   "x-strapi-config": {
     "plugins": [
@@ -11939,6 +11939,9 @@
               "fcmToken": {
                 "type": "string"
               },
+              "otp_code": {
+                "type": "string"
+              },
               "createdAt": {
                 "type": "string",
                 "format": "date-time"
@@ -14196,6 +14199,9 @@
                               "fcmToken": {
                                 "type": "string"
                               },
+                              "otp_code": {
+                                "type": "string"
+                              },
                               "createdAt": {
                                 "type": "string",
                                 "format": "date-time"
@@ -15481,6 +15487,7 @@
               "mesh_name": {
                 "type": "string"
               },
+              "accessible_by": {},
               "createdAt": {
                 "type": "string",
                 "format": "date-time"
@@ -17541,6 +17548,9 @@
                 }
               },
               "fcmToken": {
+                "type": "string"
+              },
+              "otp_code": {
                 "type": "string"
               },
               "createdAt": {
@@ -20097,6 +20107,9 @@
                                           "fcmToken": {
                                             "type": "string"
                                           },
+                                          "otp_code": {
+                                            "type": "string"
+                                          },
                                           "createdAt": {
                                             "type": "string",
                                             "format": "date-time"
@@ -20987,6 +21000,7 @@
                           "mesh_name": {
                             "type": "string"
                           },
+                          "accessible_by": {},
                           "createdAt": {
                             "type": "string",
                             "format": "date-time"
@@ -23334,6 +23348,9 @@
                                 "fcmToken": {
                                   "type": "string"
                                 },
+                                "otp_code": {
+                                  "type": "string"
+                                },
                                 "createdAt": {
                                   "type": "string",
                                   "format": "date-time"
@@ -24619,6 +24636,7 @@
                 "mesh_name": {
                   "type": "string"
                 },
+                "accessible_by": {},
                 "createdAt": {
                   "type": "string",
                   "format": "date-time"
@@ -26635,6 +26653,9 @@
               "fcmToken": {
                 "type": "string"
               },
+              "otp_code": {
+                "type": "string"
+              },
               "createdAt": {
                 "type": "string",
                 "format": "date-time"
@@ -28596,6 +28617,9 @@
                 }
               },
               "fcmToken": {
+                "type": "string"
+              },
+              "otp_code": {
                 "type": "string"
               },
               "createdAt": {
@@ -31245,6 +31269,9 @@
                                     "fcmToken": {
                                       "type": "string"
                                     },
+                                    "otp_code": {
+                                      "type": "string"
+                                    },
                                     "createdAt": {
                                       "type": "string",
                                       "format": "date-time"
@@ -32135,6 +32162,7 @@
                     "mesh_name": {
                       "type": "string"
                     },
+                    "accessible_by": {},
                     "createdAt": {
                       "type": "string",
                       "format": "date-time"
@@ -34302,6 +34330,7 @@
                   "mesh_name": {
                     "type": "string"
                   },
+                  "accessible_by": {},
                   "createdAt": {
                     "type": "string",
                     "format": "date-time"
@@ -35430,6 +35459,9 @@
                     }
                   },
                   "fcmToken": {
+                    "type": "string"
+                  },
+                  "otp_code": {
                     "type": "string"
                   },
                   "createdAt": {
@@ -37813,6 +37845,9 @@
               "fcmToken": {
                 "type": "string"
               },
+              "otp_code": {
+                "type": "string"
+              },
               "createdAt": {
                 "type": "string",
                 "format": "date-time"
@@ -40004,6 +40039,9 @@
                                 "fcmToken": {
                                   "type": "string"
                                 },
+                                "otp_code": {
+                                  "type": "string"
+                                },
                                 "createdAt": {
                                   "type": "string",
                                   "format": "date-time"
@@ -41289,6 +41327,7 @@
                 "mesh_name": {
                   "type": "string"
                 },
+                "accessible_by": {},
                 "createdAt": {
                   "type": "string",
                   "format": "date-time"
@@ -43315,6 +43354,9 @@
                   "fcmToken": {
                     "type": "string"
                   },
+                  "otp_code": {
+                    "type": "string"
+                  },
                   "createdAt": {
                     "type": "string",
                     "format": "date-time"
@@ -43775,6 +43817,7 @@
               "mesh_name": {
                 "type": "string"
               },
+              "accessible_by": {},
               "locale": {
                 "type": "string"
               },
@@ -46357,6 +46400,9 @@
                                       "fcmToken": {
                                         "type": "string"
                                       },
+                                      "otp_code": {
+                                        "type": "string"
+                                      },
                                       "createdAt": {
                                         "type": "string",
                                         "format": "date-time"
@@ -46934,6 +46980,7 @@
                       "mesh_name": {
                         "type": "string"
                       },
+                      "accessible_by": {},
                       "createdAt": {
                         "type": "string",
                         "format": "date-time"
@@ -47183,6 +47230,7 @@
           "mesh_name": {
             "type": "string"
           },
+          "accessible_by": {},
           "createdAt": {
             "type": "string",
             "format": "date-time"
@@ -49289,6 +49337,9 @@
                               "fcmToken": {
                                 "type": "string"
                               },
+                              "otp_code": {
+                                "type": "string"
+                              },
                               "createdAt": {
                                 "type": "string",
                                 "format": "date-time"
@@ -50574,6 +50625,7 @@
               "mesh_name": {
                 "type": "string"
               },
+              "accessible_by": {},
               "createdAt": {
                 "type": "string",
                 "format": "date-time"
@@ -52504,6 +52556,9 @@
                 }
               },
               "fcmToken": {
+                "type": "string"
+              },
+              "otp_code": {
                 "type": "string"
               },
               "createdAt": {
@@ -55162,6 +55217,9 @@
                 }
               },
               "fcmToken": {
+                "type": "string"
+              },
+              "otp_code": {
                 "type": "string"
               },
               "createdAt": {

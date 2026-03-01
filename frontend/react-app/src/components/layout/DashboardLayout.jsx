@@ -82,6 +82,18 @@ const Sidebar = ({ role, activeTab, onTabChange }) => {
           icon: "🤝",
           path: "/association/members",
         },
+        {
+          id: "bookings",
+          label: "Mes Réservations",
+          icon: "📅",
+          path: "/association/bookings",
+        },
+        {
+          id: "exploration",
+          label: "Visualisation 3D",
+          icon: "🏙️",
+          path: "/explore/5",
+        },
       ],
     };
 
@@ -117,8 +129,8 @@ const Sidebar = ({ role, activeTab, onTabChange }) => {
             key={item.id}
             onClick={() => navigate(item.path)}
             className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-300 font-bold text-sm group ${location.pathname === item.path
-                ? "bg-blue-600 text-white shadow-xl shadow-blue-200 scale-[1.02]"
-                : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
+              ? "bg-blue-600 text-white shadow-xl shadow-blue-200 scale-[1.02]"
+              : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
               }`}
           >
             <span

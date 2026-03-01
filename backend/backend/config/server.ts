@@ -10,4 +10,7 @@ export default ({ env }) => ({
       requestTimeout: 600000, // 10 minutes
     },
   },
+  cron: {
+    enabled: true,
+  },
 });

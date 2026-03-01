@@ -27,7 +27,7 @@ import ResetPassword from "./pages/auth/ResetPassword";
 import ProfessionalDashboard from "./pages/dashboards/ProfessionalDashboard";
 import ModelTestPage from "./pages/ModelTestPage";
 import ExplorationScene from "./components/3d/ExplorationScene";
-import { GoogleCallback } from "./pages/auth";
+import { GoogleCallback, GithubCallback, VerifyEmailPage } from "./pages/auth";
 import RoleSelection from "./pages/auth/RoleSelection";
 
 import SpaceManagement from "./admin/components/layout/pages/SpaceManagement";
@@ -152,7 +152,9 @@ function App() {
           }
         />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/connect/google/redirect" element={<GoogleCallback />} />
+        <Route path="/connect/github/redirect" element={<GithubCallback />} />
         <Route path="/select-role" element={<RoleSelection />} />
         <Route
           path="/profile"
@@ -223,6 +225,14 @@ function App() {
           element={
             <UserRoute>
               <AssociationDashboard />
+            </UserRoute>
+          }
+        />
+        <Route
+          path="/association/bookings"
+          element={
+            <UserRoute>
+              <AssociationDashboard activeTab="bookings" />
             </UserRoute>
           }
         />

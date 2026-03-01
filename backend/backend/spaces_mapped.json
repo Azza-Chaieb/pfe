@@ -1,0 +1,9128 @@
+[
+  {
+    "id": "bureau_1",
+    "x": 10.133,
+    "y": 394,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_2",
+    "x": 1559.96,
+    "y": 1223,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_3",
+    "x": 1512,
+    "y": 18,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_4",
+    "x": 2261,
+    "y": 1234.05,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_5",
+    "x": 1952,
+    "y": 857,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_258",
+    "x": 1591,
+    "y": 0.3,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_259",
+    "x": 1514,
+    "y": 247,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_260",
+    "x": 1514,
+    "y": 247,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_261",
+    "x": 1514,
+    "y": 131.5,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_262",
+    "x": 1514,
+    "y": 131.5,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_263",
+    "x": 1585,
+    "y": 243,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_264",
+    "x": 1567,
+    "y": 187.683,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_265",
+    "x": 1567,
+    "y": 187.683,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_266",
+    "x": 1564.28,
+    "y": 242.435,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_267",
+    "x": 1564.28,
+    "y": 242.435,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_268",
+    "x": 1566,
+    "y": 132.366,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_269",
+    "x": 1566,
+    "y": 132.366,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_270",
+    "x": 1567.55,
+    "y": 73.662,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_271",
+    "x": 1567.55,
+    "y": 73.662,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_272",
+    "x": 1514,
+    "y": 220,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_273",
+    "x": 1514,
+    "y": 220,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_274",
+    "x": 1514,
+    "y": 24,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_275",
+    "x": 1514,
+    "y": 24,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_6",
+    "x": 1952,
+    "y": 249,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_692",
+    "x": 808.559,
+    "y": 186.068,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_693",
+    "x": 808.559,
+    "y": 186.068,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_7",
+    "x": 808.559,
+    "y": 186.068,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_694",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_695",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_696",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_697",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_698",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_699",
+    "x": 852,
+    "y": 103,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_276",
+    "x": 852,
+    "y": 103,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_700",
+    "x": 218.068,
+    "y": 755.864,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_701",
+    "x": 218.068,
+    "y": 755.864,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_8",
+    "x": 218.068,
+    "y": 755.864,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_702",
+    "x": 218.068,
+    "y": 1043.44,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_703",
+    "x": 218.068,
+    "y": 1043.44,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_9",
+    "x": 218.068,
+    "y": 1043.44,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_704",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_705",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_706",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_707",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_708",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_709",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_710",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_711",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_712",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_713",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_714",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_715",
+    "x": 135,
+    "y": 712.423,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_277",
+    "x": 135,
+    "y": 712.423,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_278",
+    "x": 135,
+    "y": 1000,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_279",
+    "x": 135,
+    "y": 1391.51,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_716",
+    "x": 1268.56,
+    "y": 186.068,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_717",
+    "x": 1268.56,
+    "y": 186.068,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_10",
+    "x": 1268.56,
+    "y": 186.068,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_718",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_719",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_720",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_721",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_722",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_723",
+    "x": 1312,
+    "y": 103,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_280",
+    "x": 1312,
+    "y": 103,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_724",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_725",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_726",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_727",
+    "x": 1833.02,
+    "y": 1634.34,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_281",
+    "x": 1833.02,
+    "y": 1634.34,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_282",
+    "x": 1833.02,
+    "y": 1634.34,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_283",
+    "x": 1809.88,
+    "y": 1635.12,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_284",
+    "x": 1809.88,
+    "y": 1635.12,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_728",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_729",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_730",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_731",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_732",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_733",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_734",
+    "x": 1849.66,
+    "y": 1676.02,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_285",
+    "x": 1849.66,
+    "y": 1676.02,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_286",
+    "x": 1849.66,
+    "y": 1676.02,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_287",
+    "x": 1848.88,
+    "y": 1652.88,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_288",
+    "x": 1848.88,
+    "y": 1652.88,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_735",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_736",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_737",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_738",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_739",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_740",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_741",
+    "x": 1791.34,
+    "y": 1649.58,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_289",
+    "x": 1791.34,
+    "y": 1649.58,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_290",
+    "x": 1791.34,
+    "y": 1649.58,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_291",
+    "x": 1792.12,
+    "y": 1672.72,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_292",
+    "x": 1792.12,
+    "y": 1672.72,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_742",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_743",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_744",
+    "x": 1792,
+    "y": 1693,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_293",
+    "x": 1792,
+    "y": 1693,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_745",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_746",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_747",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_748",
+    "x": 1807.48,
+    "y": 1695.12,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_294",
+    "x": 1807.48,
+    "y": 1695.12,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_295",
+    "x": 1807.48,
+    "y": 1695.12,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_296",
+    "x": 1830.62,
+    "y": 1694.34,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_297",
+    "x": 1830.62,
+    "y": 1694.34,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_749",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_750",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_751",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_752",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_753",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_754",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_755",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_298",
+    "x": 1655.02,
+    "y": 1634.34,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_299",
+    "x": 1655.02,
+    "y": 1634.34,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_300",
+    "x": 1631.88,
+    "y": 1635.12,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_301",
+    "x": 1631.88,
+    "y": 1635.12,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_756",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_757",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_758",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_759",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_760",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_761",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_762",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_302",
+    "x": 1671.66,
+    "y": 1676.02,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_303",
+    "x": 1671.66,
+    "y": 1676.02,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_304",
+    "x": 1670.88,
+    "y": 1652.88,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_305",
+    "x": 1670.88,
+    "y": 1652.88,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_763",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_764",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_765",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_766",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_767",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_768",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_769",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_306",
+    "x": 1613.34,
+    "y": 1649.58,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_307",
+    "x": 1613.34,
+    "y": 1649.58,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_308",
+    "x": 1614.12,
+    "y": 1672.72,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_309",
+    "x": 1614.12,
+    "y": 1672.72,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_770",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_771",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_772",
+    "x": 1614,
+    "y": 1693,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_310",
+    "x": 1614,
+    "y": 1693,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_773",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_774",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_775",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_776",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_311",
+    "x": 1629.48,
+    "y": 1695.12,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_312",
+    "x": 1629.48,
+    "y": 1695.12,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_313",
+    "x": 1652.62,
+    "y": 1694.34,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_314",
+    "x": 1652.62,
+    "y": 1694.34,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_777",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_778",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_779",
+    "x": -178,
+    "y": 181,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_780",
+    "x": -178,
+    "y": 181,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_781",
+    "x": -178,
+    "y": 181,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_782",
+    "x": -178,
+    "y": 181,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_783",
+    "x": -178,
+    "y": 181,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_315",
+    "x": 1655.02,
+    "y": 1815.34,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_316",
+    "x": 1655.02,
+    "y": 1815.34,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_317",
+    "x": 1631.88,
+    "y": 1816.12,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_318",
+    "x": 1631.88,
+    "y": 1816.12,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_784",
+    "x": -178,
+    "y": 181,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_785",
+    "x": -178,
+    "y": 181,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_786",
+    "x": -178,
+    "y": 181,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_787",
+    "x": -178,
+    "y": 181,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_788",
+    "x": -178,
+    "y": 181,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_789",
+    "x": -178,
+    "y": 181,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_790",
+    "x": -178,
+    "y": 181,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_319",
+    "x": 1671.66,
+    "y": 1857.02,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_320",
+    "x": 1671.66,
+    "y": 1857.02,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_321",
+    "x": 1670.88,
+    "y": 1833.88,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_322",
+    "x": 1670.88,
+    "y": 1833.88,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_791",
+    "x": -178,
+    "y": 181,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_792",
+    "x": -178,
+    "y": 181,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_793",
+    "x": -178,
+    "y": 181,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_794",
+    "x": -178,
+    "y": 181,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_795",
+    "x": -178,
+    "y": 181,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_796",
+    "x": -178,
+    "y": 181,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_797",
+    "x": -178,
+    "y": 181,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_323",
+    "x": 1613.34,
+    "y": 1830.58,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_324",
+    "x": 1613.34,
+    "y": 1830.58,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_325",
+    "x": 1614.12,
+    "y": 1853.72,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_326",
+    "x": 1614.12,
+    "y": 1853.72,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_798",
+    "x": -178,
+    "y": 181,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_799",
+    "x": -178,
+    "y": 181,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_800",
+    "x": -178,
+    "y": 181,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_327",
+    "x": 1614,
+    "y": 1874,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_801",
+    "x": -178,
+    "y": 181,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_802",
+    "x": -178,
+    "y": 181,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_803",
+    "x": -178,
+    "y": 181,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_804",
+    "x": -178,
+    "y": 181,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_328",
+    "x": 1629.48,
+    "y": 1876.12,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_329",
+    "x": 1629.48,
+    "y": 1876.12,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_330",
+    "x": 1652.62,
+    "y": 1875.34,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_331",
+    "x": 1652.62,
+    "y": 1875.34,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_805",
+    "x": -178,
+    "y": 181,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_806",
+    "x": -178,
+    "y": 181,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_807",
+    "x": -178,
+    "y": 181,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_808",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_809",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_810",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_811",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_332",
+    "x": 1833.02,
+    "y": 1815.34,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_333",
+    "x": 1833.02,
+    "y": 1815.34,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_334",
+    "x": 1809.88,
+    "y": 1816.12,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_335",
+    "x": 1809.88,
+    "y": 1816.12,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_812",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_813",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_814",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_815",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_816",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_817",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_818",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_336",
+    "x": 1849.66,
+    "y": 1857.02,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_337",
+    "x": 1849.66,
+    "y": 1857.02,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_338",
+    "x": 1848.88,
+    "y": 1833.88,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_339",
+    "x": 1848.88,
+    "y": 1833.88,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_819",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_820",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_821",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_822",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_823",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_824",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_825",
+    "x": 1791.34,
+    "y": 1830.58,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_340",
+    "x": 1791.34,
+    "y": 1830.58,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_341",
+    "x": 1791.34,
+    "y": 1830.58,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_342",
+    "x": 1792.12,
+    "y": 1853.72,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_343",
+    "x": 1792.12,
+    "y": 1853.72,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_826",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_827",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_828",
+    "x": 1792,
+    "y": 1874,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_344",
+    "x": 1792,
+    "y": 1874,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_829",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_830",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_831",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_832",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_345",
+    "x": 1807.48,
+    "y": 1876.12,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_346",
+    "x": 1807.48,
+    "y": 1876.12,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_347",
+    "x": 1830.62,
+    "y": 1875.34,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_348",
+    "x": 1830.62,
+    "y": 1875.34,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_833",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_834",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_835",
+    "x": 1492,
+    "y": 207,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_349",
+    "x": 1492,
+    "y": 207,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_11",
+    "x": 1627.72,
+    "y": 212.497,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_12",
+    "x": 1687.38,
+    "y": 192.611,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_13",
+    "x": 1674.77,
+    "y": 175.21,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_14",
+    "x": 1636.42,
+    "y": 208.392,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_15",
+    "x": 1636.42,
+    "y": 204.839,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_16",
+    "x": 1640.15,
+    "y": 202.64,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_17",
+    "x": 1631.45,
+    "y": 209.154,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_18",
+    "x": 1607.84,
+    "y": 209.154,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_19",
+    "x": 1624.61,
+    "y": 193.232,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_20",
+    "x": 1619.68,
+    "y": 196.339,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_21",
+    "x": 1621.32,
+    "y": 174.406,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_22",
+    "x": 1734.84,
+    "y": 892.099,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_23",
+    "x": 1754.72,
+    "y": 951.757,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_24",
+    "x": 1772.12,
+    "y": 939.144,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_25",
+    "x": 1738.94,
+    "y": 900.799,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_26",
+    "x": 1742.5,
+    "y": 900.799,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_27",
+    "x": 1744.69,
+    "y": 904.528,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_28",
+    "x": 1738.18,
+    "y": 895.827,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_29",
+    "x": 1738.18,
+    "y": 872.213,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_30",
+    "x": 1754.1,
+    "y": 888.992,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_31",
+    "x": 1751,
+    "y": 884.053,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_32",
+    "x": 1772.93,
+    "y": 885.696,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_33",
+    "x": 1609.17,
+    "y": 892.098,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_34",
+    "x": 1629.05,
+    "y": 951.757,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_35",
+    "x": 1646.45,
+    "y": 939.144,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_36",
+    "x": 1613.27,
+    "y": 900.799,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_37",
+    "x": 1616.83,
+    "y": 900.799,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_38",
+    "x": 1619.02,
+    "y": 904.527,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_39",
+    "x": 1612.51,
+    "y": 895.827,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_40",
+    "x": 1612.51,
+    "y": 872.212,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_41",
+    "x": 1628.43,
+    "y": 888.991,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_42",
+    "x": 1625.32,
+    "y": 884.053,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_43",
+    "x": 1647.26,
+    "y": 885.696,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_836",
+    "x": 176,
+    "y": -380.46,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_837",
+    "x": 176,
+    "y": -380.46,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_838",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_839",
+    "x": 1967.34,
+    "y": 1303.98,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_350",
+    "x": 1967.34,
+    "y": 1303.98,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_351",
+    "x": 1967.34,
+    "y": 1303.98,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_352",
+    "x": 1968.12,
+    "y": 1314.12,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_353",
+    "x": 1968.12,
+    "y": 1314.12,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_840",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_841",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_842",
+    "x": 176,
+    "y": -296.46,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_843",
+    "x": 176,
+    "y": -296.46,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_844",
+    "x": 176,
+    "y": -296.46,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_845",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_846",
+    "x": 1967.34,
+    "y": 1387.98,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_354",
+    "x": 1967.34,
+    "y": 1387.98,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_355",
+    "x": 1967.34,
+    "y": 1387.98,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_356",
+    "x": 1968.12,
+    "y": 1398.12,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_357",
+    "x": 1968.12,
+    "y": 1398.12,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_847",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_848",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_849",
+    "x": 1971.69,
+    "y": 1049,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_44",
+    "x": 1971.69,
+    "y": 1049,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_45",
+    "x": 2025.7,
+    "y": 1165.06,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_46",
+    "x": 1995.97,
+    "y": 1217.54,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_47",
+    "x": 2020.18,
+    "y": 1166.3,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_48",
+    "x": 2020.18,
+    "y": 1189.61,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_49",
+    "x": 2006.78,
+    "y": 1200.42,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_50",
+    "x": 2007.34,
+    "y": 1191.52,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_51",
+    "x": 1993.49,
+    "y": 1187.36,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_52",
+    "x": 1986.62,
+    "y": 1189.38,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_53",
+    "x": 2025.7,
+    "y": 1119.42,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_54",
+    "x": 1998.22,
+    "y": 1080.34,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_55",
+    "x": 2004.19,
+    "y": 1086.31,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_56",
+    "x": 1630.21,
+    "y": 91.347,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_57",
+    "x": 1689.87,
+    "y": 71.46,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_58",
+    "x": 1677.25,
+    "y": 54.06,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_59",
+    "x": 1638.91,
+    "y": 87.242,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_60",
+    "x": 1638.91,
+    "y": 83.689,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_61",
+    "x": 1642.64,
+    "y": 81.49,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_62",
+    "x": 1633.94,
+    "y": 88.004,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_63",
+    "x": 1610.32,
+    "y": 88.004,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_64",
+    "x": 1627.1,
+    "y": 72.082,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_65",
+    "x": 1622.16,
+    "y": 75.19,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_66",
+    "x": 1623.81,
+    "y": 53.256,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_67",
+    "x": 1946.69,
+    "y": 165.296,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_68",
+    "x": 1946.69,
+    "y": 212.497,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_69",
+    "x": 1936.61,
+    "y": 168.671,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_70",
+    "x": 1936.61,
+    "y": 168.671,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_71",
+    "x": 1930.82,
+    "y": 170.837,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_850",
+    "x": 1923.82,
+    "y": 175.976,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_72",
+    "x": 1923.82,
+    "y": 175.976,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_73",
+    "x": 1930.11,
+    "y": 201.717,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_74",
+    "x": 1927.85,
+    "y": 175.119,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_75",
+    "x": 1927.85,
+    "y": 191.037,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_76",
+    "x": 1925.48,
+    "y": 188.922,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_77",
+    "x": 1926.19,
+    "y": 190.231,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_78",
+    "x": 1926.19,
+    "y": 187.562,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_79",
+    "x": 1927.85,
+    "y": 189.526,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_80",
+    "x": 1930.87,
+    "y": 187.713,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_81",
+    "x": 1943.61,
+    "y": 191.39,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_82",
+    "x": 1945.68,
+    "y": 189.476,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_83",
+    "x": 1933.29,
+    "y": 188.015,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_84",
+    "x": 1940.74,
+    "y": 191.39,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_85",
+    "x": 1944.92,
+    "y": 191.037,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_86",
+    "x": 1936.66,
+    "y": 195.521,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_87",
+    "x": 1945.28,
+    "y": 188.267,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_88",
+    "x": 1936.61,
+    "y": 208.718,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_89",
+    "x": 1946.69,
+    "y": 47.86,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_90",
+    "x": 1946.69,
+    "y": 95.061,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_91",
+    "x": 1936.61,
+    "y": 51.236,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_92",
+    "x": 1936.61,
+    "y": 51.236,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_93",
+    "x": 1930.82,
+    "y": 53.402,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_851",
+    "x": 1923.82,
+    "y": 58.54,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_94",
+    "x": 1923.82,
+    "y": 58.54,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_95",
+    "x": 1930.11,
+    "y": 84.281,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_96",
+    "x": 1927.85,
+    "y": 57.683,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_97",
+    "x": 1927.85,
+    "y": 73.602,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_98",
+    "x": 1925.48,
+    "y": 71.486,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_99",
+    "x": 1926.19,
+    "y": 72.796,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_100",
+    "x": 1926.19,
+    "y": 70.126,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_101",
+    "x": 1927.85,
+    "y": 72.09,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_102",
+    "x": 1930.87,
+    "y": 70.277,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_103",
+    "x": 1943.61,
+    "y": 73.954,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_104",
+    "x": 1945.68,
+    "y": 72.04,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_105",
+    "x": 1933.29,
+    "y": 70.58,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_106",
+    "x": 1940.74,
+    "y": 73.954,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_107",
+    "x": 1944.92,
+    "y": 73.602,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_108",
+    "x": 1936.66,
+    "y": 78.085,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_109",
+    "x": 1945.28,
+    "y": 70.831,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_110",
+    "x": 1936.61,
+    "y": 91.283,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_111",
+    "x": 2635.14,
+    "y": 790.194,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_112",
+    "x": 2634.61,
+    "y": 788.425,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_113",
+    "x": 2670.01,
+    "y": 790.194,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_114",
+    "x": 2669.48,
+    "y": 788.425,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_358",
+    "x": 2632.57,
+    "y": 788.753,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_359",
+    "x": 2632.57,
+    "y": 788.753,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_360",
+    "x": 2642.71,
+    "y": 787.976,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_361",
+    "x": 2642.71,
+    "y": 787.976,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_852",
+    "x": 2626.54,
+    "y": 793.626,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_853",
+    "x": 2626.54,
+    "y": 793.626,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_115",
+    "x": 2626.54,
+    "y": 793.626,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_362",
+    "x": 2579.59,
+    "y": 784.092,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_854",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_855",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_856",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_857",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_363",
+    "x": 2322.34,
+    "y": 629.98,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_364",
+    "x": 2322.34,
+    "y": 629.98,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_365",
+    "x": 2323.12,
+    "y": 640.122,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_366",
+    "x": 2323.12,
+    "y": 640.122,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_858",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_859",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_860",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_861",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_862",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_863",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_864",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_367",
+    "x": 2322.34,
+    "y": 576.98,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_368",
+    "x": 2322.34,
+    "y": 576.98,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_369",
+    "x": 2323.12,
+    "y": 587.122,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_370",
+    "x": 2323.12,
+    "y": 587.122,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_865",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_866",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_867",
+    "x": 2330,
+    "y": 554,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_371",
+    "x": 2330,
+    "y": 554,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_868",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_869",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_870",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_871",
+    "x": 2418.02,
+    "y": 551.339,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_372",
+    "x": 2418.02,
+    "y": 551.339,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_373",
+    "x": 2418.02,
+    "y": 551.339,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_374",
+    "x": 2407.88,
+    "y": 552.116,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_375",
+    "x": 2407.88,
+    "y": 552.116,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_872",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_873",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_874",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_875",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_876",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_877",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_878",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_376",
+    "x": 2473.02,
+    "y": 551.339,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_377",
+    "x": 2473.02,
+    "y": 551.339,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_378",
+    "x": 2462.88,
+    "y": 552.116,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_379",
+    "x": 2462.88,
+    "y": 552.116,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_879",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_880",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_881",
+    "x": 2497,
+    "y": 554,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_380",
+    "x": 2497,
+    "y": 554,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_882",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_883",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_884",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_885",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_381",
+    "x": 2535.02,
+    "y": 551.339,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_382",
+    "x": 2535.02,
+    "y": 551.339,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_383",
+    "x": 2524.88,
+    "y": 552.116,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_384",
+    "x": 2524.88,
+    "y": 552.116,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_886",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_887",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_888",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_889",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_890",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_891",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_892",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_385",
+    "x": 2590.02,
+    "y": 551.339,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_386",
+    "x": 2590.02,
+    "y": 551.339,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_387",
+    "x": 2579.88,
+    "y": 552.116,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_388",
+    "x": 2579.88,
+    "y": 552.116,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_893",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_894",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_895",
+    "x": 2613,
+    "y": 554,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_389",
+    "x": 2613,
+    "y": 554,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_896",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_897",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_898",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_899",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_390",
+    "x": 2670.66,
+    "y": 589.02,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_391",
+    "x": 2670.66,
+    "y": 589.02,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_392",
+    "x": 2669.88,
+    "y": 578.878,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_393",
+    "x": 2669.88,
+    "y": 578.878,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_900",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_901",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_902",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_903",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_904",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_905",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_906",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_394",
+    "x": 2670.66,
+    "y": 645.02,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_395",
+    "x": 2670.66,
+    "y": 645.02,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_396",
+    "x": 2669.88,
+    "y": 634.878,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_397",
+    "x": 2669.88,
+    "y": 634.878,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_907",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_908",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_909",
+    "x": 2666,
+    "y": 668,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_398",
+    "x": 2666,
+    "y": 668,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_116",
+    "x": 2640.53,
+    "y": 905.353,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_117",
+    "x": 2641.06,
+    "y": 907.122,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_118",
+    "x": 2605.66,
+    "y": 905.353,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_119",
+    "x": 2606.2,
+    "y": 907.122,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_399",
+    "x": 2643.11,
+    "y": 906.794,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_400",
+    "x": 2643.11,
+    "y": 906.794,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_401",
+    "x": 2632.96,
+    "y": 907.571,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_402",
+    "x": 2632.96,
+    "y": 907.571,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_910",
+    "x": 2649.13,
+    "y": 901.921,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_911",
+    "x": 2649.13,
+    "y": 901.921,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_120",
+    "x": 2649.13,
+    "y": 901.921,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_403",
+    "x": 2696.09,
+    "y": 911.455,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_912",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_913",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_914",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_915",
+    "x": 2673.16,
+    "y": 1067.07,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_404",
+    "x": 2673.16,
+    "y": 1067.07,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_405",
+    "x": 2673.16,
+    "y": 1067.07,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_406",
+    "x": 2672.38,
+    "y": 1056.92,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_407",
+    "x": 2672.38,
+    "y": 1056.92,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_916",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_917",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_918",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_919",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_920",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_921",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_922",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_408",
+    "x": 2673.16,
+    "y": 1120.07,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_409",
+    "x": 2673.16,
+    "y": 1120.07,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_410",
+    "x": 2672.38,
+    "y": 1109.92,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_411",
+    "x": 2672.38,
+    "y": 1109.92,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_923",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_924",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_925",
+    "x": 2665.5,
+    "y": 1143.05,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_412",
+    "x": 2665.5,
+    "y": 1143.05,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_926",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_927",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_928",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_929",
+    "x": 2577.48,
+    "y": 1145.71,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_413",
+    "x": 2577.48,
+    "y": 1145.71,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_414",
+    "x": 2577.48,
+    "y": 1145.71,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_415",
+    "x": 2587.62,
+    "y": 1144.93,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_416",
+    "x": 2587.62,
+    "y": 1144.93,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_930",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_931",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_932",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_933",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_934",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_935",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_936",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_417",
+    "x": 2522.48,
+    "y": 1145.71,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_418",
+    "x": 2522.48,
+    "y": 1145.71,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_419",
+    "x": 2532.62,
+    "y": 1144.93,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_420",
+    "x": 2532.62,
+    "y": 1144.93,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_937",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_938",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_939",
+    "x": 2498.5,
+    "y": 1143.05,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_421",
+    "x": 2498.5,
+    "y": 1143.05,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_940",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_941",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_942",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_943",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_422",
+    "x": 2460.48,
+    "y": 1145.71,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_423",
+    "x": 2460.48,
+    "y": 1145.71,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_424",
+    "x": 2470.62,
+    "y": 1144.93,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_425",
+    "x": 2470.62,
+    "y": 1144.93,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_944",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_945",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_946",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_947",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_948",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_949",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_950",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_426",
+    "x": 2405.48,
+    "y": 1145.71,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_427",
+    "x": 2405.48,
+    "y": 1145.71,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_428",
+    "x": 2415.62,
+    "y": 1144.93,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_429",
+    "x": 2415.62,
+    "y": 1144.93,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_951",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_952",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_953",
+    "x": 2382.5,
+    "y": 1143.05,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_430",
+    "x": 2382.5,
+    "y": 1143.05,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_954",
+    "x": 533.5,
+    "y": -541.55,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_955",
+    "x": 533.5,
+    "y": -541.55,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_956",
+    "x": 533.5,
+    "y": -541.55,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_957",
+    "x": 533.5,
+    "y": -541.55,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_431",
+    "x": 2324.84,
+    "y": 1108.03,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_432",
+    "x": 2324.84,
+    "y": 1108.03,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_433",
+    "x": 2325.62,
+    "y": 1118.17,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_434",
+    "x": 2325.62,
+    "y": 1118.17,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_958",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_959",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_960",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_961",
+    "x": 533.5,
+    "y": -597.55,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_962",
+    "x": 533.5,
+    "y": -597.55,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_963",
+    "x": 533.5,
+    "y": -597.55,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_964",
+    "x": 533.5,
+    "y": -597.55,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_435",
+    "x": 2324.84,
+    "y": 1052.03,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_436",
+    "x": 2324.84,
+    "y": 1052.03,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_437",
+    "x": 2325.62,
+    "y": 1062.17,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_438",
+    "x": 2325.62,
+    "y": 1062.17,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_965",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_966",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_967",
+    "x": 2329.5,
+    "y": 1029.05,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_439",
+    "x": 2329.5,
+    "y": 1029.05,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_121",
+    "x": 2630.21,
+    "y": 400.046,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_122",
+    "x": 2629.68,
+    "y": 398.278,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_123",
+    "x": 2665.07,
+    "y": 400.046,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_124",
+    "x": 2664.54,
+    "y": 398.278,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_440",
+    "x": 2627.63,
+    "y": 398.605,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_441",
+    "x": 2627.63,
+    "y": 398.605,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_442",
+    "x": 2637.77,
+    "y": 397.828,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_443",
+    "x": 2637.77,
+    "y": 397.828,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_968",
+    "x": 2621.6,
+    "y": 403.479,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_969",
+    "x": 2621.6,
+    "y": 403.479,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_125",
+    "x": 2621.6,
+    "y": 403.479,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_444",
+    "x": 2574.65,
+    "y": 393.944,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_970",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_971",
+    "x": 246.51,
+    "y": -331.056,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_972",
+    "x": 246.51,
+    "y": -331.056,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_973",
+    "x": 2664.53,
+    "y": 220.283,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_445",
+    "x": 2664.53,
+    "y": 220.283,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_446",
+    "x": 2664.53,
+    "y": 220.283,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_447",
+    "x": 2654.39,
+    "y": 221.06,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_448",
+    "x": 2654.39,
+    "y": 221.06,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_974",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_975",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_976",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_977",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_978",
+    "x": 302.51,
+    "y": -331.056,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_979",
+    "x": 302.51,
+    "y": -331.056,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_980",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_449",
+    "x": 2720.53,
+    "y": 220.283,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_450",
+    "x": 2720.53,
+    "y": 220.283,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_451",
+    "x": 2710.39,
+    "y": 221.06,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_452",
+    "x": 2710.39,
+    "y": 221.06,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_981",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_982",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_983",
+    "x": 2743.51,
+    "y": 224.944,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_453",
+    "x": 2743.51,
+    "y": 224.944,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_984",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_985",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_986",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_987",
+    "x": 2664.53,
+    "y": 99.394,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_454",
+    "x": 2664.53,
+    "y": 99.394,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_455",
+    "x": 2664.53,
+    "y": 99.394,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_456",
+    "x": 2654.39,
+    "y": 100.171,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_457",
+    "x": 2654.39,
+    "y": 100.171,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_988",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_989",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_990",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_991",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_992",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_993",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_994",
+    "x": 2720.53,
+    "y": 99.394,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_458",
+    "x": 2720.53,
+    "y": 99.394,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_459",
+    "x": 2720.53,
+    "y": 99.394,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_460",
+    "x": 2710.39,
+    "y": 100.171,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_461",
+    "x": 2710.39,
+    "y": 100.171,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_995",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_996",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_997",
+    "x": 2743.51,
+    "y": 104.056,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_462",
+    "x": 2743.51,
+    "y": 104.056,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_998",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_999",
+    "x": 67.51,
+    "y": -331.056,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1000",
+    "x": 67.51,
+    "y": -331.056,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1001",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_463",
+    "x": 2485.53,
+    "y": 220.283,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_464",
+    "x": 2485.53,
+    "y": 220.283,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_465",
+    "x": 2475.39,
+    "y": 221.06,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_466",
+    "x": 2475.39,
+    "y": 221.06,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1002",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1003",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1004",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1005",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1006",
+    "x": 123.51,
+    "y": -331.056,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1007",
+    "x": 123.51,
+    "y": -331.056,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1008",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_467",
+    "x": 2541.53,
+    "y": 220.283,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_468",
+    "x": 2541.53,
+    "y": 220.283,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_469",
+    "x": 2531.39,
+    "y": 221.06,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_470",
+    "x": 2531.39,
+    "y": 221.06,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1009",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1010",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1011",
+    "x": 2564.51,
+    "y": 224.944,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_471",
+    "x": 2564.51,
+    "y": 224.944,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1012",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1013",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1014",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1015",
+    "x": 2485.53,
+    "y": 99.394,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_472",
+    "x": 2485.53,
+    "y": 99.394,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_473",
+    "x": 2485.53,
+    "y": 99.394,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_474",
+    "x": 2475.39,
+    "y": 100.171,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_475",
+    "x": 2475.39,
+    "y": 100.171,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1016",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1017",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1018",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1019",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1020",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1021",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1022",
+    "x": 2541.53,
+    "y": 99.394,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_476",
+    "x": 2541.53,
+    "y": 99.394,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_477",
+    "x": 2541.53,
+    "y": 99.394,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_478",
+    "x": 2531.39,
+    "y": 100.171,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_479",
+    "x": 2531.39,
+    "y": 100.171,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1023",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1024",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1025",
+    "x": 2564.51,
+    "y": 104.056,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_480",
+    "x": 2564.51,
+    "y": 104.056,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1026",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1027",
+    "x": -111.49,
+    "y": -331.056,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1028",
+    "x": -111.49,
+    "y": -331.056,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1029",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_481",
+    "x": 2306.53,
+    "y": 220.283,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_482",
+    "x": 2306.53,
+    "y": 220.283,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_483",
+    "x": 2296.39,
+    "y": 221.06,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_484",
+    "x": 2296.39,
+    "y": 221.06,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1030",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1031",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1032",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1033",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1034",
+    "x": -55.49,
+    "y": -331.056,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1035",
+    "x": -55.49,
+    "y": -331.056,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1036",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_485",
+    "x": 2362.53,
+    "y": 220.283,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_486",
+    "x": 2362.53,
+    "y": 220.283,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_487",
+    "x": 2352.39,
+    "y": 221.06,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_488",
+    "x": 2352.39,
+    "y": 221.06,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1037",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1038",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1039",
+    "x": 2385.51,
+    "y": 224.944,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_489",
+    "x": 2385.51,
+    "y": 224.944,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1040",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1041",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1042",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1043",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_490",
+    "x": 2306.53,
+    "y": 99.394,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_491",
+    "x": 2306.53,
+    "y": 99.394,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_492",
+    "x": 2296.39,
+    "y": 100.171,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_493",
+    "x": 2296.39,
+    "y": 100.171,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1044",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1045",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1046",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1047",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1048",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1049",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1050",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_494",
+    "x": 2362.53,
+    "y": 99.394,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_495",
+    "x": 2362.53,
+    "y": 99.394,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_496",
+    "x": 2352.39,
+    "y": 100.171,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_497",
+    "x": 2352.39,
+    "y": 100.171,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1051",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1052",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1053",
+    "x": 2385.51,
+    "y": 104.056,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_498",
+    "x": 2385.51,
+    "y": 104.056,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1054",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1055",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1056",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1057",
+    "x": 2350.48,
+    "y": 1442.66,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_499",
+    "x": 2350.48,
+    "y": 1442.66,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_500",
+    "x": 2350.48,
+    "y": 1442.66,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_501",
+    "x": 2360.62,
+    "y": 1441.88,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_502",
+    "x": 2360.62,
+    "y": 1441.88,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1058",
+    "x": -227,
+    "y": 296.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1059",
+    "x": -227,
+    "y": 296.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1060",
+    "x": -227,
+    "y": 296.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1061",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1062",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1063",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1064",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_503",
+    "x": 2294.48,
+    "y": 1442.66,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_504",
+    "x": 2294.48,
+    "y": 1442.66,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_505",
+    "x": 2304.62,
+    "y": 1441.88,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_506",
+    "x": 2304.62,
+    "y": 1441.88,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1065",
+    "x": -283,
+    "y": 296.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1066",
+    "x": -283,
+    "y": 296.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1067",
+    "x": -283,
+    "y": 296.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_507",
+    "x": 2271.5,
+    "y": 1438,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1068",
+    "x": 543,
+    "y": -131.57,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1069",
+    "x": 543,
+    "y": -131.57,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1070",
+    "x": 543,
+    "y": -131.57,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1071",
+    "x": 2350.48,
+    "y": 1563.55,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_508",
+    "x": 2350.48,
+    "y": 1563.55,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_509",
+    "x": 2350.48,
+    "y": 1563.55,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_510",
+    "x": 2360.62,
+    "y": 1562.77,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_511",
+    "x": 2360.62,
+    "y": 1562.77,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1072",
+    "x": -227,
+    "y": 417.84,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1073",
+    "x": -227,
+    "y": 417.84,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1074",
+    "x": -227,
+    "y": 417.84,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1075",
+    "x": 487,
+    "y": -131.57,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1076",
+    "x": 487,
+    "y": -131.57,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1077",
+    "x": 487,
+    "y": -131.57,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1078",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_512",
+    "x": 2294.48,
+    "y": 1563.55,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_513",
+    "x": 2294.48,
+    "y": 1563.55,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_514",
+    "x": 2304.62,
+    "y": 1562.77,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_515",
+    "x": 2304.62,
+    "y": 1562.77,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1079",
+    "x": -283,
+    "y": 417.84,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1080",
+    "x": -283,
+    "y": 417.84,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1081",
+    "x": -283,
+    "y": 417.84,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_516",
+    "x": 2271.5,
+    "y": 1558.89,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1082",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1083",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1084",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1085",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_517",
+    "x": 2529.48,
+    "y": 1442.66,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_518",
+    "x": 2529.48,
+    "y": 1442.66,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_519",
+    "x": 2539.62,
+    "y": 1441.88,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_520",
+    "x": 2539.62,
+    "y": 1441.88,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1086",
+    "x": -48,
+    "y": 296.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1087",
+    "x": -48,
+    "y": 296.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1088",
+    "x": -48,
+    "y": 296.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1089",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1090",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1091",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1092",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_521",
+    "x": 2473.48,
+    "y": 1442.66,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_522",
+    "x": 2473.48,
+    "y": 1442.66,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_523",
+    "x": 2483.62,
+    "y": 1441.88,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_524",
+    "x": 2483.62,
+    "y": 1441.88,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1093",
+    "x": -104,
+    "y": 296.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1094",
+    "x": -104,
+    "y": 296.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1095",
+    "x": -104,
+    "y": 296.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_525",
+    "x": 2450.5,
+    "y": 1438,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1096",
+    "x": 722,
+    "y": -131.57,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1097",
+    "x": 722,
+    "y": -131.57,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1098",
+    "x": 722,
+    "y": -131.57,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1099",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_526",
+    "x": 2529.48,
+    "y": 1563.55,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_527",
+    "x": 2529.48,
+    "y": 1563.55,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_528",
+    "x": 2539.62,
+    "y": 1562.77,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_529",
+    "x": 2539.62,
+    "y": 1562.77,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1100",
+    "x": -48,
+    "y": 417.84,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1101",
+    "x": -48,
+    "y": 417.84,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1102",
+    "x": -48,
+    "y": 417.84,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1103",
+    "x": 666,
+    "y": -131.57,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1104",
+    "x": 666,
+    "y": -131.57,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1105",
+    "x": 666,
+    "y": -131.57,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1106",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_530",
+    "x": 2473.48,
+    "y": 1563.55,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_531",
+    "x": 2473.48,
+    "y": 1563.55,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_532",
+    "x": 2483.62,
+    "y": 1562.77,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_533",
+    "x": 2483.62,
+    "y": 1562.77,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1107",
+    "x": -104,
+    "y": 417.84,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1108",
+    "x": -104,
+    "y": 417.84,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1109",
+    "x": -104,
+    "y": 417.84,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_534",
+    "x": 2450.5,
+    "y": 1558.89,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1110",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1111",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1112",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1113",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_535",
+    "x": 2708.48,
+    "y": 1442.66,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_536",
+    "x": 2708.48,
+    "y": 1442.66,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_537",
+    "x": 2718.62,
+    "y": 1441.88,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_538",
+    "x": 2718.62,
+    "y": 1441.88,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1114",
+    "x": 131,
+    "y": 296.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1115",
+    "x": 131,
+    "y": 296.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1116",
+    "x": 131,
+    "y": 296.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1117",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1118",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1119",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1120",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_539",
+    "x": 2652.48,
+    "y": 1442.66,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_540",
+    "x": 2652.48,
+    "y": 1442.66,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_541",
+    "x": 2662.62,
+    "y": 1441.88,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_542",
+    "x": 2662.62,
+    "y": 1441.88,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1121",
+    "x": 75,
+    "y": 296.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1122",
+    "x": 75,
+    "y": 296.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1123",
+    "x": 75,
+    "y": 296.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_543",
+    "x": 2629.5,
+    "y": 1438,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1124",
+    "x": 901,
+    "y": -131.57,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1125",
+    "x": 901,
+    "y": -131.57,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1126",
+    "x": 901,
+    "y": -131.57,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1127",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_544",
+    "x": 2708.48,
+    "y": 1563.55,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_545",
+    "x": 2708.48,
+    "y": 1563.55,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_546",
+    "x": 2718.62,
+    "y": 1562.77,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_547",
+    "x": 2718.62,
+    "y": 1562.77,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1128",
+    "x": 131,
+    "y": 417.84,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1129",
+    "x": 131,
+    "y": 417.84,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1130",
+    "x": 131,
+    "y": 417.84,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1131",
+    "x": 845,
+    "y": -131.57,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1132",
+    "x": 845,
+    "y": -131.57,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1133",
+    "x": 845,
+    "y": -131.57,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1134",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_548",
+    "x": 2652.48,
+    "y": 1563.55,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_549",
+    "x": 2652.48,
+    "y": 1563.55,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_550",
+    "x": 2662.62,
+    "y": 1562.77,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_551",
+    "x": 2662.62,
+    "y": 1562.77,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1135",
+    "x": 75,
+    "y": 417.84,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1136",
+    "x": 75,
+    "y": 417.84,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1137",
+    "x": 75,
+    "y": 417.84,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_552",
+    "x": 2629.5,
+    "y": 1558.89,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1138",
+    "x": -123,
+    "y": -238,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1139",
+    "x": -123,
+    "y": -238,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1140",
+    "x": -123,
+    "y": -238,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1141",
+    "x": -123,
+    "y": -238,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_553",
+    "x": 1726.66,
+    "y": 1438.02,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_554",
+    "x": 1726.66,
+    "y": 1438.02,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_555",
+    "x": 1725.88,
+    "y": 1405.88,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_556",
+    "x": 1725.88,
+    "y": 1405.88,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1142",
+    "x": 1732.54,
+    "y": 1441.64,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1143",
+    "x": 1732.54,
+    "y": 1441.64,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_126",
+    "x": 1732.54,
+    "y": 1441.64,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1144",
+    "x": 576.028,
+    "y": 1200.91,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_127",
+    "x": 576.028,
+    "y": 1200.91,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1145",
+    "x": 610.891,
+    "y": 1200.91,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_128",
+    "x": 610.891,
+    "y": 1200.91,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_557",
+    "x": 573.98,
+    "y": 1201.24,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_558",
+    "x": 573.98,
+    "y": 1201.24,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_559",
+    "x": 606.122,
+    "y": 1200.46,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_560",
+    "x": 606.122,
+    "y": 1200.46,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1146",
+    "x": 570.36,
+    "y": 1207.12,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1147",
+    "x": 570.36,
+    "y": 1207.12,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_129",
+    "x": 570.36,
+    "y": 1207.12,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_130",
+    "x": 1546.74,
+    "y": 1405.56,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_131",
+    "x": 1548.51,
+    "y": 1405.03,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_132",
+    "x": 1546.74,
+    "y": 1440.42,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_133",
+    "x": 1548.51,
+    "y": 1439.89,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_561",
+    "x": 1548.18,
+    "y": 1402.98,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_562",
+    "x": 1548.18,
+    "y": 1402.98,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_563",
+    "x": 1548.96,
+    "y": 1435.12,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_564",
+    "x": 1548.96,
+    "y": 1435.12,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1148",
+    "x": 1542.3,
+    "y": 1399.36,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1149",
+    "x": 1542.3,
+    "y": 1399.36,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_134",
+    "x": 1542.3,
+    "y": 1399.36,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1150",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1151",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1152",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1153",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_565",
+    "x": 609.02,
+    "y": 1022.76,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_566",
+    "x": 609.02,
+    "y": 1022.76,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_567",
+    "x": 576.878,
+    "y": 1023.54,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_568",
+    "x": 576.878,
+    "y": 1023.54,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1154",
+    "x": 612.64,
+    "y": 1016.88,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1155",
+    "x": 612.64,
+    "y": 1016.88,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_135",
+    "x": 612.64,
+    "y": 1016.88,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_569",
+    "x": 1714.92,
+    "y": 1508,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1156",
+    "x": -829,
+    "y": 166.363,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1157",
+    "x": -829,
+    "y": 131.5,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1158",
+    "x": -829,
+    "y": 131.5,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1159",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_570",
+    "x": 1841.66,
+    "y": 720.52,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_571",
+    "x": 1841.66,
+    "y": 720.52,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_572",
+    "x": 1840.88,
+    "y": 688.378,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_573",
+    "x": 1840.88,
+    "y": 688.378,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1160",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1161",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1162",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1163",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1164",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1165",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1166",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_574",
+    "x": 1552.3,
+    "y": 685.48,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_575",
+    "x": 1552.3,
+    "y": 685.48,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_576",
+    "x": 1553.08,
+    "y": 717.622,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_577",
+    "x": 1553.08,
+    "y": 717.622,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1167",
+    "x": 1546.42,
+    "y": 681.86,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1168",
+    "x": 1546.42,
+    "y": 681.86,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_136",
+    "x": 1546.42,
+    "y": 681.86,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1169",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1170",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1171",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1172",
+    "x": 1804.12,
+    "y": 628.339,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_578",
+    "x": 1804.12,
+    "y": 628.339,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_579",
+    "x": 1804.12,
+    "y": 628.339,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_580",
+    "x": 1771.98,
+    "y": 629.116,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_581",
+    "x": 1771.98,
+    "y": 629.116,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1173",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1174",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1175",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1176",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1177",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1178",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1179",
+    "x": 1597.08,
+    "y": 777.661,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_582",
+    "x": 1597.08,
+    "y": 777.661,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_583",
+    "x": 1597.08,
+    "y": 777.661,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_584",
+    "x": 1629.23,
+    "y": 776.884,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_585",
+    "x": 1629.23,
+    "y": 776.884,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1180",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1181",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1182",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1183",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1184",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1185",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1186",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_586",
+    "x": 1718.12,
+    "y": 628.339,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_587",
+    "x": 1718.12,
+    "y": 628.339,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_588",
+    "x": 1685.98,
+    "y": 629.116,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_589",
+    "x": 1685.98,
+    "y": 629.116,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1187",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1188",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1189",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1190",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1191",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1192",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1193",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_590",
+    "x": 1683.08,
+    "y": 777.661,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_591",
+    "x": 1683.08,
+    "y": 777.661,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_592",
+    "x": 1715.23,
+    "y": 776.884,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_593",
+    "x": 1715.23,
+    "y": 776.884,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1194",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1195",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1196",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1197",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1198",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1199",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1200",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_594",
+    "x": 1632.12,
+    "y": 628.339,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_595",
+    "x": 1632.12,
+    "y": 628.339,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_596",
+    "x": 1599.98,
+    "y": 629.116,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_597",
+    "x": 1599.98,
+    "y": 629.116,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1201",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1202",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1203",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1204",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1205",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1206",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1207",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_598",
+    "x": 1769.08,
+    "y": 777.661,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_599",
+    "x": 1769.08,
+    "y": 777.661,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_600",
+    "x": 1801.23,
+    "y": 776.884,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_601",
+    "x": 1801.23,
+    "y": 776.884,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1208",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1209",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1210",
+    "x": 1830.98,
+    "y": 769,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_602",
+    "x": 1830.98,
+    "y": 769,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1211",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1212",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1213",
+    "x": -417.51,
+    "y": -34.863,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1214",
+    "x": -417.51,
+    "y": -34.863,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_603",
+    "x": 1424.15,
+    "y": 720.52,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_604",
+    "x": 1424.15,
+    "y": 720.52,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_605",
+    "x": 1423.38,
+    "y": 688.378,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_606",
+    "x": 1423.38,
+    "y": 688.378,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1215",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1216",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1217",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1218",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1219",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1220",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1221",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_607",
+    "x": 1134.79,
+    "y": 685.48,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_608",
+    "x": 1134.79,
+    "y": 685.48,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_609",
+    "x": 1135.57,
+    "y": 717.622,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_610",
+    "x": 1135.57,
+    "y": 717.622,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1222",
+    "x": 1128.91,
+    "y": 681.86,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1223",
+    "x": 1128.91,
+    "y": 681.86,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_137",
+    "x": 1128.91,
+    "y": 681.86,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1224",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1225",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1226",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1227",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_611",
+    "x": 1386.61,
+    "y": 628.339,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_612",
+    "x": 1386.61,
+    "y": 628.339,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_613",
+    "x": 1354.47,
+    "y": 629.116,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_614",
+    "x": 1354.47,
+    "y": 629.116,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1228",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1229",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1230",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1231",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1232",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1233",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1234",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_615",
+    "x": 1179.57,
+    "y": 777.661,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_616",
+    "x": 1179.57,
+    "y": 777.661,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_617",
+    "x": 1211.72,
+    "y": 776.884,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_618",
+    "x": 1211.72,
+    "y": 776.884,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1235",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1236",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1237",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1238",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1239",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1240",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1241",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_619",
+    "x": 1300.61,
+    "y": 628.339,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_620",
+    "x": 1300.61,
+    "y": 628.339,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_621",
+    "x": 1268.47,
+    "y": 629.116,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_622",
+    "x": 1268.47,
+    "y": 629.116,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1242",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1243",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1244",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1245",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1246",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1247",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1248",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_623",
+    "x": 1265.57,
+    "y": 777.661,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_624",
+    "x": 1265.57,
+    "y": 777.661,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_625",
+    "x": 1297.72,
+    "y": 776.884,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_626",
+    "x": 1297.72,
+    "y": 776.884,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1249",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1250",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1251",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1252",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1253",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1254",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1255",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_627",
+    "x": 1214.61,
+    "y": 628.339,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_628",
+    "x": 1214.61,
+    "y": 628.339,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_629",
+    "x": 1182.47,
+    "y": 629.116,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_630",
+    "x": 1182.47,
+    "y": 629.116,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1256",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1257",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1258",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1259",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1260",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1261",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1262",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_631",
+    "x": 1351.57,
+    "y": 777.661,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_632",
+    "x": 1351.57,
+    "y": 777.661,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_633",
+    "x": 1383.72,
+    "y": 776.884,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_634",
+    "x": 1383.72,
+    "y": 776.884,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1263",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1264",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1265",
+    "x": 1413.47,
+    "y": 769,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_635",
+    "x": 1413.47,
+    "y": 769,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_636",
+    "x": 504,
+    "y": 1189.5,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1266",
+    "x": 909.471,
+    "y": 1420.33,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_138",
+    "x": 909.471,
+    "y": 1420.33,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1267",
+    "x": 944.334,
+    "y": 1420.33,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_139",
+    "x": 944.334,
+    "y": 1420.33,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_637",
+    "x": 907.424,
+    "y": 1420.66,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_638",
+    "x": 907.424,
+    "y": 1420.66,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_639",
+    "x": 939.565,
+    "y": 1419.88,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_640",
+    "x": 939.565,
+    "y": 1419.88,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1268",
+    "x": 903.804,
+    "y": 1426.54,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1269",
+    "x": 903.804,
+    "y": 1426.54,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_140",
+    "x": 903.804,
+    "y": 1426.54,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_641",
+    "x": 987.444,
+    "y": 1319.92,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_141",
+    "x": 620.836,
+    "y": 595.187,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_142",
+    "x": 621.643,
+    "y": 596.848,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_143",
+    "x": 586.422,
+    "y": 600.763,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_144",
+    "x": 587.229,
+    "y": 602.424,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_642",
+    "x": 623.611,
+    "y": 596.197,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_643",
+    "x": 623.611,
+    "y": 596.197,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_644",
+    "x": 592.008,
+    "y": 602.105,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_645",
+    "x": 592.008,
+    "y": 602.105,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1270",
+    "x": 626.244,
+    "y": 589.811,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1271",
+    "x": 626.244,
+    "y": 589.811,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_145",
+    "x": 626.244,
+    "y": 589.811,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_146",
+    "x": 574.35,
+    "y": 742.968,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_147",
+    "x": 576.189,
+    "y": 742.8,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_148",
+    "x": 567.407,
+    "y": 777.133,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_149",
+    "x": 569.246,
+    "y": 776.965,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_646",
+    "x": 576.276,
+    "y": 740.729,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_647",
+    "x": 576.276,
+    "y": 740.729,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_648",
+    "x": 570.636,
+    "y": 772.381,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_649",
+    "x": 570.636,
+    "y": 772.381,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1272",
+    "x": 577.268,
+    "y": 735.639,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1273",
+    "x": 577.268,
+    "y": 735.639,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_150",
+    "x": 577.268,
+    "y": 735.639,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_650",
+    "x": 678,
+    "y": 620,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_151",
+    "x": 575.821,
+    "y": 1438.56,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_152",
+    "x": 577.589,
+    "y": 1438.03,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_153",
+    "x": 575.821,
+    "y": 1473.42,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_154",
+    "x": 577.589,
+    "y": 1472.89,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_651",
+    "x": 577.262,
+    "y": 1435.98,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_652",
+    "x": 577.262,
+    "y": 1435.98,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_653",
+    "x": 578.039,
+    "y": 1468.12,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_654",
+    "x": 578.039,
+    "y": 1468.12,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1274",
+    "x": 571.379,
+    "y": 1432.36,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1275",
+    "x": 571.379,
+    "y": 1432.36,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_155",
+    "x": 571.379,
+    "y": 1432.36,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_655",
+    "x": 678,
+    "y": 1546,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_156",
+    "x": 131.942,
+    "y": 499.266,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_157",
+    "x": 132.472,
+    "y": 501.034,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_158",
+    "x": 97.079,
+    "y": 499.265,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_159",
+    "x": 97.61,
+    "y": 501.034,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_656",
+    "x": 134.52,
+    "y": 500.707,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_657",
+    "x": 134.52,
+    "y": 500.707,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_658",
+    "x": 102.378,
+    "y": 501.483,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_659",
+    "x": 102.378,
+    "y": 501.483,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1276",
+    "x": 138.14,
+    "y": 494.824,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1277",
+    "x": 138.14,
+    "y": 494.824,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_160",
+    "x": 138.14,
+    "y": 494.824,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_660",
+    "x": 41.5,
+    "y": 583.445,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1278",
+    "x": -1250.13,
+    "y": -22,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_161",
+    "x": 1102.4,
+    "y": 1420.33,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_162",
+    "x": 1137.79,
+    "y": 1422.1,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_163",
+    "x": 1137.26,
+    "y": 1420.33,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_661",
+    "x": 1100.35,
+    "y": 1420.66,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_662",
+    "x": 1100.35,
+    "y": 1420.66,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_663",
+    "x": 1132.49,
+    "y": 1419.88,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_664",
+    "x": 1132.49,
+    "y": 1419.88,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1279",
+    "x": 1096.73,
+    "y": 1426.54,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1280",
+    "x": 1096.73,
+    "y": 1426.54,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_164",
+    "x": 1096.73,
+    "y": 1426.54,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_665",
+    "x": 1207.37,
+    "y": 1319.92,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_165",
+    "x": 2635.56,
+    "y": 1282.99,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_166",
+    "x": 2636.09,
+    "y": 1284.75,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_167",
+    "x": 2600.69,
+    "y": 1282.99,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_168",
+    "x": 2601.22,
+    "y": 1284.75,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_666",
+    "x": 2638.13,
+    "y": 1284.43,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_667",
+    "x": 2638.13,
+    "y": 1284.43,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_668",
+    "x": 2627.99,
+    "y": 1285.2,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_669",
+    "x": 2627.99,
+    "y": 1285.2,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1281",
+    "x": 2644.16,
+    "y": 1279.55,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1282",
+    "x": 2644.16,
+    "y": 1279.55,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_169",
+    "x": 2644.16,
+    "y": 1279.55,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_670",
+    "x": 2691.11,
+    "y": 1289.09,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_170",
+    "x": 1570,
+    "y": 1213,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_171",
+    "x": 1657.38,
+    "y": 1208.51,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_172",
+    "x": 1610.18,
+    "y": 1208.51,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_173",
+    "x": 1654.01,
+    "y": 1198.43,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1283",
+    "x": 1651.84,
+    "y": 1192.64,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_174",
+    "x": 1651.84,
+    "y": 1192.64,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_175",
+    "x": 1633.76,
+    "y": 1177.88,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_176",
+    "x": 1646.7,
+    "y": 1185.64,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_177",
+    "x": 1620.96,
+    "y": 1191.94,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_178",
+    "x": 1647.56,
+    "y": 1189.67,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_179",
+    "x": 1631.64,
+    "y": 1189.67,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_180",
+    "x": 1633.76,
+    "y": 1187.3,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_181",
+    "x": 1632.45,
+    "y": 1188.01,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_182",
+    "x": 1635.12,
+    "y": 1188.01,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_183",
+    "x": 1633.15,
+    "y": 1189.67,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_184",
+    "x": 1634.97,
+    "y": 1192.69,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_185",
+    "x": 1631.29,
+    "y": 1205.44,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_186",
+    "x": 1633.2,
+    "y": 1207.5,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_187",
+    "x": 1634.66,
+    "y": 1195.11,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_188",
+    "x": 1631.29,
+    "y": 1202.56,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_189",
+    "x": 1631.64,
+    "y": 1206.75,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_190",
+    "x": 1627.16,
+    "y": 1198.48,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_191",
+    "x": 1634.41,
+    "y": 1207.1,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_192",
+    "x": 1613.96,
+    "y": 1198.43,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_193",
+    "x": 1774.82,
+    "y": 1208.51,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_194",
+    "x": 1727.62,
+    "y": 1208.51,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_195",
+    "x": 1771.44,
+    "y": 1198.43,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1284",
+    "x": 1769.28,
+    "y": 1192.64,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_196",
+    "x": 1769.28,
+    "y": 1192.64,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_197",
+    "x": 1751.19,
+    "y": 1177.88,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_198",
+    "x": 1764.14,
+    "y": 1185.64,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_199",
+    "x": 1738.4,
+    "y": 1191.94,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_200",
+    "x": 1765,
+    "y": 1189.67,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_201",
+    "x": 1749.08,
+    "y": 1189.67,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_202",
+    "x": 1751.19,
+    "y": 1187.3,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_203",
+    "x": 1749.88,
+    "y": 1188.01,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_204",
+    "x": 1752.55,
+    "y": 1188.01,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_205",
+    "x": 1750.59,
+    "y": 1189.67,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_206",
+    "x": 1752.4,
+    "y": 1192.69,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_207",
+    "x": 1748.72,
+    "y": 1205.44,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_208",
+    "x": 1750.64,
+    "y": 1207.5,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_209",
+    "x": 1752.1,
+    "y": 1195.11,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_210",
+    "x": 1748.72,
+    "y": 1202.56,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_211",
+    "x": 1749.08,
+    "y": 1206.75,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_212",
+    "x": 1744.59,
+    "y": 1198.48,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_213",
+    "x": 1751.85,
+    "y": 1207.1,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_214",
+    "x": 1731.4,
+    "y": 1198.43,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_215",
+    "x": 457.973,
+    "y": 18,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1285",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1286",
+    "x": 569.027,
+    "y": 408.461,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_216",
+    "x": 569.027,
+    "y": 408.461,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_217",
+    "x": 565.116,
+    "y": 411.597,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_218",
+    "x": 565.116,
+    "y": 411.597,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_219",
+    "x": 95.495,
+    "y": 691.644,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_220",
+    "x": 91.769,
+    "y": 695.381,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_221",
+    "x": 91.769,
+    "y": 695.381,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_222",
+    "x": 95.16,
+    "y": 1400.48,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_223",
+    "x": 91.435,
+    "y": 1404.22,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_224",
+    "x": 91.435,
+    "y": 1404.22,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_225",
+    "x": 1035.02,
+    "y": 23.095,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_226",
+    "x": 1029.48,
+    "y": 27.41,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_227",
+    "x": 1029.48,
+    "y": 27.41,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_228",
+    "x": 1550.66,
+    "y": 1938,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_229",
+    "x": 1545.57,
+    "y": 1932.64,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_230",
+    "x": 1545.57,
+    "y": 1932.64,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_231",
+    "x": 1961.97,
+    "y": 502.298,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1287",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1288",
+    "x": 531.322,
+    "y": 1017.04,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_671",
+    "x": 531.322,
+    "y": 1017.04,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_672",
+    "x": 531.322,
+    "y": 1017.04,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_673",
+    "x": 532.822,
+    "y": 952.973,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_674",
+    "x": 532.822,
+    "y": 952.973,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_675",
+    "x": 539,
+    "y": 935.705,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_232",
+    "x": 539,
+    "y": 942.922,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_676",
+    "x": 534.715,
+    "y": 597.146,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_677",
+    "x": 534.715,
+    "y": 597.146,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_678",
+    "x": 536.215,
+    "y": 533.084,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_679",
+    "x": 536.215,
+    "y": 533.084,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_680",
+    "x": 542.393,
+    "y": 515.816,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_233",
+    "x": 531.32362,
+    "y": 1208.999835,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_681",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_682",
+    "x": 532.82125,
+    "y": 1273.059508,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_683",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_684",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_685",
+    "x": 539,
+    "y": 1290.33,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_234",
+    "x": 539,
+    "y": 1283.11,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_686",
+    "x": 581.253,
+    "y": 1518.68,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_687",
+    "x": 581.253,
+    "y": 1518.68,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_688",
+    "x": 517.191,
+    "y": 1517.18,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_689",
+    "x": 517.191,
+    "y": 1517.18,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_690",
+    "x": 499.923,
+    "y": 1511,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_235",
+    "x": 507.14,
+    "y": 1511,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_236",
+    "x": 457.973,
+    "y": 217,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_237",
+    "x": 485.757,
+    "y": 217,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_238",
+    "x": 513.514,
+    "y": 217,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_239",
+    "x": 541.27,
+    "y": 217,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_240",
+    "x": 1036,
+    "y": 452,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_241",
+    "x": 1670,
+    "y": 1017,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_242",
+    "x": 1817.9,
+    "y": 259,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_243",
+    "x": 1786,
+    "y": 114.904,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_244",
+    "x": 1825,
+    "y": 1138,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_245",
+    "x": 1460,
+    "y": 1155,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_246",
+    "x": 458.16,
+    "y": 1463,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_247",
+    "x": 826,
+    "y": 1590,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_248",
+    "x": 826,
+    "y": 858,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_249",
+    "x": 1512,
+    "y": 259,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_250",
+    "x": 1776,
+    "y": 114.904,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_251",
+    "x": 2151.9,
+    "y": 249,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_252",
+    "x": 2236,
+    "y": 259,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_253",
+    "x": 2251,
+    "y": 1635,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_254",
+    "x": 2764,
+    "y": 8,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_255",
+    "x": 1825,
+    "y": 1049,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_256",
+    "x": 1560,
+    "y": 1027,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_257",
+    "x": 10,
+    "y": 8.003,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1289",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1290",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1291",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1292",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1293",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1294",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1295",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1296",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1297",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1298",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1299",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1300",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1301",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1302",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1303",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1304",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1305",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1306",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1307",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1308",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1309",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1310",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1311",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1312",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1313",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1314",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1315",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1316",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1317",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1318",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1319",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1320",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1321",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1322",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1323",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1324",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1325",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1326",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1327",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1328",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1329",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1330",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1331",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1332",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1333",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1334",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1335",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1336",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1337",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1338",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1339",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1340",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1341",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1342",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1343",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1344",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1345",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1346",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1347",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1348",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1349",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1350",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1351",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1352",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1353",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1354",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1355",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1356",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1357",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1358",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1359",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1360",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1361",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1362",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1363",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1364",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1365",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1366",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1367",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1368",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1369",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1370",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1371",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1372",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1373",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1374",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1375",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1376",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1377",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1378",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1379",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1380",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1381",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1382",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1383",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1384",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1385",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1386",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1387",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1388",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1389",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1390",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1391",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1392",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1393",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1394",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1395",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1396",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1397",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1398",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1399",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1400",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1401",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1402",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1403",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1404",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1405",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1406",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1407",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1408",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1409",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1410",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1411",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1412",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1413",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1414",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1415",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1416",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1417",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1418",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1419",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1420",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1421",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1422",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1423",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1424",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1425",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1426",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1427",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1428",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1429",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1430",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1431",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1432",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1433",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1434",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1435",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1436",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1437",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1438",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1439",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1440",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1441",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1442",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1443",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1444",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1445",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1446",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1447",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1448",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1449",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1450",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1451",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1452",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1453",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1454",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1455",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1456",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1457",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1458",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1459",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1460",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1461",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1462",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1463",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1464",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1465",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1466",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1467",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1468",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1469",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1470",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1471",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1472",
+    "x": -2.167,
+    "y": 0,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1473",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1474",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1475",
+    "x": -17.925,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1476",
+    "x": -17.925,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1477",
+    "x": -17.925,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1478",
+    "x": -17.925,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1479",
+    "x": -5.975,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1480",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1481",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1482",
+    "x": -17.925,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1483",
+    "x": -17.925,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1484",
+    "x": -17.925,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1485",
+    "x": -17.925,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1486",
+    "x": -5.975,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1487",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1488",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1489",
+    "x": -17.925,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1490",
+    "x": -17.925,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1491",
+    "x": -17.925,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1492",
+    "x": -17.925,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1493",
+    "x": -5.975,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1494",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1495",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1496",
+    "x": -17.925,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1497",
+    "x": -17.925,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1498",
+    "x": -17.925,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1499",
+    "x": -17.925,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1500",
+    "x": -5.975,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1501",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1502",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1503",
+    "x": -17.925,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1504",
+    "x": -17.925,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1505",
+    "x": -17.925,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1506",
+    "x": -17.925,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1507",
+    "x": -5.975,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1508",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1509",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1510",
+    "x": -17.925,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1511",
+    "x": -17.925,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1512",
+    "x": -17.925,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1513",
+    "x": -17.925,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1514",
+    "x": -5.975,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1515",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1516",
+    "x": 0,
+    "y": 0,
+    "foundCoords": false
+  },
+  {
+    "id": "bureau_1517",
+    "x": -17.925,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1518",
+    "x": -17.925,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1519",
+    "x": -17.925,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1520",
+    "x": -17.925,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_1521",
+    "x": -5.975,
+    "y": 11.95,
+    "foundCoords": true
+  },
+  {
+    "id": "bureau_691",
+    "x": 1591,
+    "y": 247,
+    "foundCoords": true
+  }
+]

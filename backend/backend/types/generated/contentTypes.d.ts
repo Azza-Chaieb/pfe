@@ -924,6 +924,7 @@ export interface ApiSpaceSpace extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    accessible_by: Schema.Attribute.JSON;
     capacity: Schema.Attribute.Integer &
       Schema.Attribute.SetMinMax<
         {
@@ -1589,13 +1590,16 @@ export interface PluginUsersPermissionsUser
       "plugin::users-permissions.user"
     > &
       Schema.Attribute.Private;
+    otp_code: Schema.Attribute.String & Schema.Attribute.Private;
     password: Schema.Attribute.Password &
       Schema.Attribute.Required &
       Schema.Attribute.Private &
       Schema.Attribute.SetMinMaxLength<{
         minLength: 6;
       }>;
-    phone: Schema.Attribute.BigInteger & Schema.Attribute.Required;
+    phone: Schema.Attribute.BigInteger &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
     professionnel: Schema.Attribute.Relation<
       "oneToOne",
       "api::professionnel.professionnel"
