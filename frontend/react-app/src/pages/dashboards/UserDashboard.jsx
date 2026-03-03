@@ -3,7 +3,12 @@ import { useNavigate } from "react-router-dom";
 import api from "../../services/apiClient";
 import { updateUser, updateSubProfile } from "../../services/userService";
 import { uploadFile } from "../../services/fileService";
+import {
+  getMySubscription,
+  cancelSubscription as cancelSub,
+} from "../../services/subscriptionService";
 import DashboardLayout from "../../components/layout/DashboardLayout";
+import SubscriptionSection from "../../components/dashboard/SubscriptionSection";
 
 const UserDashboard = () => {
   const [userData, setUserData] = useState(null);
@@ -25,6 +30,7 @@ const UserDashboard = () => {
     },
     profileFields: {},
   });
+  const [subscription, setSubscription] = useState(null);
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [error, setError] = useState(null);
@@ -35,8 +41,12 @@ const UserDashboard = () => {
 
   const fetchUserData = async () => {
     try {
-      const userRes = await api.get("/users/me?populate=avatar");
+      const [userRes, subData] = await Promise.all([
+        api.get("/users/me?populate=avatar"),
+        getMySubscription(),
+      ]);
       const userBase = userRes.data;
+      setSubscription(subData);
 
       const endpoints = {
         student: "/etudiant-profils",
@@ -306,6 +316,7 @@ const UserDashboard = () => {
           {[
             { id: "identity", label: "Identité", icon: "👤" },
             { id: "professional", label: "Profil Pro", icon: "💼" },
+            { id: "subscription", label: "Abonnement", icon: "💎" },
             { id: "settings", label: "Paramètres", icon: "⚙️" },
           ].map((tab) => (
             <button
@@ -465,6 +476,29 @@ const UserDashboard = () => {
                   ))}
                 </div>
               </div>
+            )}
+            {activeTab === "subscription" && (
+              <SubscriptionSection
+                subscription={subscription}
+                onCancel={async () => {
+                  if (
+                    window.confirm(
+                      "Êtes-vous sûr de vouloir annuler votre abonnement ?",
+                    )
+                  ) {
+                    try {
+                      const subId =
+                        subscription?.documentId || subscription?.id;
+                      if (subId) await cancelSub(subId);
+                      setSubscription(null);
+                      setSuccessMsg("Abonnement annulé avec succès.");
+                    } catch (error) {
+                      setError("Erreur lors de l'annulation.");
+                    }
+                  }
+                }}
+                onNavigateToPlans={() => navigate("/subscription-plans")}
+              />
             )}
           </div>
           <div className="lg:col-span-1 space-y-8">

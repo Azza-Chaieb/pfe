@@ -7,13 +7,20 @@ import { getUpcomingSessions } from "../../services/courseService";
 import { getUsers } from "../../services/userService";
 import MyBookingsWidget from "../../components/dashboard/MyBookingsWidget";
 import { getUserReservations } from "../../services/bookingService";
+import {
+  getMySubscription,
+  cancelSubscription as cancelSub,
+} from "../../services/subscriptionService";
 import BookingCalendar from "../../components/calendar/BookingCalendar";
+import SubscriptionSection from "../../components/dashboard/SubscriptionSection";
+import SubscriptionStatCard from "../../components/dashboard/SubscriptionStatCard";
 
 const AssociationDashboard = ({ activeTab = "dashboard" }) => {
   const [user, setUser] = useState(null);
   const [events, setEvents] = useState([]);
   const [memberCount, setMemberCount] = useState(0);
   const [bookings, setBookings] = useState([]);
+  const [subscription, setSubscription] = useState(null);
   const [bookingView, setBookingView] = useState("list");
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -27,11 +34,15 @@ const AssociationDashboard = ({ activeTab = "dashboard" }) => {
         setLoading(true);
 
         try {
-          const [resEvents, resUsers, resReservations] = await Promise.all([
-            getUpcomingSessions(),
-            api.get("/users?filters[user_type]=student"),
-            getUserReservations(parsedUser.id),
-          ]);
+          const [resEvents, resUsers, resReservations, subData] =
+            await Promise.all([
+              getUpcomingSessions(),
+              api.get("/users?filters[user_type]=student"),
+              getUserReservations(parsedUser.id),
+              getMySubscription(parsedUser.id),
+            ]);
+
+          setSubscription(subData);
 
           setEvents(
             (resEvents.data || []).map((item) => {
@@ -109,6 +120,7 @@ const AssociationDashboard = ({ activeTab = "dashboard" }) => {
           icon="👥"
           color="blue"
         />
+        <SubscriptionStatCard subscription={subscription} />
         <DashboardStatCard
           title="Événements"
           value={events.length}
@@ -319,7 +331,8 @@ const AssociationDashboard = ({ activeTab = "dashboard" }) => {
             Mes Réservations 📅
           </h1>
           <p className="text-xs text-slate-500 font-medium">
-            Consultez et gérez les réservations d'espaces pour votre association.
+            Consultez et gérez les réservations d'espaces pour votre
+            association.
           </p>
         </div>
         <div className="flex gap-4 items-center">
@@ -361,12 +374,35 @@ const AssociationDashboard = ({ activeTab = "dashboard" }) => {
     </div>
   );
 
+  const handleCancelSubscription = async () => {
+    if (window.confirm("Êtes-vous sûr de vouloir annuler votre abonnement ?")) {
+      try {
+        const subId = subscription?.documentId || subscription?.id;
+        if (subId) await cancelSub(subId);
+        setSubscription(null);
+        alert("Abonnement annulé avec succès.");
+      } catch (error) {
+        console.error("Erreur annulation abonnement", error);
+        alert("Erreur lors de l'annulation.");
+      }
+    }
+  };
+
+  const renderSubscription = () => (
+    <SubscriptionSection
+      subscription={subscription}
+      onCancel={handleCancelSubscription}
+      onNavigateToPlans={() => navigate("/subscription-plans")}
+    />
+  );
+
   return (
     <DashboardLayout role="association" user={user} loading={loading}>
       {activeTab === "dashboard" && renderDashboard()}
       {activeTab === "events" && renderEvents()}
       {activeTab === "members" && renderMembers()}
       {activeTab === "bookings" && renderBookings()}
+      {activeTab === "subscription" && renderSubscription()}
     </DashboardLayout>
   );
 };

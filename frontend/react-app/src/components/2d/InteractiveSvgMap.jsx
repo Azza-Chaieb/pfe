@@ -112,32 +112,17 @@ const InteractiveSvgMap = ({
       "path[id], rect[id], circle[id], use[id]",
     );
 
-    const normalize = (v) => (v || "").toString().toLowerCase();
-    const extractDigits = (v) => {
-      const m = (v || "").match(/\d+/);
-      return m ? m[0] : null;
-    };
+    const normalize = (v) => (v || "").toString().trim().toLowerCase();
 
     const findSpaceByElementId = (elementId) => {
       if (!elementId) return null;
       const elNorm = normalize(elementId);
-      const elDigits = extractDigits(elementId);
-
-      return spaces?.find((s) => {
-        const sAttrs = s.attributes || s;
-        const mesh = normalize(sAttrs.mesh_name || "");
-        const sid = s.id ? s.id.toString() : "";
-        const docId = sAttrs.documentId ? sAttrs.documentId.toString() : "";
-
-        if (mesh && mesh === elNorm) return true;
-        if (mesh && mesh.includes(elNorm)) return true;
-        if (elDigits && (sid === elDigits || docId === elDigits)) return true;
-
-        const name = normalize(sAttrs.name || "");
-        if (name && name === elNorm) return true;
-
-        return false;
-      });
+      return (
+        spaces?.find((s) => {
+          const sAttrs = s.attributes || s;
+          return normalize(sAttrs.mesh_name || s.mesh_name || "") === elNorm;
+        }) || null
+      );
     };
 
     interactiveElements.forEach((el) => {
@@ -145,34 +130,50 @@ const InteractiveSvgMap = ({
       if (!elementId || elementId.length < 3) return;
 
       const spaceData = findSpaceByElementId(elementId);
-      const isSelected = selectedSpaceId === elementId;
-      const status =
-        spaceData?.attributes?.status || spaceData?.status || "AVAILABLE";
 
-      el.style.pointerEvents = "all";
-      el.style.transition = "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
-      el.style.cursor = status === "INACCESSIBLE" ? "not-allowed" : "pointer";
+      const isSelected =
+        selectedSpaceId && normalize(selectedSpaceId) === normalize(elementId);
+
+      // CRITICAL: Respect the status calculated in ExplorationScene (Parent)
+      // ExplorationScene calculates status based on RBAC and Availability.
+      const status = isSelected
+        ? "SELECTED"
+        : spaceData?.status || (spaceData ? "AVAILABLE" : "UNKNOWN");
 
       // Apply Dynamic Styling
+      el.style.pointerEvents = "all";
+      el.style.transition = "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
+      el.style.cursor =
+        status === "INACCESSIBLE" || status === "UNKNOWN"
+          ? "not-allowed"
+          : "pointer";
+
+      // Apply Dynamic Styling — only when we have a confirmed space
       if (isSelected) {
         el.style.fill = statusColors.SELECTED;
-        el.style.fillOpacity = "0.8";
+        el.style.fillOpacity = "0.7";
         el.style.stroke = "#2563eb";
-        el.style.strokeWidth = "4px";
+        el.style.strokeWidth = "2px";
         el.setAttribute("filter", "none");
       } else if (spaceData) {
         el.style.fill = statusColors[status] || statusColors.INACCESSIBLE;
-        el.style.fillOpacity = status === "INACCESSIBLE" ? "0.3" : "0.5";
+        el.style.fillOpacity = status === "INACCESSIBLE" ? "0.15" : "0.5";
         el.style.stroke = statusColors[status] || statusColors.INACCESSIBLE;
-        el.style.strokeWidth = status === "INACCESSIBLE" ? "1px" : "2px";
+        el.style.strokeWidth = "1px";
         el.setAttribute("filter", "none");
       }
+      // else: leave element with its original SVG styling — don't gray out unknown sub-elements
 
       // Event Handlers
       el.onclick = (e) => {
         e.stopPropagation();
-        if (status === "INACCESSIBLE") return; // Enforce role restriction
-        onSelectSpace(elementId);
+        if (status === "INACCESSIBLE" || status === "UNKNOWN") return;
+        // Use the matched space's mesh_name as the canonical ID
+        const canonicalId = (() => {
+          const sAttrs = spaceData?.attributes || spaceData;
+          return sAttrs?.mesh_name || spaceData?.mesh_name || elementId;
+        })();
+        if (spaceData) onSelectSpace(canonicalId);
       };
 
       el.onmouseenter = (e) => {
@@ -184,7 +185,8 @@ const InteractiveSvgMap = ({
         setMousePos({ x: e.clientX, y: e.clientY });
 
         if (status !== "INACCESSIBLE") {
-          el.style.filter = "brightness(1.1) drop-shadow(0 0 8px rgba(59, 130, 246, 0.4))";
+          el.style.filter =
+            "brightness(1.1) drop-shadow(0 0 8px rgba(59, 130, 246, 0.4))";
         }
       };
 
@@ -195,7 +197,9 @@ const InteractiveSvgMap = ({
       el.onmouseleave = () => {
         setHoveredSpace(null);
         el.style.filter =
-          isSelected || (spaceData && status !== "INACCESSIBLE") ? "none" : "url(#furnitureShadow)";
+          isSelected || (spaceData && status !== "INACCESSIBLE")
+            ? "none"
+            : "url(#furnitureShadow)";
       };
     });
   }, [svgLoaded, spaces, selectedSpaceId, onSelectSpace]);
@@ -217,12 +221,13 @@ const InteractiveSvgMap = ({
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
               <div
-                className={`w-2 h-2 rounded-full ${hoveredSpace.status === "BOOKED"
-                  ? "bg-red-500"
-                  : hoveredSpace.status === "AVAILABLE"
-                    ? "bg-emerald-500"
-                    : "bg-slate-500"
-                  }`}
+                className={`w-2 h-2 rounded-full ${
+                  hoveredSpace.status === "BOOKED"
+                    ? "bg-red-500"
+                    : hoveredSpace.status === "AVAILABLE"
+                      ? "bg-emerald-500"
+                      : "bg-slate-500"
+                }`}
               />
               <span className="text-[9px] uppercase tracking-widest font-black text-slate-400">
                 {hoveredSpace.status === "UNKNOWN"
@@ -270,7 +275,9 @@ const InteractiveSvgMap = ({
           </div>
           <div className="flex items-center gap-3">
             <div className="w-4 h-4 rounded-full bg-slate-400 shadow-lg shadow-slate-400/30"></div>
-            <span className="text-xs font-bold text-slate-700">Inaccessible</span>
+            <span className="text-xs font-bold text-slate-700">
+              Inaccessible
+            </span>
           </div>
         </div>
       </div>

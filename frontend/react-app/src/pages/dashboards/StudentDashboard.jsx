@@ -10,13 +10,20 @@ import {
   getEnrolledCourses,
   getUpcomingSessions,
 } from "../../services/courseService";
+import {
+  getMySubscription,
+  cancelSubscription as cancelSub,
+} from "../../services/subscriptionService";
 import BookingCalendar from "../../components/calendar/BookingCalendar";
+import SubscriptionSection from "../../components/dashboard/SubscriptionSection";
+import SubscriptionStatCard from "../../components/dashboard/SubscriptionStatCard";
 
 const StudentDashboard = ({ activeTab = "dashboard" }) => {
   const [user, setUser] = useState(null);
   const [courses, setCourses] = useState([]);
   const [sessions, setSessions] = useState([]);
   const [bookings, setBookings] = useState([]);
+  const [subscription, setSubscription] = useState(null);
   const [loading, setLoading] = useState(true);
   const [bookingView, setBookingView] = useState("list");
   const navigate = useNavigate();
@@ -30,11 +37,15 @@ const StudentDashboard = ({ activeTab = "dashboard" }) => {
         setLoading(true);
 
         try {
-          const [resReservations, resCourses, resSessions] = await Promise.all([
-            getUserReservations(parsedUser.id),
-            getEnrolledCourses(),
-            getUpcomingSessions(),
-          ]);
+          const [resReservations, resCourses, resSessions, subData] =
+            await Promise.all([
+              getUserReservations(parsedUser.id),
+              getEnrolledCourses(),
+              getUpcomingSessions(),
+              getMySubscription(parsedUser.id),
+            ]);
+
+          setSubscription(subData);
 
           setBookings(
             (resReservations.data || []).map((item) => {
@@ -137,12 +148,7 @@ const StudentDashboard = ({ activeTab = "dashboard" }) => {
           icon="⏰"
           color="purple"
         />
-        <DashboardStatCard
-          title="Progression moyenne"
-          value={`${Math.round(courses.reduce((acc, c) => acc + (c.progress || 0), 0) / (courses.length || 1))}%`}
-          icon="⚡"
-          color="orange"
-        />
+        <SubscriptionStatCard subscription={subscription} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -243,11 +249,34 @@ const StudentDashboard = ({ activeTab = "dashboard" }) => {
     </div>
   );
 
+  const handleCancelSubscription = async () => {
+    if (window.confirm("Êtes-vous sûr de vouloir annuler votre abonnement ?")) {
+      try {
+        const subId = subscription?.documentId || subscription?.id;
+        if (subId) await cancelSub(subId);
+        setSubscription(null);
+        alert("Abonnement annulé avec succès.");
+      } catch (error) {
+        console.error("Erreur annulation abonnement", error);
+        alert("Erreur lors de l'annulation.");
+      }
+    }
+  };
+
+  const renderSubscription = () => (
+    <SubscriptionSection
+      subscription={subscription}
+      onCancel={handleCancelSubscription}
+      onNavigateToPlans={() => navigate("/subscription-plans")}
+    />
+  );
+
   return (
     <DashboardLayout role="student" user={user} loading={loading}>
       {activeTab === "dashboard" && renderDashboard()}
       {activeTab === "courses" && renderCourses()}
       {activeTab === "bookings" && renderBookings()}
+      {activeTab === "subscription" && renderSubscription()}
     </DashboardLayout>
   );
 };

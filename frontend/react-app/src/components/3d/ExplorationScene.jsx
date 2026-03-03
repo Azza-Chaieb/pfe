@@ -80,21 +80,30 @@ const ExplorationScene = () => {
           }
 
           console.log(
-            `[DEBUG] Coworking Space: ${attrs.name} (ID: ${item.id}). Spaces found: ${spacesData.length}`,
+            `[DEBUG] Coworking Space: ${attrs.name} (ID: ${item.id}, docID: ${item.documentId}). Spaces found: ${spacesData.length}`,
           );
 
           if (spacesData.length === 0) {
             console.warn(
-              "[DEBUG] No spaces found in coworking-space object. Trying direct /spaces query...",
+              "[DEBUG] No spaces found in coworking-space object. Trying direct /spaces queries...",
             );
             try {
-              const filterKey = isNaN(spaceId) ? "documentId" : "id";
-              const spaceRes = await api.get(
-                `/spaces?filters[coworking_space][${filterKey}][$eq]=${spaceId}&populate[0]=equipments&populate[1]=services`,
+              // Try by integer ID
+              const resId = await api.get(
+                `/spaces?filters[coworking_space][id][$eq]=${item.id}&populate=*`,
               );
-              spacesData = spaceRes.data?.data || spaceRes.data || [];
+              spacesData = resId.data?.data || [];
+
+              // If still 0, try by documentId
+              if (spacesData.length === 0 && item.documentId) {
+                const resDoc = await api.get(
+                  `/spaces?filters[coworking_space][documentId][$eq]=${item.documentId}&populate=*`,
+                );
+                spacesData = resDoc.data?.data || [];
+              }
+
               console.log(
-                `[DEBUG] Direct /spaces fallback found ${spacesData.length} spaces`,
+                `[DEBUG] Direct /spaces fallbacks found ${spacesData.length} spaces`,
               );
             } catch (fErr) {
               console.error("[DEBUG] Direct space fallback failed:", fErr);
@@ -144,8 +153,12 @@ const ExplorationScene = () => {
   const user = userStr ? JSON.parse(userStr) : null;
   const userType = (user?.user_type || "").toLowerCase();
 
+  console.log(
+    `[RBAC DEBUG] User Type: "${userType}" | Spaces Fetched: ${spaces.length}`,
+  );
+
   // Map occupancy status to spaces
-  const spacesWithStatus = spaces.map((s) => {
+  const spacesWithStatus = (spaces || []).map((s) => {
     const spaceIdNumeric = s.id;
     const isBooked = reservations.some((r) => {
       const rAttrs = r.attributes || r;
@@ -155,19 +168,24 @@ const ExplorationScene = () => {
     });
 
     const sAttrs = s.attributes || s;
-    const accessibleBy = sAttrs.accessible_by || s.accessible_by || [];
+    const rawAccessibleBy =
+      sAttrs.accessible_by ||
+      s.accessible_by ||
+      s.attributes?.accessible_by ||
+      [];
 
-    // Check if the current user is allowed to book this space.
-    // If accessibleBy is completely empty and it isn't specifically empty by design, maybe grant access or block? 
-    // From requirements: Restrooms, etc. have empty array `[]` meaning NOT bookable. Default to unbookable if not explicitly in `accessible_by`.
-    // Exception for 'admin' who could book anything if needed, but let's strictly stick to the types.
+    // Normalize to array of lowercase strings
+    const accessibleBy = Array.isArray(rawAccessibleBy)
+      ? rawAccessibleBy.map((role) => role.toString().toLowerCase().trim())
+      : typeof rawAccessibleBy === "string"
+        ? rawAccessibleBy.split(",").map((r) => r.toLowerCase().trim())
+        : [];
+
     let isAccessible = true;
-    if (Array.isArray(accessibleBy)) {
-      if (accessibleBy.length === 0) {
-        isAccessible = false;
-      } else if (userType !== "admin" && !accessibleBy.includes(userType)) {
-        isAccessible = false;
-      }
+    if (accessibleBy.length === 0) {
+      isAccessible = false;
+    } else if (userType !== "admin" && !accessibleBy.includes(userType)) {
+      isAccessible = false;
     }
 
     let status = isBooked ? "BOOKED" : "AVAILABLE";
@@ -263,31 +281,15 @@ const ExplorationScene = () => {
 
           const elName = selectedObject.name || "";
           const elNorm = normalize(elName);
-          const elDigits = extractDigits(elName);
 
-          // Find the space object that matches the clicked SVG element ID
-          let matched = spacesWithStatus.find((s) => {
+          // Find the space that matches the clicked SVG element ID — exact match only
+          const matched = spacesWithStatus.find((s) => {
             const sAttrs = s.attributes || s;
             const mesh = normalize(sAttrs.mesh_name || "");
-            const sid = s.id ? s.id.toString() : "";
-            const docId = sAttrs.documentId ? sAttrs.documentId.toString() : "";
-            const name = normalize(sAttrs.name || "");
-
-            // 1. Precise mesh_name match
-            if (mesh && mesh === elNorm) return true;
-            if (mesh && mesh.includes(elNorm)) return true;
-
-            // 2. Element ID digits match numeric ID or documentId
-            if (elDigits && (sid === elDigits || docId === elDigits))
-              return true;
-
-            // 3. Name match
-            if (name && name === elNorm) return true;
-
-            return false;
+            return mesh && mesh === elNorm;
           });
 
-          // Only allow booking if status isn't INACCESSIBLE and we have a valid match
+          // Only allow booking if accessible and matched
           return matched && matched.status !== "INACCESSIBLE" ? (
             <BookingModal
               key={`modal-${matched.id}`}

@@ -6,12 +6,12 @@
                 <path id="bureau_1" d="M1415 512h220v711h-220z M1415 1223h400v288h-400z M10 394h219v196H10z M2033 1442h721v495h-721z"/>
         <path id="bureau_salle_5" d="M1635 512h317v330h-317z"/>
         <path id="bureau_salle_6" d="M1635 857h317v366h-317z"/>
-        
-                
-        
-                
-        
-        
+       
+               
+       
+               
+       
+       
         <path id="bureau_2" d="M1559.96 1223H1815v288h-355v-348.12h99.96zM1221 1117h229v394h-229zm-395 0h384.996v394H826zM468 868h348v712H468zM10.659 600h447.267v863H10.659z"/>
     </g>
     <path id="bureau_3" fill="#d8d8d8" d="M1512 18H569.027v434H1512z"/>
@@ -244,7 +244,7 @@
         <rect id="bureau_295" width="3" height="16" x="1807.48" y="1695.12" fill="url(#AE)" rx="1.5" style="mix-blend-mode:overlay"/>
     </g>
     <g transform="rotate(15 1830.62 1694.34)">
-        <rect id="bureau_296" width="3" 
+        <rect id="bureau_296" width="3"
 height="16" x="1830.62" y="1694.34" fill="url(#RD)" rx="1.5"/>
         <rect id="bureau_297" width="3" height="16" x="1830.62" y="1694.34" fill="url(#AF)" rx="1.5" style="mix-blend-mode:overlay"/>
     </g>
