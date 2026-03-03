@@ -14,7 +14,7 @@
       "name": "Apache 2.0",
       "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "x-generation-date": "2026-03-01T02:51:29.162Z"
+    "x-generation-date": "2026-03-03T15:34:43.339Z"
   },
   "x-strapi-config": {
     "plugins": [
@@ -52758,6 +52758,16 @@
               "max_credits": {
                 "type": "integer"
               },
+              "target_role": {
+                "type": "string",
+                "enum": [
+                  "student",
+                  "trainer",
+                  "professional",
+                  "association",
+                  "all"
+                ]
+              },
               "locale": {
                 "type": "string"
               },
@@ -52858,6 +52868,16 @@
           "features": {},
           "max_credits": {
             "type": "integer"
+          },
+          "target_role": {
+            "type": "string",
+            "enum": [
+              "student",
+              "trainer",
+              "professional",
+              "association",
+              "all"
+            ]
           },
           "createdAt": {
             "type": "string",
@@ -53296,6 +53316,16 @@
                 "max_credits": {
                   "type": "integer"
                 },
+                "target_role": {
+                  "type": "string",
+                  "enum": [
+                    "student",
+                    "trainer",
+                    "professional",
+                    "association",
+                    "all"
+                  ]
+                },
                 "createdAt": {
                   "type": "string",
                   "format": "date-time"
@@ -53448,6 +53478,17 @@
               },
               "payment_reference": {
                 "type": "string"
+              },
+              "payment_method": {
+                "type": "string",
+                "enum": [
+                  "cash",
+                  "card"
+                ]
+              },
+              "payment_deadline": {
+                "type": "string",
+                "format": "date-time"
               },
               "locale": {
                 "type": "string"
@@ -55337,6 +55378,16 @@
               "max_credits": {
                 "type": "integer"
               },
+              "target_role": {
+                "type": "string",
+                "enum": [
+                  "student",
+                  "trainer",
+                  "professional",
+                  "association",
+                  "all"
+                ]
+              },
               "createdAt": {
                 "type": "string",
                 "format": "date-time"
@@ -55440,6 +55491,17 @@
           },
           "payment_reference": {
             "type": "string"
+          },
+          "payment_method": {
+            "type": "string",
+            "enum": [
+              "cash",
+              "card"
+            ]
+          },
+          "payment_deadline": {
+            "type": "string",
+            "format": "date-time"
           },
           "createdAt": {
             "type": "string",
@@ -55575,6 +55637,17 @@
                 },
                 "payment_reference": {
                   "type": "string"
+                },
+                "payment_method": {
+                  "type": "string",
+                  "enum": [
+                    "cash",
+                    "card"
+                  ]
+                },
+                "payment_deadline": {
+                  "type": "string",
+                  "format": "date-time"
                 },
                 "createdAt": {
                   "type": "string",

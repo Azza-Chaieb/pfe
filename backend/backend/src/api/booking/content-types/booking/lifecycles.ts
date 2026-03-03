@@ -161,7 +161,44 @@ async function handleBookingLogic(event) {
         }
       }
 
-      // 3. Price Calculation
+      // 3. Role-Based Access Control (RBAC)
+      const rbacSpaceId = extractId(data.space);
+      const userId = extractId(data.user);
+
+      if (rbacSpaceId && userId) {
+        console.log(
+          `[Booking Lifecycle] Checking RBAC for User ${userId} on Space ${rbacSpaceId}`,
+        );
+
+        const space = await strapi.entityService.findOne(
+          "api::space.space",
+          rbacSpaceId,
+        );
+        const user = await strapi.entityService.findOne(
+          "plugin::users-permissions.user",
+          userId,
+        );
+
+        if (space && user) {
+          const rawAllowedRoles = space.accessible_by;
+          const allowedRoles = Array.isArray(rawAllowedRoles)
+            ? (rawAllowedRoles as string[])
+            : [];
+          const userType = user.user_type;
+
+          if (allowedRoles.length > 0 && !allowedRoles.includes(userType)) {
+            console.warn(
+              `[Booking Lifecycle] RBAC DENIED: User type '${userType}' cannot book space restricted to [${allowedRoles.join(", ")}]`,
+            );
+            throw new ApplicationError(
+              `Votre profil (${userType}) ne vous permet pas de réserver cet espace. Cet espace est réservé aux : ${allowedRoles.join(", ")}.`,
+            );
+          }
+          console.log(`[Booking Lifecycle] RBAC PASSED for ${userType}`);
+        }
+      }
+
+      // 4. Price Calculation
       const currentSpaceId = extractId(data.space);
       if (currentSpaceId) {
         console.log(
@@ -352,7 +389,9 @@ async function sendCancellationEmail(result) {
         fullBooking.user.fullname || fullBooking.user.username,
         reservationDetails,
       );
-      strapi.log.info(`[Booking Lifecycle] Cancellation email sent to ${fullBooking.user.email}`);
+      strapi.log.info(
+        `[Booking Lifecycle] Cancellation email sent to ${fullBooking.user.email}`,
+      );
     }
   } catch (error) {
     strapi.log.error("Failed to send booking cancellation email:", error);

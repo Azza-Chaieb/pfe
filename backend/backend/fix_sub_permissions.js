@@ -26,6 +26,9 @@ async function run() {
     console.log(`Found Authenticated role ID: ${roleId}`);
 
     const actions = [
+      "api::user-subscription.user-subscription.find",
+      "api::user-subscription.user-subscription.findOne",
+      "api::user-subscription.user-subscription.update",
       "api::user-subscription.user-subscription.getPlans",
       "api::user-subscription.user-subscription.getMySubscription",
       "api::user-subscription.user-subscription.subscribe",

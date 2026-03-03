@@ -33,7 +33,27 @@ export default factories.createCoreController(
      */
     async getMySubscription(ctx) {
       try {
-        const userId = ctx.state.user?.id;
+        let userId = ctx.state.user?.id;
+
+        // If auth: false, try manual extraction from Bearer token
+        if (!userId && ctx.request.header.authorization) {
+          try {
+            const token = ctx.request.header.authorization.replace(
+              "Bearer ",
+              "",
+            );
+            const decoded = await strapi
+              .plugin("users-permissions")
+              .service("jwt")
+              .verify(token);
+            userId = decoded.id;
+          } catch (err) {
+            strapi.log.debug(
+              "Manual JWT verification failed in subscription controller",
+            );
+          }
+        }
+
         if (!userId) return ctx.unauthorized("Authentification requise.");
 
         const subscriptionService = strapi.service(
@@ -52,10 +72,35 @@ export default factories.createCoreController(
      */
     async subscribe(ctx) {
       try {
-        const userId = ctx.state.user?.id;
+        let userId = ctx.state.user?.id;
+
+        // If auth: false, try manual extraction from Bearer token
+        if (!userId && ctx.request.header.authorization) {
+          try {
+            const token = ctx.request.header.authorization.replace(
+              "Bearer ",
+              "",
+            );
+            const decoded = await strapi
+              .plugin("users-permissions")
+              .service("jwt")
+              .verify(token);
+            userId = decoded.id;
+          } catch (err) {
+            strapi.log.debug(
+              "Manual JWT verification failed in subscription.subscribe",
+            );
+          }
+        }
+
         if (!userId) return ctx.unauthorized("Authentification requise.");
 
-        const { planId, billingCycle = "monthly" } = ctx.request.body as any;
+        const {
+          planId,
+          billingCycle = "monthly",
+          paymentMethod = "cash",
+          paymentReference = "",
+        } = ctx.request.body as any;
         if (!planId) return ctx.badRequest("planId est requis.");
 
         const subscriptionService = strapi.service(
@@ -65,6 +110,8 @@ export default factories.createCoreController(
           userId,
           planId,
           billingCycle,
+          paymentMethod,
+          paymentReference,
         );
 
         ctx.created({ data: newSub, message: "Abonnement créé avec succès." });
@@ -79,13 +126,35 @@ export default factories.createCoreController(
      */
     async upgrade(ctx) {
       try {
-        const userId = ctx.state.user?.id;
+        let userId = ctx.state.user?.id;
+
+        // If auth: false, try manual extraction from Bearer token
+        if (!userId && ctx.request.header.authorization) {
+          try {
+            const token = ctx.request.header.authorization.replace(
+              "Bearer ",
+              "",
+            );
+            const decoded = await strapi
+              .plugin("users-permissions")
+              .service("jwt")
+              .verify(token);
+            userId = decoded.id;
+          } catch (err) {
+            strapi.log.debug(
+              "Manual JWT verification failed in subscription.upgrade",
+            );
+          }
+        }
+
         if (!userId) return ctx.unauthorized("Authentification requise.");
 
         const {
           subscriptionId,
           planId,
           billingCycle = "monthly",
+          paymentMethod = "cash",
+          paymentReference = "",
         } = ctx.request.body as any;
         if (!subscriptionId || !planId)
           return ctx.badRequest("subscriptionId et planId sont requis.");
@@ -105,6 +174,8 @@ export default factories.createCoreController(
           subscriptionId,
           planId,
           billingCycle,
+          paymentMethod,
+          paymentReference,
         );
 
         ctx.body = {
@@ -122,7 +193,27 @@ export default factories.createCoreController(
      */
     async cancelSubscription(ctx) {
       try {
-        const userId = ctx.state.user?.id;
+        let userId = ctx.state.user?.id;
+
+        // If auth: false, try manual extraction from Bearer token
+        if (!userId && ctx.request.header.authorization) {
+          try {
+            const token = ctx.request.header.authorization.replace(
+              "Bearer ",
+              "",
+            );
+            const decoded = await strapi
+              .plugin("users-permissions")
+              .service("jwt")
+              .verify(token);
+            userId = decoded.id;
+          } catch (err) {
+            strapi.log.debug(
+              "Manual JWT verification failed in subscription.cancelSubscription",
+            );
+          }
+        }
+
         if (!userId) return ctx.unauthorized("Authentification requise.");
 
         const { subscriptionId } = ctx.request.body as any;
@@ -154,7 +245,27 @@ export default factories.createCoreController(
      */
     async renew(ctx) {
       try {
-        const userId = ctx.state.user?.id;
+        let userId = ctx.state.user?.id;
+
+        // If auth: false, try manual extraction from Bearer token
+        if (!userId && ctx.request.header.authorization) {
+          try {
+            const token = ctx.request.header.authorization.replace(
+              "Bearer ",
+              "",
+            );
+            const decoded = await strapi
+              .plugin("users-permissions")
+              .service("jwt")
+              .verify(token);
+            userId = decoded.id;
+          } catch (err) {
+            strapi.log.debug(
+              "Manual JWT verification failed in subscription.renew",
+            );
+          }
+        }
+
         if (!userId) return ctx.unauthorized("Authentification requise.");
 
         const { subscriptionId } = ctx.request.body as any;
