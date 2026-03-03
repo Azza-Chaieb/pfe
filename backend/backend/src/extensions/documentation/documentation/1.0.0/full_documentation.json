@@ -14,7 +14,7 @@
       "name": "Apache 2.0",
       "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "x-generation-date": "2026-03-01T02:51:29.162Z"
+    "x-generation-date": "2026-03-03T23:01:50.003Z"
   },
   "x-strapi-config": {
     "plugins": [
@@ -15488,6 +15488,9 @@
                 "type": "string"
               },
               "accessible_by": {},
+              "is_per_chair": {
+                "type": "boolean"
+              },
               "createdAt": {
                 "type": "string",
                 "format": "date-time"
@@ -21001,6 +21004,9 @@
                             "type": "string"
                           },
                           "accessible_by": {},
+                          "is_per_chair": {
+                            "type": "boolean"
+                          },
                           "createdAt": {
                             "type": "string",
                             "format": "date-time"
@@ -24637,6 +24643,9 @@
                   "type": "string"
                 },
                 "accessible_by": {},
+                "is_per_chair": {
+                  "type": "boolean"
+                },
                 "createdAt": {
                   "type": "string",
                   "format": "date-time"
@@ -32163,6 +32172,9 @@
                       "type": "string"
                     },
                     "accessible_by": {},
+                    "is_per_chair": {
+                      "type": "boolean"
+                    },
                     "createdAt": {
                       "type": "string",
                       "format": "date-time"
@@ -34331,6 +34343,9 @@
                     "type": "string"
                   },
                   "accessible_by": {},
+                  "is_per_chair": {
+                    "type": "boolean"
+                  },
                   "createdAt": {
                     "type": "string",
                     "format": "date-time"
@@ -41328,6 +41343,9 @@
                   "type": "string"
                 },
                 "accessible_by": {},
+                "is_per_chair": {
+                  "type": "boolean"
+                },
                 "createdAt": {
                   "type": "string",
                   "format": "date-time"
@@ -43818,6 +43836,9 @@
                 "type": "string"
               },
               "accessible_by": {},
+              "is_per_chair": {
+                "type": "boolean"
+              },
               "locale": {
                 "type": "string"
               },
@@ -46981,6 +47002,9 @@
                         "type": "string"
                       },
                       "accessible_by": {},
+                      "is_per_chair": {
+                        "type": "boolean"
+                      },
                       "createdAt": {
                         "type": "string",
                         "format": "date-time"
@@ -47231,6 +47255,9 @@
             "type": "string"
           },
           "accessible_by": {},
+          "is_per_chair": {
+            "type": "boolean"
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time"
@@ -50626,6 +50653,9 @@
                 "type": "string"
               },
               "accessible_by": {},
+              "is_per_chair": {
+                "type": "boolean"
+              },
               "createdAt": {
                 "type": "string",
                 "format": "date-time"

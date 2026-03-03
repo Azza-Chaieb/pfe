@@ -12,13 +12,14 @@ import PaymentSelector from "../payment/PaymentSelector";
  * BookingModal Component - CLEAN & LOGICAL VERSION
  * Enforces a single submission to prevent redundant clicks.
  */
-const BookingModal = ({ space, coworkingSpaceId, initialDate, onClose }) => {
+const BookingModal = ({ space, coworkingSpaceId, initialDate, initialChairId, onClose }) => {
   const [bookingLoading, setBookingLoading] = useState(false);
   const [showPaymentSelector, setShowPaymentSelector] = useState(false);
   const [createdReservation, setCreatedReservation] = useState(null);
   const [existingReservations, setExistingReservations] = useState([]);
 
-  // ... rest of state ...
+  const [selectedChair, setSelectedChair] = useState(initialChairId ? parseInt(initialChairId) : null);
+  const [occupiedChairs, setOccupiedChairs] = useState([]);
   const [checkingAvailability, setCheckingAvailability] = useState(false);
   const [equipmentQuantities, setEquipmentQuantities] = useState({});
   const [serviceQuantities, setServiceQuantities] = useState({});
@@ -36,17 +37,38 @@ const BookingModal = ({ space, coworkingSpaceId, initialDate, onClose }) => {
   // Fetch current reservations for the selected date
   useEffect(() => {
     if (!space?.id || !formData.date) return;
+    const attrs = space.attributes || space;
+
     const checkAvailability = async () => {
       setCheckingAvailability(true);
       try {
         const startOfDay = `${formData.date}T00:00:00.000Z`;
         const endOfDay = `${formData.date}T23:59:59.999Z`;
 
-        // Better overlap filter for Strapi: (start < endOfDay) AND (end > startOfDay)
         const response = await api.get(
           `/bookings?filters[space][id][$eq]=${space.id}&filters[start_time][$lt]=${endOfDay}&filters[end_time][$gt]=${startOfDay}&filters[status][$ne]=cancelled`,
         );
-        setExistingReservations(response.data?.data || []);
+        const resList = response.data?.data || [];
+        setExistingReservations(resList);
+
+        // If per-chair, identify which chairs are taken during the selected time
+        if (attrs.is_per_chair) {
+          const startTimeMs = new Date(`${formData.date}T${formData.startTime}:00.000Z`).getTime();
+          const endTimeMs = formData.allDay
+            ? new Date(`${formData.date}T23:59:59.999Z`).getTime()
+            : new Date(`${formData.date}T${formData.endTime}:00.000Z`).getTime();
+
+          const taken = resList
+            .filter(r => {
+              const rStart = new Date(r.attributes?.start_time || r.start_time).getTime();
+              const rEnd = new Date(r.attributes?.end_time || r.end_time).getTime();
+              return startTimeMs < rEnd && rStart < endTimeMs;
+            })
+            .map(r => (r.attributes?.extras?.chairId || r.extras?.chairId))
+            .filter(id => id !== undefined);
+
+          setOccupiedChairs(taken);
+        }
       } catch (err) {
         console.error("Availability check failed:", err);
       } finally {
@@ -54,7 +76,7 @@ const BookingModal = ({ space, coworkingSpaceId, initialDate, onClose }) => {
       }
     };
     checkAvailability();
-  }, [space?.id, formData.date]);
+  }, [space?.id, formData.date, formData.startTime, formData.endTime, formData.allDay, space.attributes?.is_per_chair, space.is_per_chair]);
 
   if (!space) return null;
   const attrs = space.attributes || space;
@@ -103,6 +125,13 @@ const BookingModal = ({ space, coworkingSpaceId, initialDate, onClose }) => {
       const userString = localStorage.getItem("user");
       const user = userString ? JSON.parse(userString) : null;
 
+      if (attrs.is_per_chair && !selectedChair) {
+        alert("Veuillez sélectionner une chaise.");
+        setBookingLoading(false);
+        isSubmitting.current = false;
+        return;
+      }
+
       if (!user) {
         alert("Veuillez vous connecter pour réserver.");
         navigate("/login");
@@ -130,6 +159,7 @@ const BookingModal = ({ space, coworkingSpaceId, initialDate, onClose }) => {
         extras: {
           equipmentQuantities: equipmentQuantities,
           serviceQuantities: serviceQuantities,
+          chairId: selectedChair,
           contact: {
             participants: formData.participants,
           },
@@ -275,8 +305,9 @@ const BookingModal = ({ space, coworkingSpaceId, initialDate, onClose }) => {
     return total.toFixed(2);
   };
 
-  const hasConflict =
-    (!formData.allDay &&
+  const hasConflict = attrs.is_per_chair
+    ? (selectedChair && occupiedChairs.includes(selectedChair))
+    : ((!formData.allDay &&
       existingReservations.some((res) => {
         const resStart = new Date(
           res.attributes?.start_time || res.start_time,
@@ -295,7 +326,7 @@ const BookingModal = ({ space, coworkingSpaceId, initialDate, onClose }) => {
 
         return reqStart < resEnd && resStart < reqEnd;
       })) ||
-    (formData.allDay && existingReservations.length > 0);
+      (formData.allDay && existingReservations.length > 0));
 
   // Calendar Logic
   const [viewDate, setViewDate] = useState(new Date(formData.date));
@@ -489,6 +520,45 @@ const BookingModal = ({ space, coworkingSpaceId, initialDate, onClose }) => {
             </div>
           </section>
 
+          {attrs.is_per_chair && (
+            <section className="mb-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                <span className="w-1 h-1 bg-amber-500 rounded-full"></span> Sélectionner votre place
+              </h4>
+              <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
+                {Array.from({ length: attrs.capacity || 1 }).map((_, i) => {
+                  const chairId = i + 1;
+                  const isOccupied = occupiedChairs.includes(chairId);
+                  const isSelected = selectedChair === chairId;
+
+                  return (
+                    <button
+                      key={chairId}
+                      disabled={isOccupied}
+                      onClick={() => setSelectedChair(isSelected ? null : chairId)}
+                      className={`h-12 rounded-xl text-[11px] font-black transition-all border-2 flex flex-col items-center justify-center gap-1
+                        ${isSelected
+                          ? "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-500/30"
+                          : isOccupied
+                            ? "bg-slate-50 border-slate-100 text-slate-200 cursor-not-allowed opacity-50"
+                            : "bg-white border-slate-100 text-slate-600 hover:border-blue-200 hover:bg-blue-50/30"
+                        }
+                      `}
+                    >
+                      <span className="text-[14px]">{isOccupied ? "🔒" : isSelected ? "✅" : "🪑"}</span>
+                      <span className="text-[9px]">PLACE {chairId}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              {selectedChair && (
+                <p className="mt-4 text-[10px] font-bold text-blue-600 uppercase tracking-tight">
+                  Vous avez sélectionné la place <span className="text-lg font-black">#{selectedChair}</span>
+                </p>
+              )}
+            </section>
+          )}
+
           <section className="space-y-4">
             <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
               Nombre de participants
@@ -556,12 +626,11 @@ const BookingModal = ({ space, coworkingSpaceId, initialDate, onClose }) => {
                       disabled={isPast}
                       onClick={() => setFormData((p) => ({ ...p, date: dStr }))}
                       className={`h-10 rounded-xl text-[10px] font-black transition-all flex items-center justify-center
-                        ${
-                          isSelected
-                            ? "bg-blue-600 text-white shadow-lg shadow-blue-500/30"
-                            : isPast
-                              ? "text-slate-200 cursor-not-allowed opacity-40"
-                              : "text-slate-600 hover:bg-slate-100"
+                        ${isSelected
+                          ? "bg-blue-600 text-white shadow-lg shadow-blue-500/30"
+                          : isPast
+                            ? "text-slate-200 cursor-not-allowed opacity-40"
+                            : "text-slate-600 hover:bg-slate-100"
                         }
                       `}
                     >

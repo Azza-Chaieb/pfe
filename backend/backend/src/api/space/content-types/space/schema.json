@@ -74,6 +74,10 @@
     },
     "accessible_by": {
       "type": "json"
+    },
+    "is_per_chair": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

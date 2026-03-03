@@ -129,7 +129,7 @@ const InteractiveSvgMap = ({
         const sid = s.id ? s.id.toString() : "";
         const docId = sAttrs.documentId ? sAttrs.documentId.toString() : "";
 
-        if (mesh && mesh === elNorm) return true;
+        if (mesh && (mesh === elNorm || elNorm.startsWith(mesh + "_"))) return true;
         if (mesh && mesh.includes(elNorm)) return true;
         if (elDigits && (sid === elDigits || docId === elDigits)) return true;
 

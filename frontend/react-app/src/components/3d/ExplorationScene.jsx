@@ -273,8 +273,8 @@ const ExplorationScene = () => {
             const docId = sAttrs.documentId ? sAttrs.documentId.toString() : "";
             const name = normalize(sAttrs.name || "");
 
-            // 1. Precise mesh_name match
-            if (mesh && mesh === elNorm) return true;
+            // 1. Precise mesh_name match or Sub-element (like bureau_student_left_1 matches bureau_student_left)
+            if (mesh && (mesh === elNorm || elNorm.startsWith(mesh + "_"))) return true;
             if (mesh && mesh.includes(elNorm)) return true;
 
             // 2. Element ID digits match numeric ID or documentId
@@ -287,6 +287,16 @@ const ExplorationScene = () => {
             return false;
           });
 
+          // If matched, extract the chair index from the element ID if applicable
+          let initialChairId = null;
+          if (matched) {
+            const mesh = normalize((matched.attributes || matched).mesh_name || "");
+            if (mesh && elNorm.startsWith(mesh + "_")) {
+              // Extract the part after the mesh name as the chair ID
+              initialChairId = elNorm.replace(mesh + "_", "");
+            }
+          }
+
           // Only allow booking if status isn't INACCESSIBLE and we have a valid match
           return matched && matched.status !== "INACCESSIBLE" ? (
             <BookingModal
@@ -294,6 +304,7 @@ const ExplorationScene = () => {
               space={matched}
               coworkingSpaceId={numericCoworkingId}
               initialDate={selectedDate}
+              initialChairId={initialChairId}
               onClose={() => setSelectedObject(null)}
             />
           ) : null;

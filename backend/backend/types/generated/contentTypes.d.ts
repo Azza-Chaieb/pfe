@@ -944,6 +944,7 @@ export interface ApiSpaceSpace extends Struct.CollectionTypeSchema {
       "api::equipment.equipment"
     >;
     floor: Schema.Attribute.Integer;
+    is_per_chair: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<"oneToMany", "api::space.space"> &
       Schema.Attribute.Private;
