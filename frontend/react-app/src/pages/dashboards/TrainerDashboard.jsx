@@ -13,7 +13,13 @@ import {
   createCourse,
 } from "../../services/courseService";
 import { getUserReservations } from "../../services/bookingService";
+import {
+  getMySubscription,
+  cancelSubscription as cancelSub,
+} from "../../services/subscriptionService";
 import BookingCalendar from "../../components/calendar/BookingCalendar";
+import SubscriptionSection from "../../components/dashboard/SubscriptionSection";
+import SubscriptionStatCard from "../../components/dashboard/SubscriptionStatCard";
 
 const TrainerDashboard = ({ activeTab = "dashboard" }) => {
   const [user, setUser] = useState(null);
@@ -21,6 +27,7 @@ const TrainerDashboard = ({ activeTab = "dashboard" }) => {
   const [sessions, setSessions] = useState([]);
   const [students, setStudents] = useState([]);
   const [bookings, setBookings] = useState([]);
+  const [subscription, setSubscription] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [bookingView, setBookingView] = useState("list");
@@ -34,13 +41,13 @@ const TrainerDashboard = ({ activeTab = "dashboard" }) => {
       setLoading(true);
 
       try {
-        const [resCourses, resSessions, resStudents] = await Promise.allSettled(
-          [
+        const [resCourses, resSessions, resStudents, subData] =
+          await Promise.allSettled([
             getTrainerCourses(parsedUser.id),
             getUpcomingSessions(),
             getTrainerStudents(parsedUser.id),
-          ],
-        );
+            getMySubscription(parsedUser.id),
+          ]);
 
         if (resCourses.status === "fulfilled") {
           setCourses(
@@ -83,6 +90,10 @@ const TrainerDashboard = ({ activeTab = "dashboard" }) => {
                 : "-",
             })),
           );
+        }
+
+        if (subData.status === "fulfilled") {
+          setSubscription(subData.value);
         }
 
         const resBookings = await getUserReservations(parsedUser.id);
@@ -151,6 +162,7 @@ const TrainerDashboard = ({ activeTab = "dashboard" }) => {
           icon="📅"
           color="orange"
         />
+        <SubscriptionStatCard subscription={subscription} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -338,6 +350,27 @@ const TrainerDashboard = ({ activeTab = "dashboard" }) => {
       )}
     </div>
   );
+  const handleCancelSubscription = async () => {
+    if (window.confirm("Êtes-vous sûr de vouloir annuler votre abonnement ?")) {
+      try {
+        const subId = subscription?.documentId || subscription?.id;
+        if (subId) await cancelSub(subId);
+        setSubscription(null);
+        alert("Abonnement annulé avec succès.");
+      } catch (error) {
+        console.error("Erreur annulation abonnement", error);
+        alert("Erreur lors de l'annulation.");
+      }
+    }
+  };
+
+  const renderSubscription = () => (
+    <SubscriptionSection
+      subscription={subscription}
+      onCancel={handleCancelSubscription}
+      onNavigateToPlans={() => navigate("/subscription-plans")}
+    />
+  );
 
   return (
     <DashboardLayout role="trainer" user={user} loading={loading}>
@@ -345,6 +378,7 @@ const TrainerDashboard = ({ activeTab = "dashboard" }) => {
       {activeTab === "manage" && renderManage()}
       {activeTab === "students" && renderStudents()}
       {activeTab === "bookings" && renderBookings()}
+      {activeTab === "subscription" && renderSubscription()}
       <CreateCourseModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

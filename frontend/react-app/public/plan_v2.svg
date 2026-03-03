@@ -1,25 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 2780 1974" xmlns:v="https://vecta.io/nano">
     <style>
-        <![CDATA[.B{color-interpolation-filters:sRGB}.C{flood-opacity:0}.D{fill-opacity:.2}.E{opacity:.5}.F{fill-opacity:.07}.G{stroke:#fff}.H{stroke-width:4}.I{fill:#fff}.J{opacity:.1}.K{fill:#000}.L{fill-rule:evenodd}.M{fill:#f5f5f5}.N{opacity:.3}.O{fill:#dedede}.P{fill:#e8e8e8}.Q{opacity:.4}.R{fill:#dbe5da}.S{fill-opacity:.65}.T{fill:#d9d9d9}.U{fill:#bebebe}.V{fill:#d8d9d5}.W{fill:#d4d4d4}.X{fill:#a9d9f7}.Y{fill:#d0e9f8}.Z{fill:#5c5e5d}.a{fill:#bdbdbd}.b{stroke-miterlimit:10}.c{stroke-width:.4}.d{fill:#baffc7}.interactive-chair{cursor:pointer;transition:all 0.2s}.interactive-chair:hover{fill:#3b82f6 !important;fill-opacity:0.6 !important;stroke:#fff !important;stroke-width:2}]]>
+        <![CDATA[.B{color-interpolation-filters:sRGB}.C{flood-opacity:0}.D{fill-opacity:.2}.E{opacity:.5}.F{fill-opacity:.07}.G{stroke:#fff}.H{stroke-width:4}.I{fill:#fff}.J{opacity:.1}.K{fill:#000}.L{fill-rule:evenodd}.M{fill:#f5f5f5}.N{opacity:.3}.O{fill:#dedede}.P{fill:#e8e8e8}.Q{opacity:.4}.R{fill:#dbe5da}.S{fill-opacity:.65}.T{fill:#d9d9d9}.U{fill:#bebebe}.V{fill:#d8d9d5}.W{fill:#d4d4d4}.X{fill:#a9d9f7}.Y{fill:#d0e9f8}.Z{fill:#5c5e5d}.a{fill:#bdbdbd}.b{stroke-miterlimit:10}.c{stroke-width:.4}.d{fill:#baffc7}]]>
     </style>
     <g class="T">
-                <path id="bureau_1_a" d="M1415 512h220v711h-220z"/>
-        <path id="bureau_1_b" d="M1415 1223h400v288h-400z"/>
-        <path id="bureau_1_c" d="M10 394h219v196H10z"/>
-        <path id="bureau_student_bottom" pointer-events="none" d="M2033 1442h721v495h-721z" pointer-events="none"/>
-        
-                
-        
-                
-        
-        
-        <path id="bureau_2_a" d="M1559.96 1223H1815v288h-355v-348.12h99.96z"/>
-        <path id="bureau_2_b" d="M1221 1117h229v394h-229z"/>
-        <path id="bureau_2_c" d="M826 1117h384.996v394H826z"/>
-        <path id="bureau_2_d" d="M468 868h348v712H468z"/>
+                <path id="bureau_1" d="M1415 512h220v711h-220z M1415 1223h400v288h-400z M10 394h219v196H10z M2033 1442h721v495h-721z"/>
         <path id="bureau_salle_5" d="M1635 512h317v330h-317z"/>
         <path id="bureau_salle_6" d="M1635 857h317v366h-317z"/>
-        <path id="bureau_student_left" pointer-events="none" d="M10.659 600h447.267v863H10.659z" pointer-events="none"/>
+       
+               
+       
+               
+       
+       
+        <path id="bureau_2" d="M1559.96 1223H1815v288h-355v-348.12h99.96zM1221 1117h229v394h-229zm-395 0h384.996v394H826zM468 868h348v712H468zM10.659 600h447.267v863H10.659z"/>
     </g>
     <path id="bureau_3" fill="#d8d8d8" d="M1512 18H569.027v434H1512z"/>
     <g class="T">
@@ -92,34 +85,34 @@
         <rect id="bureau_276" width="95" height="253" x="852" y="103" rx="3" transform="rotate(90 852 103)"/>
     </g>
     <g filter="url(#HB)">
-        <use id="bureau_student_left_back_1" href="#Us" fill="url(#Q)" class="interactive-chair"/>
+        <use id="bureau_700" href="#Us" fill="url(#Q)"/>
         <use id="bureau_701" href="#Us" fill="url(#R)" class="F"/>
-        <path id="bureau_student_left_back_1" d="M218.068 755.864a102.2 102.2 0 0 1 31.397-31.397 6.02 6.02 0 0 1 7.848 1.219l15.749 18.854c7.301 8.74 6.725 21.608-1.328 29.66l-3.932 3.932c-8.053 8.053-20.921 8.629-29.661 1.328l-18.853-15.749a6.02 6.02 0 0 1-1.22-7.847Z" class="G H"/>
+        <path id="bureau_8" d="M218.068 755.864a102.2 102.2 0 0 1 31.397-31.397 6.02 6.02 0 0 1 7.848 1.219l15.749 18.854c7.301 8.74 6.725 21.608-1.328 29.66l-3.932 3.932c-8.053 8.053-20.921 8.629-29.661 1.328l-18.853-15.749a6.02 6.02 0 0 1-1.22-7.847Z" class="G H"/>
     </g>
     <g filter="url(#HC)">
-        <use id="bureau_student_left_back_2" href="#Ut" fill="url(#S)" class="interactive-chair"/>
+        <use id="bureau_702" href="#Ut" fill="url(#S)"/>
         <use id="bureau_703" href="#Ut" fill="url(#T)" class="F"/>
-        <path id="bureau_student_left_back_2" d="M218.068 1043.44a102.25 102.25 0 0 1 31.397-31.4 6.02 6.02 0 0 1 7.848 1.22l15.749 18.86c7.301 8.74 6.725 21.6-1.328 29.66l-3.932 3.93a22.01 22.01 0 0 1-29.661 1.33l-18.853-15.75a6.02 6.02 0 0 1-1.22-7.85z" class="G H"/>
+        <path id="bureau_9" d="M218.068 1043.44a102.25 102.25 0 0 1 31.397-31.4 6.02 6.02 0 0 1 7.848 1.22l15.749 18.86c7.301 8.74 6.725 21.6-1.328 29.66l-3.932 3.93a22.01 22.01 0 0 1-29.661 1.33l-18.853-15.75a6.02 6.02 0 0 1-1.22-7.85z" class="G H"/>
     </g>
     <g filter="url(#HD)">
-        <use id="bureau_student_left_back_3" href="#Uu" fill="url(#U)" class="interactive-chair"/>
+        <use id="bureau_704" href="#Uu" fill="url(#U)"/>
         <use id="bureau_705" href="#Uu" fill="url(#V)" class="F"/>
-        <use id="bureau_student_left_back_3" href="#Uv" class="G H"/>
+        <use id="bureau_706" href="#Uv" class="G H"/>
     </g>
     <g filter="url(#HE)">
-        <use id="bureau_student_left_back_4" href="#Uw" fill="url(#W)" class="interactive-chair"/>
+        <use id="bureau_707" href="#Uw" fill="url(#W)"/>
         <use id="bureau_708" href="#Uw" fill="url(#X)" class="F"/>
-        <use id="bureau_student_left_back_4" href="#Ux" class="G H"/>
+        <use id="bureau_709" href="#Ux" class="G H"/>
     </g>
     <g filter="url(#HF)">
-        <use id="bureau_student_left_back_5" href="#Uu" y="-77" fill="url(#U)" class="interactive-chair"/>
+        <use id="bureau_710" href="#Uu" y="-77" fill="url(#U)"/>
         <use id="bureau_711" href="#Uu" y="-77" fill="url(#V)" class="F"/>
-        <use id="bureau_student_left_back_5" href="#Uv" y="-77" class="G H"/>
+        <use id="bureau_712" href="#Uv" y="-77" class="G H"/>
     </g>
     <g filter="url(#HG)">
-        <use id="bureau_student_left_back_6" href="#Uw" y="-77" fill="url(#W)" class="interactive-chair"/>
+        <use id="bureau_713" href="#Uw" y="-77" fill="url(#W)"/>
         <use id="bureau_714" href="#Uw" y="-77" fill="url(#X)" class="F"/>
-        <use id="bureau_student_left_back_6" href="#Ux" y="-77" class="G H"/>
+        <use id="bureau_715" href="#Ux" y="-77" class="G H"/>
     </g>
     <g filter="url(#HH)" class="I">
         <rect id="bureau_277" width="95" height="253" x="135" y="712.423" rx="3"/>
@@ -251,7 +244,7 @@
         <rect id="bureau_295" width="3" height="16" x="1807.48" y="1695.12" fill="url(#AE)" rx="1.5" style="mix-blend-mode:overlay"/>
     </g>
     <g transform="rotate(15 1830.62 1694.34)">
-        <rect id="bureau_296" width="3" 
+        <rect id="bureau_296" width="3"
 height="16" x="1830.62" y="1694.34" fill="url(#RD)" rx="1.5"/>
         <rect id="bureau_297" width="3" height="16" x="1830.62" y="1694.34" fill="url(#AF)" rx="1.5" style="mix-blend-mode:overlay"/>
     </g>
@@ -1569,7 +1562,7 @@ height="16" x="1830.62" y="1694.34" fill="url(#RD)" rx="1.5"/>
     <g filter="url(#ME)">
         <use id="bureau_1030" href="#WP" x="-358" fill="url(#Cc)"/>
         <use id="bureau_1031" href="#WP" x="-358" fill="url(#Cd)" class="F"/>
-        <use id="bureau_student_bottom_1" href="#WQ" x="-358" class="G H"/>
+        <use id="bureau_1032" href="#WQ" x="-358" class="G H"/>
     </g>
     <g class="E D">
         <g filter="url(#MF)">
@@ -1596,7 +1589,7 @@ height="16" x="1830.62" y="1694.34" fill="url(#RD)" rx="1.5"/>
     <g filter="url(#MJ)">
         <use id="bureau_1037" href="#WP" x="-302" fill="url(#Cc)"/>
         <use id="bureau_1038" href="#WP" x="-302" fill="url(#Cd)" class="F"/>
-        <use id="bureau_student_bottom_2" href="#WQ" x="-302" class="G H"/>
+        <use id="bureau_1039" href="#WQ" x="-302" class="G H"/>
     </g>
     <g filter="url(#MK)" class="I">
         <rect id="bureau_489" width="49" height="114" x="2385.51" y="224.944" rx="3" transform="rotate(90 2385.51 224.944)"/>
@@ -1626,7 +1619,7 @@ height="16" x="1830.62" y="1694.34" fill="url(#RD)" rx="1.5"/>
     <g filter="url(#MP)">
         <use id="bureau_1044" href="#WV" x="-358" fill="url(#Cm)"/>
         <use id="bureau_1045" href="#WV" x="-358" fill="url(#Cn)" class="F"/>
-        <use id="bureau_student_bottom_3" href="#WW" x="-358" class="G H"/>
+        <use id="bureau_1046" href="#WW" x="-358" class="G H"/>
     </g>
     <g class="E D">
         <g filter="url(#MQ)">
@@ -1653,7 +1646,7 @@ height="16" x="1830.62" y="1694.34" fill="url(#RD)" rx="1.5"/>
     <g filter="url(#MU)">
         <use id="bureau_1051" href="#WV" x="-302" fill="url(#Cm)"/>
         <use id="bureau_1052" href="#WV" x="-302" fill="url(#Cn)" class="F"/>
-        <use id="bureau_student_bottom_4" href="#WW" x="-302" class="G H"/>
+        <use id="bureau_1053" href="#WW" x="-302" class="G H"/>
     </g>
     <g filter="url(#MV)" class="I">
         <rect id="bureau_498" width="49" height="114" x="2385.51" y="104.056" rx="3" transform="rotate(90 2385.51 104.056)"/>
@@ -1683,7 +1676,7 @@ height="16" x="1830.62" y="1694.34" fill="url(#RD)" rx="1.5"/>
     <g filter="url(#Ma)">
         <use id="bureau_1058" href="#We" fill="url(#DP)"/>
         <use id="bureau_1059" href="#We" fill="url(#DQ)" class="F"/>
-        <use id="bureau_student_bottom_5" href="#WG" x="-227" y="296.95" class="G H"/>
+        <use id="bureau_1060" href="#WG" x="-227" y="296.95" class="G H"/>
     </g>
     <g class="E D">
         <g filter="url(#Mb)">
@@ -1710,7 +1703,7 @@ height="16" x="1830.62" y="1694.34" fill="url(#RD)" rx="1.5"/>
     <g filter="url(#Mf)">
         <use id="bureau_1065" href="#We" x="-56" fill="url(#DP)"/>
         <use id="bureau_1066" href="#We" x="-56" fill="url(#DQ)" class="F"/>
-        <use id="bureau_student_bottom_6" href="#WG" x="-283" y="296.95" class="G H"/>
+        <use id="bureau_1067" href="#WG" x="-283" y="296.95" class="G H"/>
     </g>
     <g filter="url(#Mg)" class="I">
         <rect id="bureau_507" width="49" height="114" x="2271.5" y="1438" rx="3" transform="rotate(270 2271.5 1438)"/>
@@ -1740,7 +1733,7 @@ height="16" x="1830.62" y="1694.34" fill="url(#RD)" rx="1.5"/>
     <g filter="url(#Ml)">
         <use id="bureau_1072" href="#Wh" fill="url(#DX)"/>
         <use id="bureau_1073" href="#Wh" fill="url(#DY)" class="F"/>
-        <use id="bureau_student_bottom_7" href="#WG" x="-227" y="417.84" class="G H"/>
+        <use id="bureau_1074" href="#WG" x="-227" y="417.84" class="G H"/>
     </g>
     <g class="E D">
         <g filter="url(#Mm)">
@@ -1767,7 +1760,7 @@ height="16" x="1830.62" y="1694.34" fill="url(#RD)" rx="1.5"/>
     <g filter="url(#Mq)">
         <use id="bureau_1079" href="#Wh" x="-56" fill="url(#DX)"/>
         <use id="bureau_1080" href="#Wh" x="-56" fill="url(#DY)" class="F"/>
-        <use id="bureau_student_bottom_8" href="#WG" x="-283" y="417.84" class="G H"/>
+        <use id="bureau_1081" href="#WG" x="-283" y="417.84" class="G H"/>
     </g>
     <g filter="url(#Mr)" class="I">
         <rect id="bureau_516" width="49" height="114" x="2271.5" y="1558.89" rx="3" transform="rotate(270 2271.5 1558.89)"/>
@@ -1797,7 +1790,7 @@ height="16" x="1830.62" y="1694.34" fill="url(#RD)" rx="1.5"/>
     <g filter="url(#Mw)">
         <use id="bureau_1086" href="#We" x="179" fill="url(#DP)"/>
         <use id="bureau_1087" href="#We" x="179" fill="url(#DQ)" class="F"/>
-        <use id="bureau_student_bottom_9" href="#WG" x="-48" y="296.95" class="G H"/>
+        <use id="bureau_1088" href="#WG" x="-48" y="296.95" class="G H"/>
     </g>
     <g class="E D">
         <g filter="url(#Mx)">
@@ -1824,7 +1817,7 @@ height="16" x="1830.62" y="1694.34" fill="url(#RD)" rx="1.5"/>
     <g filter="url(#NB)">
         <use id="bureau_1093" href="#We" x="123" fill="url(#DP)"/>
         <use id="bureau_1094" href="#We" x="123" fill="url(#DQ)" class="F"/>
-        <use id="bureau_student_bottom_10" href="#WG" x="-104" y="296.95" class="G H"/>
+        <use id="bureau_1095" href="#WG" x="-104" y="296.95" class="G H"/>
     </g>
     <g filter="url(#NC)" class="I">
         <rect id="bureau_525" width="49" height="114" x="2450.5" y="1438" rx="3" transform="rotate(270 2450.5 1438)"/>
@@ -1854,7 +1847,7 @@ height="16" x="1830.62" y="1694.34" fill="url(#RD)" rx="1.5"/>
     <g filter="url(#NH)">
         <use id="bureau_1100" href="#Wh" x="179" fill="url(#DX)"/>
         <use id="bureau_1101" href="#Wh" x="179" fill="url(#DY)" class="F"/>
-        <use id="bureau_student_bottom_11" href="#WG" x="-48" y="417.84" class="G H"/>
+        <use id="bureau_1102" href="#WG" x="-48" y="417.84" class="G H"/>
     </g>
     <g class="E D">
         <g filter="url(#NI)">
@@ -1881,7 +1874,7 @@ height="16" x="1830.62" y="1694.34" fill="url(#RD)" rx="1.5"/>
     <g filter="url(#NM)">
         <use id="bureau_1107" href="#Wh" x="123" fill="url(#DX)"/>
         <use id="bureau_1108" href="#Wh" x="123" fill="url(#DY)" class="F"/>
-        <use id="bureau_student_bottom_12" href="#WG" x="-104" y="417.84" class="G H"/>
+        <use id="bureau_1109" href="#WG" x="-104" y="417.84" class="G H"/>
     </g>
     <g filter="url(#NN)" class="I">
         <rect id="bureau_534" width="49" height="114" x="2450.5" y="1558.89" rx="3" transform="rotate(270 2450.5 1558.89)"/>
@@ -1911,7 +1904,7 @@ height="16" x="1830.62" y="1694.34" fill="url(#RD)" rx="1.5"/>
     <g filter="url(#NS)">
         <use id="bureau_1114" href="#We" x="358" fill="url(#DP)"/>
         <use id="bureau_1115" href="#We" x="358" fill="url(#DQ)" class="F"/>
-        <use id="bureau_student_bottom_13" href="#WG" x="131" y="296.95" class="G H"/>
+        <use id="bureau_1116" href="#WG" x="131" y="296.95" class="G H"/>
     </g>
     <g class="E D">
         <g filter="url(#NT)">
@@ -1938,7 +1931,7 @@ height="16" x="1830.62" y="1694.34" fill="url(#RD)" rx="1.5"/>
     <g filter="url(#NX)">
         <use id="bureau_1121" href="#We" x="302" fill="url(#DP)"/>
         <use id="bureau_1122" href="#We" x="302" fill="url(#DQ)" class="F"/>
-        <use id="bureau_student_bottom_14" href="#WG" x="75" y="296.95" class="G H"/>
+        <use id="bureau_1123" href="#WG" x="75" y="296.95" class="G H"/>
     </g>
     <g filter="url(#NY)" class="I">
         <rect id="bureau_543" width="49" height="114" x="2629.5" y="1438" rx="3" transform="rotate(270 2629.5 1438)"/>
@@ -1968,7 +1961,7 @@ height="16" x="1830.62" y="1694.34" fill="url(#RD)" rx="1.5"/>
     <g filter="url(#Nd)">
         <use id="bureau_1128" href="#Wh" x="358" fill="url(#DX)"/>
         <use id="bureau_1129" href="#Wh" x="358" fill="url(#DY)" class="F"/>
-        <use id="bureau_student_bottom_15" href="#WG" x="131" y="417.84" class="G H"/>
+        <use id="bureau_1130" href="#WG" x="131" y="417.84" class="G H"/>
     </g>
     <g class="E D">
         <g filter="url(#Ne)">
@@ -1995,7 +1988,7 @@ height="16" x="1830.62" y="1694.34" fill="url(#RD)" rx="1.5"/>
     <g filter="url(#Ni)">
         <use id="bureau_1135" href="#Wh" x="302" fill="url(#DX)"/>
         <use id="bureau_1136" href="#Wh" x="302" fill="url(#DY)" class="F"/>
-        <use id="bureau_student_bottom_16" href="#WG" x="75" y="417.84" class="G H"/>
+        <use id="bureau_1137" href="#WG" x="75" y="417.84" class="G H"/>
     </g>
     <g filter="url(#Nj)" class="I">
         <rect id="bureau_552" width="49" height="114" x="2629.5" y="1558.89" rx="3" transform="rotate(270 2629.5 1558.89)"/>
@@ -9934,6 +9927,4 @@ height="16" x="1830.62" y="1694.34" fill="url(#RD)" rx="1.5"/>
         <path id="Xd" d="M1529.91 447.746h506.03v397.735h-67.93V497.843h-438.1z"/>
         <linearGradient id="Xe" gradientUnits="userSpaceOnUse"/>
     </defs>
-
-    
 </svg>

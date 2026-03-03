@@ -17,6 +17,7 @@ import Content from "./admin/components/layout/pages/Content";
 import Settings from "./admin/components/layout/pages/Settings";
 import Login from "./admin/components/layout/pages/Login";
 import ReservationManagement from "./admin/components/layout/pages/ReservationManagement";
+import SubscriptionManagement from "./admin/components/layout/pages/SubscriptionManagement";
 import EquipmentServiceManagement from "./admin/components/layout/pages/EquipmentServiceManagement";
 import UserDashboard from "./pages/dashboards/UserDashboard";
 import RegisterPage from "./pages/auth/RegisterPage";
@@ -189,6 +190,14 @@ function App() {
           }
         />
         <Route
+          path="/student/subscription"
+          element={
+            <UserRoute>
+              <StudentDashboard activeTab="subscription" />
+            </UserRoute>
+          }
+        />
+        <Route
           path="/trainer/dashboard"
           element={
             <UserRoute>
@@ -217,6 +226,14 @@ function App() {
           element={
             <UserRoute>
               <TrainerDashboard activeTab="bookings" />
+            </UserRoute>
+          }
+        />
+        <Route
+          path="/trainer/subscription"
+          element={
+            <UserRoute>
+              <TrainerDashboard activeTab="subscription" />
             </UserRoute>
           }
         />
@@ -253,6 +270,14 @@ function App() {
           }
         />
         <Route
+          path="/association/subscription"
+          element={
+            <UserRoute>
+              <AssociationDashboard activeTab="subscription" />
+            </UserRoute>
+          }
+        />
+        <Route
           path="/admin/*"
           element={
             <AdminRoute>
@@ -262,6 +287,10 @@ function App() {
                 <Route
                   path="reservations"
                   element={<ReservationManagement />}
+                />
+                <Route
+                  path="subscriptions"
+                  element={<SubscriptionManagement />}
                 />
                 <Route path="content" element={<Content />} />
                 <Route path="spaces" element={<SpaceManagement />} />

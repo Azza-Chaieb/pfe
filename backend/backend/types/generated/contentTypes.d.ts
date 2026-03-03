@@ -1001,6 +1001,10 @@ export interface ApiSubscriptionPlanSubscriptionPlan
       Schema.Attribute.Unique;
     price: Schema.Attribute.Decimal & Schema.Attribute.Required;
     publishedAt: Schema.Attribute.DateTime;
+    target_role: Schema.Attribute.Enumeration<
+      ["student", "trainer", "professional", "association", "all"]
+    > &
+      Schema.Attribute.DefaultTo<"all">;
     type: Schema.Attribute.Enumeration<["basic", "premium", "enterprise"]> &
       Schema.Attribute.DefaultTo<"basic">;
     updatedAt: Schema.Attribute.DateTime;
@@ -1069,6 +1073,9 @@ export interface ApiUserSubscriptionUserSubscription
       "api::user-subscription.user-subscription"
     > &
       Schema.Attribute.Private;
+    payment_deadline: Schema.Attribute.DateTime;
+    payment_method: Schema.Attribute.Enumeration<["cash", "card"]> &
+      Schema.Attribute.DefaultTo<"cash">;
     payment_reference: Schema.Attribute.String;
     plan: Schema.Attribute.Relation<
       "manyToOne",

@@ -95,21 +95,24 @@ const PLAN_COLORS = {
   },
 };
 
-const SubscriptionPlans = () => {
+const SubscriptionPlans = ({ isInline = false }) => {
   const [plans, setPlans] = useState(FALLBACK_PLANS);
   const [mySubscription, setMySubscription] = useState(null);
   const [loading, setLoading] = useState(true);
   const [subscribing, setSubscribing] = useState(null);
   const [billingCycle, setBillingCycle] = useState("monthly");
   const [showComparison, setShowComparison] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState(null);
+  const [paymentMethod, setPaymentMethod] = useState("cash");
   const navigate = useNavigate();
 
   useEffect(() => {
     const load = async () => {
       try {
         const user = JSON.parse(localStorage.getItem("user") || "null");
+        const userRole = user?.user_type || "student";
         const [plansData, subData] = await Promise.all([
-          getSubscriptionPlans(),
+          getSubscriptionPlans(userRole),
           user ? getMySubscription(user.id) : Promise.resolve(null),
         ]);
 
@@ -151,42 +154,55 @@ const SubscriptionPlans = () => {
       : Math.round(base);
   };
 
-  const handleSubscribe = async (plan) => {
+  const handleSubscribe = async () => {
+    if (!selectedPlan) return;
     const user = JSON.parse(localStorage.getItem("user") || "null");
     if (!user) {
       navigate("/login");
       return;
     }
 
-    if (
-      !window.confirm(
-        `Confirmer l'abonnement au plan ${plan.name} (${billingCycle === "yearly" ? "Annuel -20%" : "Mensuel"}) ?`,
-      )
-    )
-      return;
-
     try {
-      setSubscribing(plan.id);
-      if (plan.documentId || typeof plan.id === "number") {
-        await subscribeToPlan({
-          user: user.id,
-          plan: plan.documentId || plan.id,
-          billing_cycle: billingCycle,
-        });
+      setSubscribing(selectedPlan.id);
+      await subscribeToPlan({
+        user: user.id,
+        plan: selectedPlan.documentId || selectedPlan.id,
+        billing_cycle: billingCycle,
+        payment_method: paymentMethod,
+      });
+
+      if (paymentMethod === "cash") {
         alert(
-          `🎉 Félicitations ! Vous êtes maintenant abonné au plan ${plan.name}.`,
+          `✅ Demande enregistrée ! Votre abonnement au plan ${selectedPlan.name} est en attente de confirmation par l'administrateur. Un email vous sera envoyé dès l'activation.`,
         );
-        navigate("/professional/subscription");
       } else {
         alert(
-          `✅ Demande enregistrée pour le plan ${plan.name}. Contactez-nous pour finaliser votre abonnement.`,
+          `🎉 Félicitations ! Votre abonnement au plan ${selectedPlan.name} a été créé et est en attente d'activation.`,
         );
+      }
+
+      if (isInline) {
+        // If inline, we don't necessarily want to navigate away,
+        // just refresh the parent or show success state.
+        // For now, let's just refresh the page to show the new status.
+        window.location.reload();
+      } else {
+        const role = user.user_type || "student";
+        const dashboardPaths = {
+          student: "/dashboard",
+          trainer: "/trainer/dashboard",
+          professional: "/professional/dashboard",
+          association: "/association/dashboard",
+        };
+        navigate(dashboardPaths[role] || "/profile");
       }
     } catch (err) {
       console.error("Subscription error:", err);
-      alert("Erreur lors de l'abonnement. Veuillez réessayer.");
+      const backendError = err.response?.data?.error?.message || err.message;
+      alert(`Erreur lors de l'abonnement: ${backendError}`);
     } finally {
       setSubscribing(null);
+      setSelectedPlan(null);
     }
   };
 
@@ -206,47 +222,55 @@ const SubscriptionPlans = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 font-sans">
-      <div className="max-w-6xl mx-auto px-4 pt-16 pb-8 text-center relative">
-        <button
-          onClick={() => navigate(-1)}
-          className="absolute top-16 left-4 px-4 py-2 bg-white/50 hover:bg-white text-slate-600 rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-2 backdrop-blur-sm"
-        >
-          ← Retour
-        </button>
-
-        <span className="inline-block px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-[10px] font-black uppercase tracking-widest mb-6">
-          💳 Plans d'abonnement
-        </span>
-        <h1 className="text-5xl font-black text-slate-900 tracking-tight mb-4">
-          Choisissez votre plan
-        </h1>
-        <p className="text-slate-500 text-lg max-w-xl mx-auto mb-8">
-          Accédez régulièrement aux meilleurs espaces de coworking de Tunis avec
-          nos formules flexibles.
-        </p>
-
-        <div className="inline-flex bg-white/80 backdrop-blur border border-slate-200 rounded-2xl p-1.5 shadow-lg text-slate-400">
+    <div
+      className={
+        isInline
+          ? ""
+          : "min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 font-sans"
+      }
+    >
+      {!isInline && (
+        <div className="max-w-6xl mx-auto px-4 pt-16 pb-8 text-center relative">
           <button
-            onClick={() => setBillingCycle("monthly")}
-            className={`px-6 py-2.5 rounded-xl text-sm font-black transition-all ${billingCycle === "monthly" ? "bg-slate-900 text-white shadow-md" : "hover:text-slate-600"}`}
+            onClick={() => navigate(-1)}
+            className="absolute top-16 left-4 px-4 py-2 bg-white/50 hover:bg-white text-slate-600 rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-2 backdrop-blur-sm"
           >
-            Mensuel
+            ← Retour
           </button>
-          <button
-            onClick={() => setBillingCycle("yearly")}
-            className={`px-6 py-2.5 rounded-xl text-sm font-black transition-all flex items-center gap-2 ${billingCycle === "yearly" ? "bg-slate-900 text-white shadow-md text-white" : "hover:text-slate-600"}`}
-          >
-            Annuel{" "}
-            <span className="text-[9px] bg-emerald-500 text-white px-1.5 py-0.5 rounded-full font-black">
-              {" "}
-              -20%{" "}
-            </span>
-          </button>
+
+          <span className="inline-block px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-[10px] font-black uppercase tracking-widest mb-6">
+            💳 Plans d'abonnement
+          </span>
+          <h1 className="text-5xl font-black text-slate-900 tracking-tight mb-4">
+            Choisissez votre plan
+          </h1>
+          <p className="text-slate-500 text-lg max-w-xl mx-auto mb-8">
+            Accédez régulièrement aux meilleurs espaces de coworking de Tunis
+            avec nos formules flexibles.
+          </p>
+
+          <div className="inline-flex bg-white/80 backdrop-blur border border-slate-200 rounded-2xl p-1.5 shadow-lg text-slate-400">
+            <button
+              onClick={() => setBillingCycle("monthly")}
+              className={`px-6 py-2.5 rounded-xl text-sm font-black transition-all ${billingCycle === "monthly" ? "bg-slate-900 text-white shadow-md" : "hover:text-slate-600"}`}
+            >
+              Mensuel
+            </button>
+            <button
+              onClick={() => setBillingCycle("yearly")}
+              className={`px-6 py-2.5 rounded-xl text-sm font-black transition-all flex items-center gap-2 ${billingCycle === "yearly" ? "bg-slate-900 text-white shadow-md text-white" : "hover:text-slate-600"}`}
+            >
+              Annuel{" "}
+              <span className="text-[9px] bg-emerald-500 text-white px-1.5 py-0.5 rounded-full font-black">
+                {" "}
+                -20%{" "}
+              </span>
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
-      {mySubscription && (
+      {mySubscription && !isInline && (
         <div className="max-w-xl mx-auto px-4 mb-8">
           <div className="p-5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-4">
             <span className="text-2xl">✅</span>
@@ -342,7 +366,7 @@ const SubscriptionPlans = () => {
                     onClick={() =>
                       isCurrent
                         ? navigate("/professional/subscription")
-                        : handleSubscribe(plan)
+                        : setSelectedPlan(plan)
                     }
                     disabled={subscribing === plan.id}
                     className={`w-full py-4 text-white rounded-2xl font-black text-xs uppercase tracking-[0.15em] shadow-lg transition-all active:scale-95 disabled:opacity-50 ${isCurrent ? "bg-emerald-600 hover:bg-emerald-700" : colors.btn}`}
@@ -351,7 +375,7 @@ const SubscriptionPlans = () => {
                       ? "Traitement..."
                       : isCurrent
                         ? "Plan Actuel ✓"
-                        : "Souscrire maintenant"}
+                        : "Choisir ce plan"}
                   </button>
                 </div>
               </div>
@@ -426,6 +450,86 @@ const SubscriptionPlans = () => {
           communs.
         </p>
       </div>
+
+      {/* Payment Method Modal */}
+      {selectedPlan && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-[32px] shadow-2xl max-w-md w-full p-8 relative overflow-hidden text-left">
+            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-600 to-indigo-600" />
+            <h3 className="text-2xl font-black text-slate-800 mb-2 tracking-tight">
+              Choisir le paiement
+            </h3>
+            <p className="text-slate-500 text-sm mb-8 font-medium">
+              Sélectionnez votre méthode de paiement préférée pour le plan{" "}
+              <b className="text-slate-800">{selectedPlan.name}</b>.
+            </p>
+
+            <div className="space-y-4 mb-8">
+              <button
+                onClick={() => setPaymentMethod("cash")}
+                className={`w-full flex items-center justify-between p-5 rounded-2xl border-2 transition-all ${paymentMethod === "cash" ? "border-blue-600 bg-blue-50/50" : "border-slate-100 hover:border-slate-200"}`}
+              >
+                <div className="flex items-center gap-4 text-left">
+                  <span className="text-2xl">💵</span>
+                  <div>
+                    <h4 className="font-black text-slate-800 text-sm uppercase tracking-tight">
+                      Espèces
+                    </h4>
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                      Délai de 2 heures
+                    </p>
+                  </div>
+                </div>
+                {paymentMethod === "cash" && (
+                  <div className="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center text-white text-[10px]">
+                    ✓
+                  </div>
+                )}
+              </button>
+
+              <button
+                className={`w-full flex items-center justify-between p-5 rounded-2xl border-2 border-slate-100 opacity-60 cursor-not-allowed`}
+                disabled
+              >
+                <div className="flex items-center gap-4 text-left">
+                  <span className="text-2xl opacity-40">💳</span>
+                  <div>
+                    <h4 className="font-black text-slate-400 text-sm uppercase tracking-tight">
+                      Carte Bancaire
+                    </h4>
+                    <p className="text-[10px] text-blue-500 font-bold uppercase tracking-widest">
+                      Bientôt disponible
+                    </p>
+                  </div>
+                </div>
+              </button>
+            </div>
+
+            <div className="flex gap-4">
+              <button
+                onClick={() => setSelectedPlan(null)}
+                className="flex-1 py-4 bg-slate-100 text-slate-500 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-200 transition-all"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={handleSubscribe}
+                disabled={subscribing}
+                className="flex-[2] py-4 bg-blue-600 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-700 shadow-xl shadow-blue-100 transition-all disabled:opacity-50"
+              >
+                {subscribing ? "Traitement..." : "Confirmer"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {!isInline && (
+        <style>{`
+          @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+          .animate-fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        `}</style>
+      )}
     </div>
   );
 };
