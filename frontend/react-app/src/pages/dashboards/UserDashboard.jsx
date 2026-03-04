@@ -488,7 +488,7 @@ const UserDashboard = () => {
                   ) {
                     try {
                       const subId =
-                        subscription?.documentId || subscription?.id;
+                        subscription?.id || subscription?.documentId || subscription?.data?.id;
                       if (subId) await cancelSub(subId);
                       setSubscription(null);
                       setSuccessMsg("Abonnement annulé avec succès.");

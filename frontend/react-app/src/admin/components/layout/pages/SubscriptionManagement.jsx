@@ -36,6 +36,15 @@ const SubscriptionManagement = () => {
 
   const handleStatusChange = async (id, newStatus) => {
     const action = newStatus === "active" ? "approuver" : "refuser";
+    let rejection_reason = "";
+
+    if (newStatus === "cancelled") {
+      rejection_reason = window.prompt(
+        "Veuillez saisir la raison du refus (optionnel) :",
+        "",
+      );
+      if (rejection_reason === null) return; // Cancelled prompt
+    }
 
     if (
       window.confirm(
@@ -43,9 +52,11 @@ const SubscriptionManagement = () => {
       )
     ) {
       try {
-        // In Strapi V5, we use the documentId for the REST API
         await api.put(`/user-subscriptions/${id}`, {
-          data: { status: newStatus },
+          data: {
+            status: newStatus,
+            rejection_reason: rejection_reason || undefined
+          },
         });
 
         alert(
@@ -82,11 +93,10 @@ const SubscriptionManagement = () => {
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-widest ${
-                  filter === f
+                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-widest ${filter === f
                     ? "bg-blue-600 text-white shadow-md"
                     : "text-slate-400 hover:text-slate-600"
-                }`}
+                  }`}
               >
                 {f === "all"
                   ? "Tous"

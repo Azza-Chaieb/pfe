@@ -42,7 +42,7 @@ export const getMySubscription = async (_userId?: number | string) => {
     // Fallback: query by user ID if custom endpoint fails
     if (!_userId) return null;
     const response = await api.get(
-      `/user-subscriptions?filters[user][id][$eq]=${_userId}&filters[status][$eq]=active&populate=plan&sort=end_date:desc&pagination[limit]=1`,
+      `/user-subscriptions?filters[user][id][$eq]=${_userId}&filters[status][$in][0]=active&filters[status][$in][1]=pending&populate=plan&sort=createdAt:desc&pagination[limit]=1`,
     );
     return response.data?.data?.[0] || null;
   }
@@ -86,8 +86,8 @@ export const upgradeSubscription = async (payload: {
  * Body: { subscriptionId }
  */
 export const cancelSubscription = async (subscriptionId: string | number) => {
-  const response = await api.delete("/subscriptions/cancel", {
-    data: { subscriptionId },
+  const response = await api.post("/subscriptions/cancel", {
+    subscriptionId,
   });
   return response.data;
 };

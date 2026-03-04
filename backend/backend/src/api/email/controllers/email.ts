@@ -88,4 +88,33 @@ export default {
       ctx.badRequest('Failed: ' + error.message);
     }
   },
+
+  async debugTest(ctx) {
+    const to = ctx.query.to || 'azza.chaieb.1@gmail.com';
+    try {
+      strapi.log.info(`[EmailDebug] Attempting to send debug email to ${to}`);
+
+      const emailService = strapi.service('api::email.email-service');
+      // @ts-ignore
+      await emailService.sendWelcomeEmail(to, 'Azza (Debug Test)');
+
+      ctx.send({
+        success: true,
+        message: `Debug email sent successfully to ${to}. Check your inbox/spam.`,
+        smtp_config: {
+          host: process.env.SMTP_HOST,
+          user: process.env.SMTP_USER,
+          from: process.env.SMTP_FROM
+        }
+      });
+    } catch (error) {
+      strapi.log.error('[EmailDebug] Error:', error);
+      ctx.send({
+        success: false,
+        error: error.message,
+        stack: error.stack,
+        hint: 'Check your SMTP credentials in .env'
+      });
+    }
+  }
 };

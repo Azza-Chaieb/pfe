@@ -114,6 +114,11 @@ const InteractiveSvgMap = ({
 
     const normalize = (v) => (v || "").toString().trim().toLowerCase();
 
+    const extractDigits = (str) => {
+      const match = str.match(/\d+/);
+      return match ? match[0] : null;
+    };
+
     const findSpaceByElementId = (elementId) => {
       if (!elementId) return null;
       const elNorm = normalize(elementId);
@@ -233,10 +238,10 @@ const InteractiveSvgMap = ({
             <div className="flex items-center gap-2">
               <div
                 className={`w-2 h-2 rounded-full ${hoveredSpace.status === "BOOKED"
-                    ? "bg-red-500"
-                    : hoveredSpace.status === "AVAILABLE"
-                      ? "bg-emerald-500"
-                      : "bg-slate-500"
+                  ? "bg-red-500"
+                  : hoveredSpace.status === "AVAILABLE"
+                    ? "bg-emerald-500"
+                    : "bg-slate-500"
                   }`}
               />
               <span className="text-[9px] uppercase tracking-widest font-black text-slate-400">

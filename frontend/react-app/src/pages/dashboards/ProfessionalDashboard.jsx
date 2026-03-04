@@ -47,10 +47,16 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
   }, [navigate]);
 
   const handleCancelSubscription = async () => {
+    console.log("Cancelling subscription, current state:", subscription);
     if (window.confirm("Êtes-vous sûr de vouloir annuler votre abonnement ?")) {
       try {
-        const subId = subscription?.documentId || subscription?.id;
-        if (subId) await cancelSub(subId);
+        // In Strapi 5, id (numeric) is often preferred for entityService.update
+        // subscription.id is usually the numeric one, documentId is the UUID string
+        const subId = subscription?.id || subscription?.documentId || subscription?.data?.id;
+        console.log("Extracted subId (numeric preferred):", subId);
+        if (!subId) throw new Error("ID de l'abonnement introuvable.");
+
+        await cancelSub(subId);
         setSubscription(null);
         alert("Abonnement annulé avec succès.");
       } catch (error) {
@@ -67,7 +73,7 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
           Espace <span className="text-blue-600">Professionnel</span> 👋
         </h1>
         <p className="text-xs text-slate-500 font-medium tracking-tight">
-          Gérez vos ressources et votre abonnement premium.
+          Gérez vos ressources et votre abonnement en temps réel.
         </p>
       </div>
 
@@ -84,8 +90,8 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
           value={
             bookings.length > 0
               ? new Date(
-                  bookings[0].attributes?.start_time || bookings[0].start_time,
-                ).toLocaleDateString("fr-FR")
+                bookings[0].attributes?.start_time || bookings[0].start_time,
+              ).toLocaleDateString("fr-FR")
               : "-"
           }
           icon="📅"
@@ -173,10 +179,10 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
             </h3>
             <div className="p-5 bg-gradient-to-br from-indigo-500 to-blue-700 rounded-2xl text-white shadow-xl mb-4">
               <p className="text-[9px] font-black uppercase tracking-widest opacity-70 mb-1">
-                Status
+                Forfait Actuel
               </p>
               <h4 className="text-lg font-black">
-                {subscription ? "Premium Pro" : "Free Tier"}
+                {subscription ? (subscription.attributes?.plan?.data?.attributes?.name || subscription.plan?.name || "Premium") : "Aucun forfait"}
               </h4>
             </div>
             <button

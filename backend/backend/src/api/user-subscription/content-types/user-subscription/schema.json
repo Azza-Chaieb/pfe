@@ -32,12 +32,22 @@
     },
     "status": {
       "type": "enumeration",
-      "enum": ["pending", "active", "expired", "cancelled"],
+      "enum": [
+        "pending",
+        "active",
+        "expired",
+        "cancelled"
+      ],
       "default": "pending"
     },
     "billing_cycle": {
       "type": "enumeration",
-      "enum": ["monthly", "yearly"],
+      "enum": [
+        "monthly",
+        "quarterly",
+        "semiannually",
+        "yearly"
+      ],
       "default": "monthly"
     },
     "remaining_credits": {
@@ -49,11 +59,17 @@
     },
     "payment_method": {
       "type": "enumeration",
-      "enum": ["cash", "card"],
+      "enum": [
+        "cash",
+        "card"
+      ],
       "default": "cash"
     },
     "payment_deadline": {
       "type": "datetime"
+    },
+    "rejection_reason": {
+      "type": "string"
     }
   }
 }

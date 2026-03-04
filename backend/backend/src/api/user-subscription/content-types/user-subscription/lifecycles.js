@@ -1,12 +1,13 @@
-"use strict";
-
 /**
  * Lifecycle hooks for user-subscription
  */
 
+console.log("🧩 [LIFECYCLE] user-subscription lifecycles.js LOADED");
+
 module.exports = {
   async beforeCreate(event) {
     const { data } = event.params;
+    strapi.log.debug(`[Lifecycle] beforeCreate for user-subscription. Params keys: ${Object.keys(event.params)}`);
 
     // Set initial status to pending
     data.status = "pending";
@@ -43,85 +44,79 @@ module.exports = {
     }
   },
 
+  async afterCreate(event) {
+    const { result } = event;
+    const documentId = result.documentId || result.id;
+    strapi.log.debug(`[Lifecycle] afterCreate triggered for subscription ID: ${documentId}`);
+    try {
+      // Fetch the full subscription with user and plan details using Strapi 5 Documents API
+      const subscription = await strapi.documents("api::user-subscription.user-subscription").findOne({
+        documentId: documentId,
+        populate: ["user", "plan"],
+      });
+
+      if (subscription && subscription.user && subscription.plan) {
+        strapi.log.debug(`[Lifecycle] Found user ${subscription.user.email} and plan ${subscription.plan.name}`);
+        const emailService = strapi.service("api::email.email-service");
+        if (!emailService) {
+          strapi.log.error("[Lifecycle] EmailService NOT FOUND!");
+          return;
+        }
+        await emailService.sendSubscriptionRequest(
+          subscription.user.email,
+          subscription.user.fullname || subscription.user.username,
+          subscription.plan.name,
+        );
+      } else {
+        strapi.log.warn(`[Lifecycle] Subscription ${documentId} missing user or plan.`);
+      }
+    } catch (err) {
+      strapi.log.error("Error in afterCreate lifecycle:", err);
+    }
+  },
+
   async afterUpdate(event) {
     const { result, params } = event;
     const { data } = params;
+    const documentId = result.documentId || result.id;
+    strapi.log.debug(`[Lifecycle] afterUpdate triggered for ID: ${documentId}. Status: ${data.status}`);
 
-    // Check if status has changed
     if (data.status) {
       try {
-        // Fetch the full subscription with user and plan details
-        const subscription = await strapi.entityService.findOne(
-          "api::user-subscription.user-subscription",
-          result.id,
-          {
-            populate: ["user", "plan"],
-          },
-        );
+        const subscription = await strapi.documents("api::user-subscription.user-subscription").findOne({
+          documentId: documentId,
+          populate: ["user", "plan"],
+        });
 
-        if (!subscription || !subscription.user) return;
+        if (!subscription || !subscription.user || !subscription.plan) {
+          strapi.log.warn(`[Lifecycle] afterUpdate: Subscription ${documentId} missing details.`);
+          return;
+        }
 
-        const { user, plan, status } = subscription;
+        const { user, plan, status, rejection_reason } = subscription;
+        const emailService = strapi.service("api::email.email-service");
 
-        // 1. Send Confirmation Email (Pending -> Active)
         if (status === "active") {
-          const {
-            subscriptionConfirmationEmail,
-          } = require("../../../../email/templates/subscription-confirmation");
-          const html = subscriptionConfirmationEmail(
+          strapi.log.debug(`[Lifecycle] Sending Activation email to ${user.email}`);
+          await emailService.sendSubscriptionConfirmed(
+            user.email,
             user.fullname || user.username,
-            {
-              planName: plan.name,
-              startDate: subscription.start_date,
-              endDate: subscription.end_date,
-              price: `${plan.price} DT`,
-            },
-          );
-
-          await strapi
-            .plugin("email")
-            .service("email")
-            .send({
-              to: user.email,
-              from: process.env.SMTP_FROM || "support@sunspace.com",
-              subject: "💎 Votre abonnement SunSpace est activé !",
-              html: html,
-            });
-
-          strapi.log.info(
-            `Email de confirmation envoyé à ${user.email} pour le plan ${plan.name}`,
+            plan.name,
+            subscription.end_date,
           );
         }
 
-        // 2. Send Cancellation/Refusal Email
         if (status === "cancelled") {
-          const {
-            subscriptionCancellationEmail,
-          } = require("../../../../email/templates/subscription-cancellation");
-          const html = subscriptionCancellationEmail(
+          strapi.log.debug(`[Lifecycle] Sending Rejection email to ${user.email}`);
+          await emailService.sendSubscriptionRejected(
+            user.email,
             user.fullname || user.username,
-            {
-              planName: plan.name,
-            },
+            plan.name,
+            rejection_reason || "Demande annulée par l'administration.",
           );
-
-          await strapi
-            .plugin("email")
-            .service("email")
-            .send({
-              to: user.email,
-              from: process.env.SMTP_FROM || "support@sunspace.com",
-              subject: "❌ Information sur votre abonnement SunSpace",
-              html: html,
-            });
-
-          strapi.log.info(`Email d'annulation envoyé à ${user.email}`);
         }
       } catch (err) {
-        strapi.log.error(
-          "Erreur dans le cycle de vie afterUpdate (logique status):",
-          err,
-        );
+        strapi.log.error("Error in afterUpdate lifecycle:", err);
       }
     }
   },

@@ -6,6 +6,9 @@ import reservationConfirmationEmail from "../templates/reservation-confirmation"
 import reservationCancellationEmail from "../templates/reservation-cancellation";
 import sessionReminderEmail from "../templates/session-reminder";
 import paymentConfirmationEmail from "../templates/payment-confirmation";
+import subscriptionRequestEmail from "../templates/subscription-request";
+import subscriptionConfirmedEmail from "../templates/subscription-confirmed";
+import subscriptionRejectedEmail from "../templates/subscription-rejected";
 
 export default ({ strapi }) => {
   const getEmailService = () => {
@@ -19,6 +22,11 @@ export default ({ strapi }) => {
     process.env.SMTP_USER || process.env.SMTP_FROM || "noreply@sunspace.com";
   const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
 
+  strapi.log.debug(`[EmailService] Initialized with DEFAULT_FROM: ${DEFAULT_FROM}`);
+  if (!process.env.SMTP_HOST) {
+    strapi.log.warn("[EmailService] SMTP_HOST is not defined in environment variables!");
+  }
+
   return {
     /**
      * Send welcome email to new users
@@ -26,6 +34,7 @@ export default ({ strapi }) => {
     async sendWelcomeEmail(userEmail: string, userName: string) {
       try {
         const htmlContent = welcomeEmail(userName, userEmail, FRONTEND_URL);
+        strapi.log.debug(`[EmailService] Sending Welcome Email to: ${userEmail}`);
         await getEmailService().send({
           to: userEmail,
           from: DEFAULT_FROM,
@@ -167,6 +176,63 @@ export default ({ strapi }) => {
       } catch (error) {
         strapi.log.error("Failed to send payment confirmation:", error);
         throw error;
+      }
+    },
+
+    /**
+     * Send subscription request pending email
+     */
+    async sendSubscriptionRequest(userEmail: string, userName: string, planName: string) {
+      try {
+        strapi.log.debug(`[EmailService] Attempting to send Subscription Request email to ${userEmail} for plan ${planName}`);
+        const htmlContent = subscriptionRequestEmail(userName, planName, FRONTEND_URL);
+        await getEmailService().send({
+          to: userEmail,
+          from: DEFAULT_FROM,
+          subject: `⌛ Demande d'abonnement ${planName} reçue`,
+          html: htmlContent,
+        });
+        strapi.log.info(`[EmailService] Subscription request email sent to ${userEmail}`);
+      } catch (error) {
+        strapi.log.error("Failed to send subscription request email:", error);
+      }
+    },
+
+    /**
+     * Send subscription confirmed email
+     */
+    async sendSubscriptionConfirmed(userEmail: string, userName: string, planName: string, expiryDate: string) {
+      try {
+        strapi.log.debug(`[EmailService] Attempting to send Subscription Confirmation email to ${userEmail} for plan ${planName}`);
+        const htmlContent = subscriptionConfirmedEmail(userName, planName, expiryDate, FRONTEND_URL);
+        await getEmailService().send({
+          to: userEmail,
+          from: DEFAULT_FROM,
+          subject: `🎉 Votre abonnement ${planName} est activé !`,
+          html: htmlContent,
+        });
+        strapi.log.info(`[EmailService] Subscription confirmed email sent to ${userEmail}`);
+      } catch (error) {
+        strapi.log.error("Failed to send subscription confirmed email:", error);
+      }
+    },
+
+    /**
+     * Send subscription rejected email
+     */
+    async sendSubscriptionRejected(userEmail: string, userName: string, planName: string, reason: string) {
+      try {
+        strapi.log.debug(`[EmailService] Attempting to send Subscription Rejection email to ${userEmail} for plan ${planName}. Reason: ${reason}`);
+        const htmlContent = subscriptionRejectedEmail(userName, planName, reason, FRONTEND_URL);
+        await getEmailService().send({
+          to: userEmail,
+          from: DEFAULT_FROM,
+          subject: "Notification concernant votre demande d'abonnement",
+          html: htmlContent,
+        });
+        strapi.log.info(`[EmailService] Subscription rejected email sent to ${userEmail}`);
+      } catch (error) {
+        strapi.log.error("Failed to send subscription rejected email:", error);
       }
     },
   };

@@ -14,11 +14,21 @@ export default factories.createCoreController(
      */
     async getPlans(ctx) {
       try {
+        const { role } = ctx.query as any;
+        const filters: any = { publishedAt: { $notNull: true } };
+
+        if (role) {
+          filters.$or = [
+            { target_role: role },
+            { target_role: "all" }
+          ];
+        }
+
         const plans = await strapi.entityService.findMany(
           "api::subscription-plan.subscription-plan" as any,
           {
-            sort: { price: "asc" },
-            filters: { publishedAt: { $notNull: true } },
+            sort: [{ price: "asc" }],
+            filters,
           } as any,
         );
         ctx.body = { data: plans };
@@ -59,7 +69,7 @@ export default factories.createCoreController(
         const subscriptionService = strapi.service(
           "api::user-subscription.user-subscription",
         ) as any;
-        const sub = await subscriptionService.findActiveByUser(userId);
+        const sub = await subscriptionService.findLatestByUser(userId);
         ctx.body = { data: sub || null };
       } catch (err) {
         strapi.log.error("getMySubscription error:", err);
@@ -193,6 +203,7 @@ export default factories.createCoreController(
      */
     async cancelSubscription(ctx) {
       try {
+        strapi.log.info("CANCELLING SUB (subscription controller)...");
         let userId = ctx.state.user?.id;
 
         // If auth: false, try manual extraction from Bearer token
@@ -217,6 +228,7 @@ export default factories.createCoreController(
         if (!userId) return ctx.unauthorized("Authentification requise.");
 
         const { subscriptionId } = ctx.request.body as any;
+        strapi.log.info("Sub ID received:", subscriptionId);
         if (!subscriptionId)
           return ctx.badRequest("subscriptionId est requis.");
 

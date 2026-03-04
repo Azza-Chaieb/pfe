@@ -1061,7 +1061,9 @@ export interface ApiUserSubscriptionUserSubscription
     draftAndPublish: false;
   };
   attributes: {
-    billing_cycle: Schema.Attribute.Enumeration<["monthly", "yearly"]> &
+    billing_cycle: Schema.Attribute.Enumeration<
+      ["monthly", "quarterly", "semiannually", "yearly"]
+    > &
       Schema.Attribute.DefaultTo<"monthly">;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
@@ -1082,6 +1084,7 @@ export interface ApiUserSubscriptionUserSubscription
       "api::subscription-plan.subscription-plan"
     >;
     publishedAt: Schema.Attribute.DateTime;
+    rejection_reason: Schema.Attribute.String;
     remaining_credits: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     start_date: Schema.Attribute.Date & Schema.Attribute.Required;
     status: Schema.Attribute.Enumeration<

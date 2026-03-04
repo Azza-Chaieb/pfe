@@ -353,7 +353,7 @@ const TrainerDashboard = ({ activeTab = "dashboard" }) => {
   const handleCancelSubscription = async () => {
     if (window.confirm("Êtes-vous sûr de vouloir annuler votre abonnement ?")) {
       try {
-        const subId = subscription?.documentId || subscription?.id;
+        const subId = subscription?.id || subscription?.documentId || subscription?.data?.id;
         if (subId) await cancelSub(subId);
         setSubscription(null);
         alert("Abonnement annulé avec succès.");

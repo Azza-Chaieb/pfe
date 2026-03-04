@@ -20,12 +20,30 @@ export default factories.createCoreService(
     },
 
     /**
+     * Find latest subscription (active or pending) for a given user
+     */
+    async findLatestByUser(userId: number) {
+      const results = await strapi.entityService.findMany(
+        "api::user-subscription.user-subscription" as any,
+        {
+          filters: {
+            user: userId,
+          },
+          populate: ["plan", "user"],
+          sort: { createdAt: "desc" },
+          limit: 1,
+        } as any,
+      );
+      return (results as any[])[0] || null;
+    },
+
+    /**
      * Subscribe a user to a plan
      */
     async subscribe(
       userId: number,
       planDocumentId: string,
-      billingCycle: "monthly" | "yearly",
+      billingCycle: "monthly" | "quarterly" | "semiannually" | "yearly",
       paymentMethod: "cash" | "card" = "cash",
       paymentReference: string = "",
     ) {
@@ -51,22 +69,72 @@ export default factories.createCoreService(
         plan = (plans as any[])[0];
       }
 
-      // Final fallback 1: try search by name if it's a string (unlikely but safe)
+      // Final fallback 1: Map professional fallback IDs to names
+      if (!plan && typeof planDocumentId === "string") {
+        const fallbackMapping: Record<string, string> = {
+          "student-basic": "Étudiant Basique",
+          "student-pro": "Étudiant Pro",
+          "pro-essential": "Pro Essentiel",
+          "pro-premium": "Pro Premium",
+          "assoc-comm": "Association Communauté",
+          "assoc-exp": "Association Expansion",
+          "trainer-solo": "Formateur Solo",
+          "trainer-expert": "Formateur Expert"
+        };
+        const mappedName = fallbackMapping[planDocumentId];
+        if (mappedName) {
+          const plans = await strapi.entityService.findMany(
+            "api::subscription-plan.subscription-plan" as any,
+            { filters: { name: mappedName } } as any,
+          );
+          plan = (plans as any[])[0];
+        }
+      }
+
+      // Final fallback 2: try search by name if it's a string (case-insensitive)
       if (!plan && typeof planDocumentId === "string") {
         const plans = await strapi.entityService.findMany(
           "api::subscription-plan.subscription-plan" as any,
-          { filters: { name: planDocumentId } } as any,
+          {
+            filters: {
+              $or: [
+                { name: planDocumentId },
+                { name: planDocumentId.toLowerCase() },
+                { name: planDocumentId.charAt(0).toUpperCase() + planDocumentId.slice(1).toLowerCase() }
+              ]
+            }
+          } as any,
         );
         plan = (plans as any[])[0];
       }
 
-      // Final fallback 2: try search by "type" (handles the frontend FALLBACK_PLANS IDs like 'basic', 'premium')
+      // Final fallback 3: try search by "type" (handles the frontend FALLBACK_PLANS IDs like 'basic', 'premium')
       if (!plan && typeof planDocumentId === "string") {
         const plans = await strapi.entityService.findMany(
           "api::subscription-plan.subscription-plan" as any,
           { filters: { type: planDocumentId.toLowerCase() } } as any,
         );
         plan = (plans as any[])[0];
+      }
+
+      // Final fallback 3: Auto-create plan if it's a standard type and missing
+      if (!plan && ["basic", "premium", "enterprise"].includes(planDocumentId.toLowerCase())) {
+        console.log("[Subscription] Auto-creating missing plan:", planDocumentId);
+        const defaultPlans: any = {
+          basic: { name: "Basique", price: 49, max_credits: 5, description: "Idéal pour les freelances." },
+          premium: { name: "Premium", price: 99, max_credits: 20, description: "Meilleur rapport qualité/prix." },
+          enterprise: { name: "Entreprise", price: 199, max_credits: 9999, description: "Pour les équipes exigeantes." }
+        };
+        const planData = defaultPlans[planDocumentId.toLowerCase()];
+        plan = await strapi.entityService.create("api::subscription-plan.subscription-plan" as any, {
+          data: {
+            ...planData,
+            type: planDocumentId.toLowerCase(),
+            duration_days: 30,
+            target_role: "all",
+            publishedAt: new Date(),
+          }
+        } as any);
       }
 
       console.log(
@@ -92,7 +160,11 @@ export default factories.createCoreService(
       const days =
         billingCycle === "yearly"
           ? (plan.duration_days || 30) * 12
-          : plan.duration_days || 30;
+          : billingCycle === "semiannually"
+            ? (plan.duration_days || 30) * 6
+            : billingCycle === "quarterly"
+              ? (plan.duration_days || 30) * 3
+              : plan.duration_days || 30;
       endDate.setDate(endDate.getDate() + days);
 
       console.log(
@@ -103,12 +175,14 @@ export default factories.createCoreService(
       );
 
       // 4. Create new subscription
+      // Use documentId if available for relations in Strapi 5 if needed, 
+      // but Entity Service usually wants IDs. Let's stick to IDs but ensure they are numbers.
       const newSub = await strapi.entityService.create(
         "api::user-subscription.user-subscription" as any,
         {
           data: {
-            user: userId,
-            plan: plan.id,
+            user: Number(userId),
+            plan: Number(plan.id),
             start_date: startDate.toISOString().split("T")[0],
             end_date: endDate.toISOString().split("T")[0],
             status: "pending",
@@ -137,7 +211,7 @@ export default factories.createCoreService(
     async upgrade(
       subscriptionId: number,
       newPlanDocumentId: string,
-      billingCycle: "monthly" | "yearly",
+      billingCycle: "monthly" | "quarterly" | "semiannually" | "yearly",
       paymentMethod: "cash" | "card" = "cash",
       paymentReference: string = "",
     ) {
@@ -161,7 +235,11 @@ export default factories.createCoreService(
       const days =
         billingCycle === "yearly"
           ? (plan.duration_days || 30) * 12
-          : plan.duration_days || 30;
+          : billingCycle === "semiannually"
+            ? (plan.duration_days || 30) * 6
+            : billingCycle === "quarterly"
+              ? (plan.duration_days || 30) * 3
+              : plan.duration_days || 30;
       endDate.setDate(endDate.getDate() + days);
 
       const updated = await strapi.entityService.update(
@@ -215,7 +293,11 @@ export default factories.createCoreService(
       const days =
         sub.billing_cycle === "yearly"
           ? (plan.duration_days || 30) * 12
-          : plan.duration_days || 30;
+          : sub.billing_cycle === "semiannually"
+            ? (plan.duration_days || 30) * 6
+            : sub.billing_cycle === "quarterly"
+              ? (plan.duration_days || 30) * 3
+              : plan.duration_days || 30;
       endDate.setDate(endDate.getDate() + days);
 
       return strapi.entityService.update(

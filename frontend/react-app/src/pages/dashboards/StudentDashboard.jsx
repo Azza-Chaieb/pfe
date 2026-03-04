@@ -250,10 +250,14 @@ const StudentDashboard = ({ activeTab = "dashboard" }) => {
   );
 
   const handleCancelSubscription = async () => {
+    console.log("Cancelling sub (student), current state:", subscription);
     if (window.confirm("Êtes-vous sûr de vouloir annuler votre abonnement ?")) {
       try {
-        const subId = subscription?.documentId || subscription?.id;
-        if (subId) await cancelSub(subId);
+        const subId = subscription?.id || subscription?.documentId || subscription?.data?.id;
+        console.log("Extracted subId (numeric preferred):", subId);
+        if (!subId) throw new Error("ID de l'abonnement introuvable.");
+
+        await cancelSub(subId);
         setSubscription(null);
         alert("Abonnement annulé avec succès.");
       } catch (error) {

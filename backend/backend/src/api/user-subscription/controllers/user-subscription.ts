@@ -53,7 +53,7 @@ export default factories.createCoreController(
         const subscriptionService = strapi.service(
           "api::user-subscription.user-subscription",
         ) as any;
-        const sub = await subscriptionService.findActiveByUser(userId);
+        const sub = await subscriptionService.findLatestByUser(userId);
         ctx.body = { data: sub || null };
       } catch (err) {
         strapi.log.error("getMySubscription error:", err);
@@ -110,7 +110,12 @@ export default factories.createCoreController(
         ctx.created({ data: newSub, message: "Abonnement créé avec succès." });
       } catch (err: any) {
         strapi.log.error("subscribe error:", err);
-        ctx.badRequest(err.message || "Erreur lors de la souscription.");
+        if (err.details) {
+          strapi.log.error("Error details:", JSON.stringify(err.details, null, 2));
+        }
+        ctx.badRequest(err.message || "Erreur lors de la souscription.", {
+          details: err.details,
+        });
       }
     },
 
@@ -187,10 +192,13 @@ export default factories.createCoreController(
      */
     async cancelSubscription(ctx) {
       try {
+        strapi.log.info("CANCELLING SUB (user-subscription controller)...");
         const userId = ctx.state.user?.id;
+        strapi.log.info("User ID:", userId);
         if (!userId) return ctx.unauthorized("Authentification requise.");
 
         const { subscriptionId } = ctx.request.body as any;
+        strapi.log.info("Sub ID received:", subscriptionId);
         if (!subscriptionId)
           return ctx.badRequest("subscriptionId est requis.");
 

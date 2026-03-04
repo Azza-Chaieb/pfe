@@ -37,7 +37,7 @@ export default {
             },
         },
         {
-            method: 'DELETE',
+            method: 'POST',
             path: '/subscriptions/cancel',
             handler: 'user-subscription.cancelSubscription',
             config: {

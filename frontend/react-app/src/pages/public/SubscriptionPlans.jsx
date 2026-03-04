@@ -8,56 +8,14 @@ import {
 
 // ─── Static fallback plans ───────────────────────────────────────────────────
 const FALLBACK_PLANS = [
-  {
-    id: "basic",
-    name: "Basique",
-    price: 49,
-    type: "basic",
-    description: "Idéal pour les freelances et indépendants.",
-    max_credits: 5,
-    features: [
-      "5 réservations/mois",
-      "10h de salle de réunion",
-      "Accès open-space en semaine",
-      "WiFi haut débit",
-      "Café et thé inclus",
-      "Support par email",
-    ],
-  },
-  {
-    id: "premium",
-    name: "Premium",
-    price: 99,
-    type: "premium",
-    description: "Le meilleur rapport qualité/prix pour les professionnels.",
-    max_credits: 20,
-    features: [
-      "20 réservations/mois",
-      "50h de salle de réunion",
-      "Accès open-space 7j/7",
-      "Bureau semi-privatif",
-      "Impression 100 pages/mois",
-      "Casier personnel",
-      "Support prioritaire",
-    ],
-  },
-  {
-    id: "enterprise",
-    name: "Entreprise",
-    price: 199,
-    type: "enterprise",
-    description: "Pour les équipes et entreprises exigeantes.",
-    max_credits: 9999,
-    features: [
-      "Réservations illimitées",
-      "Accès 24h/7j à tous les espaces",
-      "Bureau privatif dédié",
-      "Salles de réunion illimitées",
-      "Impression illimitée",
-      "Domiciliation commerciale",
-      "Gestionnaire de compte dédié",
-    ],
-  },
+  { id: "student-basic", name: "Étudiant Basique", price: 15, type: "basic", target_role: "student", description: "Accès standard aux espaces d'étude.", max_credits: 5, features: ["WiFi Illimité", "Accès zones calmes", "5 crédits impression"] },
+  { id: "student-pro", name: "Étudiant Pro", price: 30, type: "premium", target_role: "student", description: "Accès étendu et prioritaire.", max_credits: 15, features: ["Accès 24/7", "Salle de réunion", "15 crédits impression"] },
+  { id: "pro-essential", name: "Pro Essentiel", price: 80, type: "basic", target_role: "professional", description: "Pour les freelances et nomades.", max_credits: 10, features: ["Coworking open-space", "Café illimité", "10h réunion"] },
+  { id: "pro-premium", name: "Pro Premium", price: 180, type: "premium", target_role: "professional", description: "Solution bureau dédié complète.", max_credits: 9999, features: ["Bureau dédié", "Domiciliation entreprise", "Salles illimitées"] },
+  { id: "assoc-comm", name: "Association Communauté", price: 100, type: "basic", target_role: "association", description: "Idéal pour les réunions régulières.", max_credits: 20, features: ["Bureau partagé", "2 événements/mois"] },
+  { id: "assoc-exp", name: "Association Expansion", price: 250, type: "premium", target_role: "association", description: "Pour les associations actives.", max_credits: 9999, features: ["Privatisation week-end", "Événements illimités"] },
+  { id: "trainer-solo", name: "Formateur Solo", price: 60, type: "basic", target_role: "trainer", description: "Accès flexible aux salles.", max_credits: 10, features: ["Salles de cours", "Projecteur inclus"] },
+  { id: "trainer-expert", name: "Formateur Expert", price: 150, type: "premium", target_role: "trainer", description: "Outils avancés et visibilité.", max_credits: 9999, features: ["Salles premium", "Vidéoconférence Pro"] },
 ];
 
 // ─── Comparison table rows ────────────────────────────────────────────────────
@@ -106,11 +64,25 @@ const SubscriptionPlans = ({ isInline = false }) => {
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const navigate = useNavigate();
 
+  const normalizeRole = (role) => {
+    if (!role) return "student";
+    const r = role.toLowerCase();
+    if (r === "etudiant" || r === "student") return "student";
+    if (r === "formateur" || r === "trainer") return "trainer";
+    if (r === "professionnel" || r === "professional" || r === "pro") return "professional";
+    if (r === "association") return "association";
+    return r;
+  };
+
   useEffect(() => {
     const load = async () => {
       try {
         const user = JSON.parse(localStorage.getItem("user") || "null");
-        const userRole = user?.user_type || "student";
+        const rawRole = user?.user_type || user?.role?.name || "student";
+        const userRole = normalizeRole(rawRole);
+
+        console.log(`[Subscription] Loading plans for role: ${userRole} (raw: ${rawRole})`);
+
         const [plansData, subData] = await Promise.all([
           getSubscriptionPlans(userRole),
           user ? getMySubscription(user.id) : Promise.resolve(null),
@@ -126,6 +98,7 @@ const SubscriptionPlans = ({ isInline = false }) => {
               name: a.name,
               price: parseFloat(a.price || 0),
               type: a.type || "basic",
+              target_role: a.target_role || "all",
               description: a.description,
               max_credits: a.max_credits || 0,
               features: Array.isArray(a.features)
@@ -135,11 +108,25 @@ const SubscriptionPlans = ({ isInline = false }) => {
                   : [],
             };
           });
-          setPlans(mapped);
+
+          if (userRole) {
+            const filtered = mapped.filter(p => p.target_role === 'all' || p.target_role === userRole);
+            setPlans(filtered.length > 0 ? filtered : mapped.filter(p => p.target_role === 'all'));
+          } else {
+            setPlans(mapped);
+          }
+        } else {
+          // Filter fallback plans by role
+          const filteredFallbacks = FALLBACK_PLANS.filter(p => p.target_role === userRole || p.target_role === 'all');
+          console.log(`[Subscription] Using ${filteredFallbacks.length} fallback plans for ${userRole}`);
+          setPlans(filteredFallbacks);
         }
         setMySubscription(subData);
       } catch (err) {
         console.warn("[Subscription] API not reachable, using static plans");
+        const user = JSON.parse(localStorage.getItem("user") || "null");
+        const role = normalizeRole(user?.user_type || "student");
+        setPlans(FALLBACK_PLANS.filter(p => p.target_role === role || p.target_role === 'all'));
       } finally {
         setLoading(false);
       }
@@ -149,9 +136,10 @@ const SubscriptionPlans = ({ isInline = false }) => {
 
   const getPrice = (plan) => {
     const base = parseFloat(plan.price || 0);
-    return billingCycle === "yearly"
-      ? Math.round(base * 12 * 0.8)
-      : Math.round(base);
+    if (billingCycle === "quarterly") return Math.round(base * 3 * 0.85); // 15% discount
+    if (billingCycle === "semiannually") return Math.round(base * 6 * 0.7); // 30% discount
+    if (billingCycle === "yearly") return Math.round(base * 12 * 0.6); // 40% discount
+    return Math.round(base);
   };
 
   const handleSubscribe = async () => {
@@ -164,37 +152,49 @@ const SubscriptionPlans = ({ isInline = false }) => {
 
     try {
       setSubscribing(selectedPlan.id);
-      await subscribeToPlan({
-        user: user.id,
-        plan: selectedPlan.documentId || selectedPlan.id,
-        billing_cycle: billingCycle,
-        payment_method: paymentMethod,
-      });
 
-      if (paymentMethod === "cash") {
-        alert(
-          `✅ Demande enregistrée ! Votre abonnement au plan ${selectedPlan.name} est en attente de confirmation par l'administrateur. Un email vous sera envoyé dès l'activation.`,
-        );
-      } else {
-        alert(
-          `🎉 Félicitations ! Votre abonnement au plan ${selectedPlan.name} a été créé et est en attente d'activation.`,
-        );
-      }
+      // Guard: allow if it's a numeric ID (Strapi), documentId (Strapi 5), 
+      // or a string ID (our professional fallback plans)
+      const isValidPlan =
+        selectedPlan.documentId ||
+        typeof selectedPlan.id === "number" ||
+        (typeof selectedPlan.id === "string" && selectedPlan.id.length > 0);
 
-      if (isInline) {
-        // If inline, we don't necessarily want to navigate away,
-        // just refresh the parent or show success state.
-        // For now, let's just refresh the page to show the new status.
-        window.location.reload();
+      if (isValidPlan) {
+        await subscribeToPlan({
+          user: user.id,
+          plan: selectedPlan.documentId || selectedPlan.id,
+          billing_cycle: billingCycle,
+          payment_method: paymentMethod,
+        });
+
+        if (paymentMethod === "cash") {
+          alert(
+            `✅ Demande enregistrée ! Votre abonnement au plan ${selectedPlan.name} est en attente de confirmation par l'administrateur. Un email vous sera envoyé dès l'activation.`,
+          );
+        } else {
+          alert(
+            `🎉 Félicitations ! Votre abonnement au plan ${selectedPlan.name} a été créé et est en attente d'activation.`,
+          );
+        }
+
+        if (isInline) {
+          window.location.reload();
+        } else {
+          const role = user.user_type || "student";
+          const dashboardPaths = {
+            student: "/dashboard",
+            trainer: "/trainer/dashboard",
+            professional: "/professional/dashboard",
+            association: "/association/dashboard",
+          };
+          navigate(dashboardPaths[role] || "/profile");
+        }
       } else {
-        const role = user.user_type || "student";
-        const dashboardPaths = {
-          student: "/dashboard",
-          trainer: "/trainer/dashboard",
-          professional: "/professional/dashboard",
-          association: "/association/dashboard",
-        };
-        navigate(dashboardPaths[role] || "/profile");
+        // Fallback for truly unknown plans
+        alert(
+          `ℹ️ Configuration requise : Le plan ${selectedPlan.name} n'est pas encore prêt. Veuillez contacter l'administrateur.`,
+        );
       }
     } catch (err) {
       console.error("Subscription error:", err);
@@ -249,21 +249,39 @@ const SubscriptionPlans = ({ isInline = false }) => {
             avec nos formules flexibles.
           </p>
 
-          <div className="inline-flex bg-white/80 backdrop-blur border border-slate-200 rounded-2xl p-1.5 shadow-lg text-slate-400">
+          <div className="flex flex-wrap justify-center gap-2 bg-white/80 backdrop-blur border border-slate-200 rounded-[2rem] p-2 shadow-lg w-fit mx-auto mt-4">
             <button
               onClick={() => setBillingCycle("monthly")}
-              className={`px-6 py-2.5 rounded-xl text-sm font-black transition-all ${billingCycle === "monthly" ? "bg-slate-900 text-white shadow-md" : "hover:text-slate-600"}`}
+              className={`px-6 py-2.5 rounded-2xl text-xs font-black transition-all ${billingCycle === "monthly" ? "bg-slate-900 text-white shadow-md" : "text-slate-400 hover:text-slate-600"}`}
             >
               Mensuel
             </button>
             <button
+              onClick={() => setBillingCycle("quarterly")}
+              className={`px-6 py-2.5 rounded-2xl text-xs font-black transition-all flex items-center gap-2 ${billingCycle === "quarterly" ? "bg-blue-600 text-white shadow-md" : "text-slate-400 hover:text-slate-600"}`}
+            >
+              3 Mois
+              <span className="text-[8px] bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded-full font-black">
+                -15%
+              </span>
+            </button>
+            <button
+              onClick={() => setBillingCycle("semiannually")}
+              className={`px-6 py-2.5 rounded-2xl text-xs font-black transition-all flex items-center gap-2 ${billingCycle === "semiannually" ? "bg-indigo-600 text-white shadow-md" : "text-slate-400 hover:text-slate-600"}`}
+            >
+              6 Mois
+              <span className="text-[8px] bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded-full font-black">
+                -30%
+              </span>
+            </button>
+            <button
               onClick={() => setBillingCycle("yearly")}
-              className={`px-6 py-2.5 rounded-xl text-sm font-black transition-all flex items-center gap-2 ${billingCycle === "yearly" ? "bg-slate-900 text-white shadow-md text-white" : "hover:text-slate-600"}`}
+              className={`px-6 py-2.5 rounded-2xl text-xs font-black transition-all flex items-center gap-2 ${billingCycle === "yearly" ? "bg-emerald-600 text-white shadow-md text-white" : "text-slate-400 hover:text-slate-600"}`}
             >
               Annuel{" "}
-              <span className="text-[9px] bg-emerald-500 text-white px-1.5 py-0.5 rounded-full font-black">
+              <span className="text-[8px] bg-emerald-100 text-emerald-600 px-1.5 py-0.5 rounded-full font-black">
                 {" "}
-                -20%{" "}
+                -40%{" "}
               </span>
             </button>
           </div>
@@ -334,12 +352,16 @@ const SubscriptionPlans = ({ isInline = false }) => {
                       {getPrice(plan)}
                     </span>
                     <span className="text-white/70 text-sm font-bold">
-                      DT/{billingCycle === "yearly" ? "an" : "mois"}
+                      DT / {
+                        billingCycle === "monthly" ? "mois" :
+                          billingCycle === "quarterly" ? "3 mois" :
+                            billingCycle === "semiannually" ? "6 mois" : "an"
+                      }
                     </span>
                   </div>
-                  {billingCycle === "yearly" && (
-                    <p className="text-white/50 text-[10px] mt-1">
-                      soit {Math.round(getPrice(plan) / 12)} DT/mois
+                  {billingCycle !== "monthly" && (
+                    <p className="text-white/60 text-[10px] mt-2 font-bold tracking-tight">
+                      soit environ {Math.round(getPrice(plan) / (billingCycle === 'quarterly' ? 3 : billingCycle === 'semiannually' ? 6 : 12))} DT / mois
                     </p>
                   )}
                 </div>

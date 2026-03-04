@@ -34,7 +34,7 @@ export default {
       config: { auth: false, policies: [], middlewares: [] },
     },
     {
-      method: "DELETE",
+      method: "POST",
       path: "/subscriptions/cancel",
       handler: "api::subscription.subscription.cancelSubscription",
       config: { auth: false, policies: [], middlewares: [] },

@@ -30,5 +30,11 @@ export default {
             handler: 'email.sendSessionReminder',
             config: { policies: [], auth: false },
         },
+        {
+            method: 'GET',
+            path: '/email/debug-test',
+            handler: 'email.debugTest',
+            config: { policies: [], auth: false },
+        },
     ],
 };

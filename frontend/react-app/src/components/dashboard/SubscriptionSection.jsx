@@ -9,11 +9,16 @@ const SubscriptionSection = ({ subscription, onCancel, onNavigateToPlans }) => {
   const planName = planAttrs?.name || "Aucun plan";
   const planType = planAttrs?.type || "basic";
   const endDate = subAttrs?.end_date
-    ? new Date(subAttrs.end_date).toLocaleDateString("fr-FR")
+    ? new Date(subAttrs.end_date).toLocaleDateString("fr-FR", {
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    })
     : null;
   const credits = subAttrs?.remaining_credits ?? 0;
   const isActive = subAttrs?.status === "active";
   const isPending = subAttrs?.status === "pending";
+  const isCancelled = subAttrs?.status === "cancelled";
   const isCash = subAttrs?.payment_method === "cash";
 
   const [timeLeft, setTimeLeft] = useState("");
@@ -58,15 +63,36 @@ const SubscriptionSection = ({ subscription, onCancel, onNavigateToPlans }) => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-black text-slate-800 tracking-tighter">
-            Mon Abonnement 💎
+            {planAttrs?.name ? `Mon Abonnement ${planAttrs.name}` : "Mon Abonnement"} 💎
           </h1>
           <p className="text-slate-500 text-sm font-medium">
-            Gérez votre plan et vos avantages SunSpace.
+            {isActive
+              ? "Profitez pleinement de vos avantages SunSpace."
+              : isPending
+                ? "Nous validons votre accès très prochainement."
+                : isCancelled
+                  ? "Votre dernière demande a été refusée."
+                  : "Choisissez un forfait pour commencer."}
           </p>
         </div>
       </div>
 
-      {(isActive || isPending) && planAttrs && !showPlans ? (
+      {showPlans ? (
+        <div className="space-y-6">
+          <div className="flex justify-between items-center">
+            <h3 className="text-xl font-black text-slate-800">Nos Offres 💎</h3>
+            <button
+              onClick={() => setShowPlans(false)}
+              className="text-[10px] font-black uppercase text-slate-400 hover:text-slate-600 transition-colors"
+            >
+              ← Retour
+            </button>
+          </div>
+          <div className="bg-white/30 backdrop-blur-xl border border-white/60 rounded-[2.5rem] overflow-hidden shadow-2xl">
+            <SubscriptionPlans isInline={true} />
+          </div>
+        </div>
+      ) : (isActive || isPending) && planAttrs ? (
         <>
           {isPending && (
             <div className="bg-amber-50 border border-amber-200 rounded-3xl p-6 mb-8 flex items-center justify-between animate-fade-in">
@@ -128,74 +154,78 @@ const SubscriptionSection = ({ subscription, onCancel, onNavigateToPlans }) => {
                 </div>
               )}
             </div>
-            <div className="mt-8 flex gap-3">
+            <div className="mt-8 flex gap-3 relative z-20">
               <button
                 onClick={() => setShowPlans(true)}
-                className="flex-1 py-3 bg-white/20 border border-white/30 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-white/30 transition-all"
+                className="flex-1 py-3 bg-white/20 border border-white/30 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-white/30 transition-all shadow-sm"
               >
-                Changer de plan
+                {isPending ? "Voir les autres plans" : "Changer de forfait"}
               </button>
-              <button
-                onClick={onCancel}
-                className="px-5 py-3 bg-red-500/20 border border-red-300/30 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-red-500/30 transition-all"
-              >
-                Annuler
-              </button>
+              {isPending && (
+                <button
+                  onClick={onCancel}
+                  className="px-5 py-3 bg-red-500/20 border border-red-300/30 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-red-500/30 transition-all shadow-sm"
+                >
+                  Annuler demande
+                </button>
+              )}
             </div>
+            {!isPending && (
+              <div className="mt-6 pt-6 border-t border-white/10 text-center relative z-20">
+                <button
+                  onClick={() => setShowPlans(true)}
+                  className="text-[10px] font-black uppercase tracking-widest text-white/50 hover:text-white transition-colors"
+                >
+                  Découvrir toutes nos offres →
+                </button>
+              </div>
+            )}
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             {[
               {
-                label: "Cycle",
+                label: "Cycle de facturation",
                 value:
                   subAttrs?.billing_cycle === "yearly" ? "Annuel" : "Mensuel",
-                icon: "🔄",
+                icon: "🗓️",
               },
               {
-                label: "Statut",
-                value: isPending
-                  ? "Paiement en attente"
-                  : subAttrs?.status || "Inactif",
-                icon: "📊",
-              },
-              {
-                label: "Crédits utilisés",
+                label: "Crédits consommés",
                 value: `${(planAttrs?.max_credits || 0) - credits} / ${planAttrs?.max_credits || 0}`,
                 icon: "🎯",
               },
             ].map((item, i) => (
               <div
                 key={i}
-                className="bg-white/40 backdrop-blur border border-white/60 rounded-2xl p-5 text-center"
+                className="bg-white/40 backdrop-blur border border-white/60 rounded-2xl p-5 text-center transition-all hover:bg-white/60"
               >
                 <p className="text-2xl mb-2">{item.icon}</p>
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                   {item.label}
                 </p>
-                <p className="text-sm font-black text-slate-700 mt-1 capitalize">
+                <p className="text-sm font-black text-slate-700 mt-1 uppercase">
                   {item.value}
                 </p>
               </div>
             ))}
           </div>
         </>
-      ) : showPlans || !hasAnySub ? (
-        <div className="space-y-6">
-          <div className="flex justify-between items-center">
-            <h3 className="text-xl font-black text-slate-800">Nos Offres 💎</h3>
-            {hasAnySub && (
-              <button
-                onClick={() => setShowPlans(false)}
-                className="text-[10px] font-black uppercase text-slate-400 hover:text-slate-600"
-              >
-                ← Retour
-              </button>
-            )}
-          </div>
-          <div className="bg-white/30 backdrop-blur-xl border border-white/60 rounded-[2.5rem] overflow-hidden shadow-2xl">
-            <SubscriptionPlans isInline={true} />
-          </div>
+      ) : isCancelled ? (
+        <div className="bg-red-50 border border-red-200 rounded-[2.5rem] p-10 text-center shadow-xl animate-fade-in">
+          <div className="text-5xl mb-4">🚫</div>
+          <h3 className="text-2xl font-black text-red-800 mb-2">
+            Abonnement refusé ou supprimé
+          </h3>
+          <p className="text-red-600/70 text-sm mb-8 font-medium">
+            Votre demande d'abonnement au plan <b className="text-red-800">{planName}</b> a été refusée par l'administrateur ou a expiré.
+          </p>
+          <button
+            onClick={() => setShowPlans(true)}
+            className="px-8 py-4 bg-red-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg hover:bg-red-700 transition-all"
+          >
+            Voir nos abonnements 💳
+          </button>
         </div>
       ) : (
         <div className="bg-white/40 backdrop-blur border border-white/60 rounded-[2.5rem] p-10 text-center shadow-xl">
@@ -211,7 +241,7 @@ const SubscriptionSection = ({ subscription, onCancel, onNavigateToPlans }) => {
             onClick={() => setShowPlans(true)}
             className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg hover:scale-105 transition-all"
           >
-            Voir les plans 💳
+            Visualiser nos abonnements 💳
           </button>
         </div>
       )}
