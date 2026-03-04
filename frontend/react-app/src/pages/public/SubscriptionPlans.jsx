@@ -8,14 +8,86 @@ import {
 
 // ─── Static fallback plans ───────────────────────────────────────────────────
 const FALLBACK_PLANS = [
-  { id: "student-basic", name: "Étudiant Basique", price: 15, type: "basic", target_role: "student", description: "Accès standard aux espaces d'étude.", max_credits: 5, features: ["WiFi Illimité", "Accès zones calmes", "5 crédits impression"] },
-  { id: "student-pro", name: "Étudiant Pro", price: 30, type: "premium", target_role: "student", description: "Accès étendu et prioritaire.", max_credits: 15, features: ["Accès 24/7", "Salle de réunion", "15 crédits impression"] },
-  { id: "pro-essential", name: "Pro Essentiel", price: 80, type: "basic", target_role: "professional", description: "Pour les freelances et nomades.", max_credits: 10, features: ["Coworking open-space", "Café illimité", "10h réunion"] },
-  { id: "pro-premium", name: "Pro Premium", price: 180, type: "premium", target_role: "professional", description: "Solution bureau dédié complète.", max_credits: 9999, features: ["Bureau dédié", "Domiciliation entreprise", "Salles illimitées"] },
-  { id: "assoc-comm", name: "Association Communauté", price: 100, type: "basic", target_role: "association", description: "Idéal pour les réunions régulières.", max_credits: 20, features: ["Bureau partagé", "2 événements/mois"] },
-  { id: "assoc-exp", name: "Association Expansion", price: 250, type: "premium", target_role: "association", description: "Pour les associations actives.", max_credits: 9999, features: ["Privatisation week-end", "Événements illimités"] },
-  { id: "trainer-solo", name: "Formateur Solo", price: 60, type: "basic", target_role: "trainer", description: "Accès flexible aux salles.", max_credits: 10, features: ["Salles de cours", "Projecteur inclus"] },
-  { id: "trainer-expert", name: "Formateur Expert", price: 150, type: "premium", target_role: "trainer", description: "Outils avancés et visibilité.", max_credits: 9999, features: ["Salles premium", "Vidéoconférence Pro"] },
+  {
+    id: "student-basic",
+    name: "Étudiant Basique",
+    price: 15,
+    type: "basic",
+    target_role: "student",
+    description: "Accès standard aux espaces d'étude.",
+    max_credits: 5,
+    features: ["WiFi Illimité", "Accès zones calmes", "5 crédits impression"],
+  },
+  {
+    id: "student-pro",
+    name: "Étudiant Pro",
+    price: 30,
+    type: "premium",
+    target_role: "student",
+    description: "Accès étendu et prioritaire.",
+    max_credits: 15,
+    features: ["Accès 24/7", "Salle de réunion", "15 crédits impression"],
+  },
+  {
+    id: "pro-essential",
+    name: "Pro Essentiel",
+    price: 80,
+    type: "basic",
+    target_role: "professional",
+    description: "Pour les freelances et nomades.",
+    max_credits: 10,
+    features: ["Coworking open-space", "Café illimité", "10h réunion"],
+  },
+  {
+    id: "pro-premium",
+    name: "Pro Premium",
+    price: 180,
+    type: "premium",
+    target_role: "professional",
+    description: "Solution bureau dédié complète.",
+    max_credits: 9999,
+    features: ["Bureau dédié", "Domiciliation entreprise", "Salles illimitées"],
+  },
+  {
+    id: "assoc-comm",
+    name: "Association Communauté",
+    price: 100,
+    type: "basic",
+    target_role: "association",
+    description: "Idéal pour les réunions régulières.",
+    max_credits: 20,
+    features: ["Bureau partagé", "2 événements/mois"],
+  },
+  {
+    id: "assoc-exp",
+    name: "Association Expansion",
+    price: 250,
+    type: "premium",
+    target_role: "association",
+    description: "Pour les associations actives.",
+    max_credits: 9999,
+    features: ["Privatisation week-end", "Événements illimités"],
+  },
+  {
+    id: "trainer-solo",
+    name: "Formateur Solo",
+    price: 60,
+    type: "basic",
+    target_role: "trainer",
+    description: "Accès flexible aux salles.",
+    max_credits: 10,
+    features: ["Salles de cours", "Projecteur inclus"],
+  },
+  {
+    id: "trainer-expert",
+    name: "Formateur Expert",
+    price: 150,
+    type: "premium",
+    target_role: "trainer",
+    description: "Outils avancés et visibilité.",
+    max_credits: 9999,
+    features: ["Salles premium", "Vidéoconférence Pro"],
+  },
 ];
 
 // ─── Comparison table rows ────────────────────────────────────────────────────
@@ -69,7 +141,8 @@ const SubscriptionPlans = ({ isInline = false }) => {
     const r = role.toLowerCase();
     if (r === "etudiant" || r === "student") return "student";
     if (r === "formateur" || r === "trainer") return "trainer";
-    if (r === "professionnel" || r === "professional" || r === "pro") return "professional";
+    if (r === "professionnel" || r === "professional" || r === "pro")
+      return "professional";
     if (r === "association") return "association";
     return r;
   };
@@ -81,7 +154,9 @@ const SubscriptionPlans = ({ isInline = false }) => {
         const rawRole = user?.user_type || user?.role?.name || "student";
         const userRole = normalizeRole(rawRole);
 
-        console.log(`[Subscription] Loading plans for role: ${userRole} (raw: ${rawRole})`);
+        console.log(
+          `[Subscription] Loading plans for role: ${userRole} (raw: ${rawRole})`,
+        );
 
         const [plansData, subData] = await Promise.all([
           getSubscriptionPlans(userRole),
@@ -110,15 +185,25 @@ const SubscriptionPlans = ({ isInline = false }) => {
           });
 
           if (userRole) {
-            const filtered = mapped.filter(p => p.target_role === 'all' || p.target_role === userRole);
-            setPlans(filtered.length > 0 ? filtered : mapped.filter(p => p.target_role === 'all'));
+            // Priority 1: Plans specifically for the user's role
+            // Priority 2: 'all' plans
+            const rolePlans = mapped.filter((p) => p.target_role === userRole);
+            const allPlans = mapped.filter((p) => p.target_role === "all");
+
+            // If we have role-specific plans, use them. Otherwise fallback to 'all'.
+            // In our case, we just created 3 plans specifically for EACH role.
+            setPlans(rolePlans.length > 0 ? rolePlans : allPlans);
           } else {
             setPlans(mapped);
           }
         } else {
           // Filter fallback plans by role
-          const filteredFallbacks = FALLBACK_PLANS.filter(p => p.target_role === userRole || p.target_role === 'all');
-          console.log(`[Subscription] Using ${filteredFallbacks.length} fallback plans for ${userRole}`);
+          const filteredFallbacks = FALLBACK_PLANS.filter(
+            (p) => p.target_role === userRole || p.target_role === "all",
+          );
+          console.log(
+            `[Subscription] Using ${filteredFallbacks.length} fallback plans for ${userRole}`,
+          );
           setPlans(filteredFallbacks);
         }
         setMySubscription(subData);
@@ -126,7 +211,11 @@ const SubscriptionPlans = ({ isInline = false }) => {
         console.warn("[Subscription] API not reachable, using static plans");
         const user = JSON.parse(localStorage.getItem("user") || "null");
         const role = normalizeRole(user?.user_type || "student");
-        setPlans(FALLBACK_PLANS.filter(p => p.target_role === role || p.target_role === 'all'));
+        setPlans(
+          FALLBACK_PLANS.filter(
+            (p) => p.target_role === role || p.target_role === "all",
+          ),
+        );
       } finally {
         setLoading(false);
       }
@@ -137,8 +226,6 @@ const SubscriptionPlans = ({ isInline = false }) => {
   const getPrice = (plan) => {
     const base = parseFloat(plan.price || 0);
     if (billingCycle === "quarterly") return Math.round(base * 3 * 0.85); // 15% discount
-    if (billingCycle === "semiannually") return Math.round(base * 6 * 0.7); // 30% discount
-    if (billingCycle === "yearly") return Math.round(base * 12 * 0.6); // 40% discount
     return Math.round(base);
   };
 
@@ -153,7 +240,7 @@ const SubscriptionPlans = ({ isInline = false }) => {
     try {
       setSubscribing(selectedPlan.id);
 
-      // Guard: allow if it's a numeric ID (Strapi), documentId (Strapi 5), 
+      // Guard: allow if it's a numeric ID (Strapi), documentId (Strapi 5),
       // or a string ID (our professional fallback plans)
       const isValidPlan =
         selectedPlan.documentId ||
@@ -248,45 +335,28 @@ const SubscriptionPlans = ({ isInline = false }) => {
             Accédez régulièrement aux meilleurs espaces de coworking de Tunis
             avec nos formules flexibles.
           </p>
-
-          <div className="flex flex-wrap justify-center gap-2 bg-white/80 backdrop-blur border border-slate-200 rounded-[2rem] p-2 shadow-lg w-fit mx-auto mt-4">
-            <button
-              onClick={() => setBillingCycle("monthly")}
-              className={`px-6 py-2.5 rounded-2xl text-xs font-black transition-all ${billingCycle === "monthly" ? "bg-slate-900 text-white shadow-md" : "text-slate-400 hover:text-slate-600"}`}
-            >
-              Mensuel
-            </button>
-            <button
-              onClick={() => setBillingCycle("quarterly")}
-              className={`px-6 py-2.5 rounded-2xl text-xs font-black transition-all flex items-center gap-2 ${billingCycle === "quarterly" ? "bg-blue-600 text-white shadow-md" : "text-slate-400 hover:text-slate-600"}`}
-            >
-              3 Mois
-              <span className="text-[8px] bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded-full font-black">
-                -15%
-              </span>
-            </button>
-            <button
-              onClick={() => setBillingCycle("semiannually")}
-              className={`px-6 py-2.5 rounded-2xl text-xs font-black transition-all flex items-center gap-2 ${billingCycle === "semiannually" ? "bg-indigo-600 text-white shadow-md" : "text-slate-400 hover:text-slate-600"}`}
-            >
-              6 Mois
-              <span className="text-[8px] bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded-full font-black">
-                -30%
-              </span>
-            </button>
-            <button
-              onClick={() => setBillingCycle("yearly")}
-              className={`px-6 py-2.5 rounded-2xl text-xs font-black transition-all flex items-center gap-2 ${billingCycle === "yearly" ? "bg-emerald-600 text-white shadow-md text-white" : "text-slate-400 hover:text-slate-600"}`}
-            >
-              Annuel{" "}
-              <span className="text-[8px] bg-emerald-100 text-emerald-600 px-1.5 py-0.5 rounded-full font-black">
-                {" "}
-                -40%{" "}
-              </span>
-            </button>
-          </div>
         </div>
       )}
+
+      <div className="max-w-6xl mx-auto px-4 text-center mt-4 mb-10">
+        <div className="flex flex-wrap justify-center gap-2 bg-white/80 backdrop-blur border border-slate-200 rounded-[2rem] p-2 shadow-lg w-fit mx-auto">
+          <button
+            onClick={() => setBillingCycle("monthly")}
+            className={`px-6 py-2.5 rounded-2xl text-xs font-black transition-all ${billingCycle === "monthly" ? "bg-slate-900 text-white shadow-md" : "text-slate-400 hover:text-slate-600"}`}
+          >
+            Mensuel
+          </button>
+          <button
+            onClick={() => setBillingCycle("quarterly")}
+            className={`px-6 py-2.5 rounded-2xl text-xs font-black transition-all flex items-center gap-2 ${billingCycle === "quarterly" ? "bg-blue-600 text-white shadow-md" : "text-slate-400 hover:text-slate-600"}`}
+          >
+            Trimestriel
+            <span className="text-[8px] bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded-full font-black">
+              -15%
+            </span>
+          </button>
+        </div>
+      </div>
 
       {mySubscription && !isInline && (
         <div className="max-w-xl mx-auto px-4 mb-8">
@@ -323,7 +393,11 @@ const SubscriptionPlans = ({ isInline = false }) => {
           {plans.map((plan) => {
             const colors = PLAN_COLORS[plan.type] || PLAN_COLORS.basic;
             const isPremium = plan.type === "premium";
-            const isCurrent = isCurrentPlan(plan);
+            const sub = mySubscription?.attributes || mySubscription;
+            const isCurrent =
+              (sub?.plan?.data?.id || sub?.plan?.id) === plan.id;
+            const hasActiveOrPending =
+              sub?.status === "active" || sub?.status === "pending";
 
             return (
               <div
@@ -352,16 +426,12 @@ const SubscriptionPlans = ({ isInline = false }) => {
                       {getPrice(plan)}
                     </span>
                     <span className="text-white/70 text-sm font-bold">
-                      DT / {
-                        billingCycle === "monthly" ? "mois" :
-                          billingCycle === "quarterly" ? "3 mois" :
-                            billingCycle === "semiannually" ? "6 mois" : "an"
-                      }
+                      DT / {billingCycle === "monthly" ? "mois" : "trimestre"}
                     </span>
                   </div>
                   {billingCycle !== "monthly" && (
                     <p className="text-white/60 text-[10px] mt-2 font-bold tracking-tight">
-                      soit environ {Math.round(getPrice(plan) / (billingCycle === 'quarterly' ? 3 : billingCycle === 'semiannually' ? 6 : 12))} DT / mois
+                      soit environ {Math.round(getPrice(plan) / 3)} DT / mois
                     </p>
                   )}
                 </div>
@@ -386,18 +456,21 @@ const SubscriptionPlans = ({ isInline = false }) => {
                   </ul>
                   <button
                     onClick={() =>
-                      isCurrent
-                        ? navigate("/professional/subscription")
-                        : setSelectedPlan(plan)
+                      isCurrent ? navigate("/dashboard") : setSelectedPlan(plan)
                     }
-                    disabled={subscribing === plan.id}
-                    className={`w-full py-4 text-white rounded-2xl font-black text-xs uppercase tracking-[0.15em] shadow-lg transition-all active:scale-95 disabled:opacity-50 ${isCurrent ? "bg-emerald-600 hover:bg-emerald-700" : colors.btn}`}
+                    disabled={
+                      subscribing === plan.id ||
+                      (hasActiveOrPending && !isCurrent)
+                    }
+                    className={`w-full py-4 text-white rounded-2xl font-black text-xs uppercase tracking-[0.15em] shadow-lg transition-all active:scale-95 disabled:opacity-40 disabled:grayscale-[0.5] ${isCurrent ? "bg-emerald-600 hover:bg-emerald-700" : colors.btn}`}
                   >
                     {subscribing === plan.id
                       ? "Traitement..."
                       : isCurrent
                         ? "Plan Actuel ✓"
-                        : "Choisir ce plan"}
+                        : hasActiveOrPending
+                          ? "Indisponible"
+                          : "Choisir ce plan"}
                   </button>
                 </div>
               </div>

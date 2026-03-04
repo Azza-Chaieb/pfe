@@ -10,10 +10,10 @@ const SubscriptionSection = ({ subscription, onCancel, onNavigateToPlans }) => {
   const planType = planAttrs?.type || "basic";
   const endDate = subAttrs?.end_date
     ? new Date(subAttrs.end_date).toLocaleDateString("fr-FR", {
-      day: "numeric",
-      month: "long",
-      year: "numeric"
-    })
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
     : null;
   const credits = subAttrs?.remaining_credits ?? 0;
   const isActive = subAttrs?.status === "active";
@@ -28,28 +28,47 @@ const SubscriptionSection = ({ subscription, onCancel, onNavigateToPlans }) => {
   const hasAnySub = !!subscription;
 
   useEffect(() => {
-    if (isPending && isCash && subAttrs?.payment_deadline) {
-      const timer = setInterval(() => {
-        const deadline = new Date(subAttrs.payment_deadline).getTime();
-        const now = new Date().getTime();
-        const diff = deadline - now;
+    const updateCountdown = () => {
+      let target;
+      if (isPending && isCash && subAttrs?.payment_deadline) {
+        target = new Date(subAttrs.payment_deadline).getTime();
+      } else if (isActive && subAttrs?.end_date) {
+        target = new Date(subAttrs.end_date).getTime();
+      }
 
-        if (diff <= 0) {
-          setTimeLeft("Expiré");
-          clearInterval(timer);
+      if (!target) return;
+
+      const now = new Date().getTime();
+      const diff = target - now;
+
+      if (diff <= 0) {
+        setTimeLeft("Expiré");
+      } else {
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor(
+          (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+        );
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        if (days > 0) {
+          setTimeLeft(`${days}j ${hours}h ${minutes}m`);
         } else {
-          const hours = Math.floor(
-            (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
-          );
-          const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-          const seconds = Math.floor((diff % (1000 * 60)) / 1000);
           setTimeLeft(`${hours}h ${minutes}m ${seconds}s`);
         }
-      }, 1000);
+      }
+    };
 
-      return () => clearInterval(timer);
-    }
-  }, [isPending, isCash, subAttrs?.payment_deadline]);
+    updateCountdown();
+    const timer = setInterval(updateCountdown, 1000);
+    return () => clearInterval(timer);
+  }, [
+    isActive,
+    isPending,
+    isCash,
+    subAttrs?.payment_deadline,
+    subAttrs?.end_date,
+  ]);
 
   const planColors = {
     basic: "from-slate-600 to-slate-800",
@@ -63,7 +82,10 @@ const SubscriptionSection = ({ subscription, onCancel, onNavigateToPlans }) => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-black text-slate-800 tracking-tighter">
-            {planAttrs?.name ? `Mon Abonnement ${planAttrs.name}` : "Mon Abonnement"} 💎
+            {planAttrs?.name
+              ? `Mon Abonnement ${planAttrs.name}`
+              : "Mon Abonnement"}{" "}
+            💎
           </h1>
           <p className="text-slate-500 text-sm font-medium">
             {isActive
@@ -145,14 +167,26 @@ const SubscriptionSection = ({ subscription, onCancel, onNavigateToPlans }) => {
                     : `Expire le ${endDate}`}
                 </p>
               </div>
-              {!isPending && (
-                <div className="bg-white/20 rounded-2xl p-4 text-center">
-                  <p className="text-2xl font-black">{credits}</p>
-                  <p className="text-[9px] font-black uppercase opacity-70">
-                    crédits restants
-                  </p>
-                </div>
-              )}
+              <div className="flex flex-col gap-2">
+                {isActive && (
+                  <div className="bg-white/20 rounded-2xl px-4 py-2 text-center border border-white/10 backdrop-blur-sm min-w-[100px]">
+                    <p className="text-[8px] font-black text-white/70 uppercase tracking-widest mb-1">
+                      Expire dans
+                    </p>
+                    <p className="text-sm font-black text-white tabular-nums">
+                      {timeLeft}
+                    </p>
+                  </div>
+                )}
+                {!isPending && (
+                  <div className="bg-white/20 rounded-2xl p-4 text-center border border-white/10 backdrop-blur-sm">
+                    <p className="text-2xl font-black">{credits}</p>
+                    <p className="text-[9px] font-black uppercase opacity-70">
+                      crédits restants
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
             <div className="mt-8 flex gap-3 relative z-20">
               <button
@@ -187,7 +221,11 @@ const SubscriptionSection = ({ subscription, onCancel, onNavigateToPlans }) => {
               {
                 label: "Cycle de facturation",
                 value:
-                  subAttrs?.billing_cycle === "yearly" ? "Annuel" : "Mensuel",
+                  subAttrs?.billing_cycle === "yearly"
+                    ? "Annuel"
+                    : subAttrs?.billing_cycle === "quarterly"
+                      ? "Trimestriel"
+                      : "Mensuel",
                 icon: "🗓️",
               },
               {
@@ -218,7 +256,9 @@ const SubscriptionSection = ({ subscription, onCancel, onNavigateToPlans }) => {
             Abonnement refusé ou supprimé
           </h3>
           <p className="text-red-600/70 text-sm mb-8 font-medium">
-            Votre demande d'abonnement au plan <b className="text-red-800">{planName}</b> a été refusée par l'administrateur ou a expiré.
+            Votre demande d'abonnement au plan{" "}
+            <b className="text-red-800">{planName}</b> a été refusée par
+            l'administrateur ou a expiré.
           </p>
           <button
             onClick={() => setShowPlans(true)}

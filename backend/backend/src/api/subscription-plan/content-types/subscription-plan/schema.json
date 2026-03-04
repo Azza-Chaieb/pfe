@@ -44,6 +44,10 @@
       "type": "enumeration",
       "enum": ["student", "trainer", "professional", "association", "all"],
       "default": "all"
+    },
+    "deadline_hours": {
+      "type": "integer",
+      "default": 2
     }
   }
 }

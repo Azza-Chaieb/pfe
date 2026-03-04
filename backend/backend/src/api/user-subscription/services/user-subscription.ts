@@ -79,7 +79,7 @@ export default factories.createCoreService(
           "assoc-comm": "Association Communauté",
           "assoc-exp": "Association Expansion",
           "trainer-solo": "Formateur Solo",
-          "trainer-expert": "Formateur Expert"
+          "trainer-expert": "Formateur Expert",
         };
         const mappedName = fallbackMapping[planDocumentId];
         if (mappedName) {
@@ -100,9 +100,13 @@ export default factories.createCoreService(
               $or: [
                 { name: planDocumentId },
                 { name: planDocumentId.toLowerCase() },
-                { name: planDocumentId.charAt(0).toUpperCase() + planDocumentId.slice(1).toLowerCase() }
-              ]
-            }
+                {
+                  name:
+                    planDocumentId.charAt(0).toUpperCase() +
+                    planDocumentId.slice(1).toLowerCase(),
+                },
+              ],
+            },
           } as any,
         );
         plan = (plans as any[])[0];
@@ -118,23 +122,49 @@ export default factories.createCoreService(
       }
 
       // Final fallback 3: Auto-create plan if it's a standard type and missing
-      if (!plan && ["basic", "premium", "enterprise"].includes(planDocumentId.toLowerCase())) {
-        console.log("[Subscription] Auto-creating missing plan:", planDocumentId);
+      if (
+        !plan &&
+        ["basic", "premium", "enterprise"].includes(
+          planDocumentId.toLowerCase(),
+        )
+      ) {
+        console.log(
+          "[Subscription] Auto-creating missing plan:",
+          planDocumentId,
+        );
         const defaultPlans: any = {
-          basic: { name: "Basique", price: 49, max_credits: 5, description: "Idéal pour les freelances." },
-          premium: { name: "Premium", price: 99, max_credits: 20, description: "Meilleur rapport qualité/prix." },
-          enterprise: { name: "Entreprise", price: 199, max_credits: 9999, description: "Pour les équipes exigeantes." }
+          basic: {
+            name: "Basique",
+            price: 49,
+            max_credits: 5,
+            description: "Idéal pour les freelances.",
+          },
+          premium: {
+            name: "Premium",
+            price: 99,
+            max_credits: 20,
+            description: "Meilleur rapport qualité/prix.",
+          },
+          enterprise: {
+            name: "Entreprise",
+            price: 199,
+            max_credits: 9999,
+            description: "Pour les équipes exigeantes.",
+          },
         };
         const planData = defaultPlans[planDocumentId.toLowerCase()];
-        plan = await strapi.entityService.create("api::subscription-plan.subscription-plan" as any, {
-          data: {
-            ...planData,
-            type: planDocumentId.toLowerCase(),
-            duration_days: 30,
-            target_role: "all",
-            publishedAt: new Date(),
-          }
-        } as any);
+        plan = await strapi.entityService.create(
+          "api::subscription-plan.subscription-plan" as any,
+          {
+            data: {
+              ...planData,
+              type: planDocumentId.toLowerCase(),
+              duration_days: 30,
+              target_role: "all",
+              publishedAt: new Date(),
+            },
+          } as any,
+        );
       }
 
       console.log(
@@ -144,7 +174,18 @@ export default factories.createCoreService(
       if (!plan)
         throw new Error(`Plan non trouvé pour la référence: ${planDocumentId}`);
 
-      // 2. Cancel any existing active subscription
+      // NEW: Prevent multiple active/pending subscriptions
+      const lastSub = await this.findLatestByUser(userId);
+      if (
+        lastSub &&
+        (lastSub.status === "active" || lastSub.status === "pending")
+      ) {
+        throw new Error(
+          "Vous avez déjà un abonnement actif ou une demande en attente de validation.",
+        );
+      }
+
+      // 2. Cancel any existing active subscription (Keep as fallback but guard above usually catches it)
       const existing = await this.findActiveByUser(userId);
       if (existing) {
         await strapi.entityService.update(
@@ -175,14 +216,14 @@ export default factories.createCoreService(
       );
 
       // 4. Create new subscription
-      // Use documentId if available for relations in Strapi 5 if needed, 
-      // but Entity Service usually wants IDs. Let's stick to IDs but ensure they are numbers.
+      // Strapi 5: When creating/updating relations via Entity Service or Documents,
+      // it's safest to use the documentId for the linkage.
       const newSub = await strapi.entityService.create(
         "api::user-subscription.user-subscription" as any,
         {
           data: {
-            user: Number(userId),
-            plan: Number(plan.id),
+            user: userId, // User is still numeric ID mostly
+            plan: plan.documentId || plan.id, // CRITICAL: Use documentId for linkage in Strapi 5
             start_date: startDate.toISOString().split("T")[0],
             end_date: endDate.toISOString().split("T")[0],
             status: "pending",
@@ -190,6 +231,12 @@ export default factories.createCoreService(
             remaining_credits: plan.max_credits || 0,
             payment_method: paymentMethod,
             payment_reference: paymentReference,
+            payment_deadline:
+              paymentMethod === "cash"
+                ? new Date(
+                    Date.now() + (plan.deadline_hours || 2) * 60 * 1000,
+                  ).toISOString()
+                : null,
           },
           populate: ["plan", "user"],
         } as any,

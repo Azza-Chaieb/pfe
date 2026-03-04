@@ -32,7 +32,8 @@ export default {
       provider: "nodemailer",
       providerOptions: {
         host: process.env.SMTP_HOST,
-        port: process.env.SMTP_PORT,
+        port: parseInt(process.env.SMTP_PORT),
+        secure: false, // For port 587
         auth: {
           user: process.env.SMTP_USER,
           pass: process.env.SMTP_PASS,

@@ -111,7 +111,10 @@ export default factories.createCoreController(
       } catch (err: any) {
         strapi.log.error("subscribe error:", err);
         if (err.details) {
-          strapi.log.error("Error details:", JSON.stringify(err.details, null, 2));
+          strapi.log.error(
+            "Error details:",
+            JSON.stringify(err.details, null, 2),
+          );
         }
         ctx.badRequest(err.message || "Erreur lors de la souscription.", {
           details: err.details,
@@ -258,6 +261,58 @@ export default factories.createCoreController(
       } catch (err: any) {
         strapi.log.error("renew error:", err);
         ctx.badRequest(err.message || "Erreur lors du renouvellement.");
+      }
+    },
+
+    /**
+     * POST /api/subscriptions/run-cron
+     * Manually trigger the auto-rejection logic for testing
+     */
+    async runCron(ctx) {
+      try {
+        const now = new Date();
+        const results = [];
+
+        console.log("[MANUAL CRON] Running auto-rejection check...");
+
+        // 1. Find expired cash subscriptions
+        const expired = await strapi
+          .documents("api::user-subscription.user-subscription")
+          .findMany({
+            filters: {
+              status: "pending",
+              payment_method: "cash",
+              payment_deadline: { $lt: now.toISOString() },
+            },
+            populate: ["user", "plan"],
+          });
+
+        for (const sub of expired) {
+          await strapi
+            .documents("api::user-subscription.user-subscription")
+            .update({
+              documentId: sub.documentId,
+              data: {
+                status: "cancelled",
+                rejection_reason:
+                  "Délai expiré (Déclenché manuellement via /run-cron).",
+              },
+            });
+          results.push({
+            id: sub.documentId,
+            status: "cancelled",
+            user: (sub as any).user?.email,
+          });
+        }
+
+        ctx.body = {
+          message: `Cron manual run complete. Processed ${results.length} items.`,
+          processed: results,
+          time: now.toISOString(),
+        };
+      } catch (err: any) {
+        strapi.log.error("Manual cron error:", err);
+        ctx.internalServerError(err.message);
       }
     },
   }),

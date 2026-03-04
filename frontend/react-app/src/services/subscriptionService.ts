@@ -14,7 +14,7 @@ export const getSubscriptionPlans = async (role?: string) => {
     // Fallback to standard Strapi endpoint
     let url = "/subscription-plans?sort=price:asc&populate=*";
     if (role) {
-      url += `&filters[target_role][$in]=${role}&filters[target_role][$in]=all`;
+      url += `&filters[target_role][$in][0]=${role}&filters[target_role][$in][1]=all`;
     }
     const response = await api.get(url);
     return response.data;

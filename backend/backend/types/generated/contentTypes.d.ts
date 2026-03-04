@@ -986,6 +986,7 @@ export interface ApiSubscriptionPlanSubscriptionPlan
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
+    deadline_hours: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<2>;
     description: Schema.Attribute.Text;
     duration_days: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<30>;
     features: Schema.Attribute.JSON;

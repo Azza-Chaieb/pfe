@@ -56,7 +56,7 @@ export default {
             try {
               passwordResetEmail =
                 require("./api/email/templates/password-reset").passwordResetEmail;
-            } catch (e2) { }
+            } catch (e2) {}
           }
 
           if (passwordResetEmail) {
@@ -160,7 +160,7 @@ export default {
                 await (strapi as any)
                   .documents(profileUid)
                   .create({ data: profileData });
-            } catch (pErr) { }
+            } catch (pErr) {}
 
             try {
               const emailService = strapi.service("api::email.email-service");
@@ -181,7 +181,7 @@ export default {
                     html: `<h3>Code: ${otpCode}</h3>`,
                   });
               }
-            } catch (eErr) { }
+            } catch (eErr) {}
 
             ctx.body = {
               success: true,
@@ -250,134 +250,134 @@ export default {
         name: string;
         capacity?: number;
       }> = [
-          // BLUE: Everyone (13 spots)
-          ...(["260", "262", "264", "266", "268", "270"] as const).map((id) => ({
-            id,
-            role: everyoneRoles,
-            type: "hot-desk",
-            name: `Blue Desk Chair ${id}`,
-          })),
-          ...(["706", "712", "720"] as const).map((id) => ({
-            id,
-            role: everyoneRoles,
-            type: "hot-desk",
-            name: `Blue Inner Row Chair ${id}`,
-          })),
-          ...(["10", "716"] as const).map((id) => ({
-            id,
-            role: everyoneRoles,
-            type: "hot-desk",
-            name: `Blue Round Table Chair ${id}`,
-          })),
-          ...(["738", "739"] as const).map((id) => ({
-            id,
-            role: everyoneRoles,
-            type: "hot-desk",
-            name: `Blue Center Chair ${id}`,
-          })),
+        // BLUE: Everyone (13 spots)
+        ...(["260", "262", "264", "266", "268", "270"] as const).map((id) => ({
+          id,
+          role: everyoneRoles,
+          type: "hot-desk",
+          name: `Blue Desk Chair ${id}`,
+        })),
+        ...(["706", "712", "720"] as const).map((id) => ({
+          id,
+          role: everyoneRoles,
+          type: "hot-desk",
+          name: `Blue Inner Row Chair ${id}`,
+        })),
+        ...(["10", "716"] as const).map((id) => ({
+          id,
+          role: everyoneRoles,
+          type: "hot-desk",
+          name: `Blue Round Table Chair ${id}`,
+        })),
+        ...(["738", "739"] as const).map((id) => ({
+          id,
+          role: everyoneRoles,
+          type: "hot-desk",
+          name: `Blue Center Chair ${id}`,
+        })),
 
-          // YELLOW: Students Only
-          // Each chair group has 2-3 SVG layers (fill, overlay, outline).
-          // Seeding ALL of them ensures exact match works on any click layer.
-          // HB: 700(fill),701(overlay) | HC: 702(fill),703(overlay)
-          // HE: 707(fill),708(overlay),709(outline) | HG: 713(fill),714(overlay),715(outline)
-          ...(
-            [
-              "700",
-              "701",
-              "702",
-              "703",
-              "707",
-              "708",
-              "709",
-              "713",
-              "714",
-              "715",
-            ] as const
-          ).map((id) => ({
-            id,
-            role: studentOnly,
-            type: "hot-desk" as const,
-            name: `Yellow Chair ${id}`,
-          })),
-          ...(
-            [
-              "745",
-              "746",
-              "747",
-              "748",
-              "773",
-              "774",
-              "775",
-              "776",
-              "801",
-              "802",
-              "803",
-              "804",
-              "829",
-              "830",
-              "831",
-              "832",
-            ] as const
-          ).map((id) => ({
-            id,
-            role: studentOnly,
-            type: "hot-desk",
-            name: `Garden Chair ${id}`,
-          })),
+        // YELLOW: Students Only
+        // Each chair group has 2-3 SVG layers (fill, overlay, outline).
+        // Seeding ALL of them ensures exact match works on any click layer.
+        // HB: 700(fill),701(overlay) | HC: 702(fill),703(overlay)
+        // HE: 707(fill),708(overlay),709(outline) | HG: 713(fill),714(overlay),715(outline)
+        ...(
+          [
+            "700",
+            "701",
+            "702",
+            "703",
+            "707",
+            "708",
+            "709",
+            "713",
+            "714",
+            "715",
+          ] as const
+        ).map((id) => ({
+          id,
+          role: studentOnly,
+          type: "hot-desk" as const,
+          name: `Yellow Chair ${id}`,
+        })),
+        ...(
+          [
+            "745",
+            "746",
+            "747",
+            "748",
+            "773",
+            "774",
+            "775",
+            "776",
+            "801",
+            "802",
+            "803",
+            "804",
+            "829",
+            "830",
+            "831",
+            "832",
+          ] as const
+        ).map((id) => ({
+          id,
+          role: studentOnly,
+          type: "hot-desk",
+          name: `Garden Chair ${id}`,
+        })),
 
-          // PINK: 4 Classrooms — Trainer, Professional, Association
-          ...(["1", "2", "3", "4"] as const).map((id) => ({
-            id: `salle_${id}`,
-            role: specializedRoles,
-            type: "event-space",
-            name: `Classroom ${id}`,
-            capacity: 20,
-          })),
+        // PINK: 4 Classrooms — Trainer, Professional, Association
+        ...(["1", "2", "3", "4"] as const).map((id) => ({
+          id: `salle_${id}`,
+          role: specializedRoles,
+          type: "event-space",
+          name: `Classroom ${id}`,
+          capacity: 20,
+        })),
 
-          // VIOLET: 2 Meeting Rooms — Professional and Association only
-          {
-            id: "4_remainder",
-            role: restrictedRoles,
-            type: "meeting-room",
-            name: "Meeting Room 1",
-            capacity: 10,
-          },
-          {
-            id: "5",
-            role: restrictedRoles,
-            type: "meeting-room",
-            name: "Meeting Room 2",
-            capacity: 10,
-          },
+        // VIOLET: 2 Meeting Rooms — Professional and Association only
+        {
+          id: "4_remainder",
+          role: restrictedRoles,
+          type: "meeting-room",
+          name: "Meeting Room 1",
+          capacity: 10,
+        },
+        {
+          id: "5",
+          role: restrictedRoles,
+          type: "meeting-room",
+          name: "Meeting Room 2",
+          capacity: 10,
+        },
 
-          // RESTRICTED CENTER DESKS
-          ...(["721", "722", "723", "735", "736", "737"] as const).map((id) => ({
-            id,
-            role: restrictedRoles,
-            type: "hot-desk",
-            name: `Restricted Desk ${id}`,
-          })),
+        // RESTRICTED CENTER DESKS
+        ...(["721", "722", "723", "735", "736", "737"] as const).map((id) => ({
+          id,
+          role: restrictedRoles,
+          type: "hot-desk",
+          name: `Restricted Desk ${id}`,
+        })),
 
-          // ORANGE: Blocked (inaccessible service areas)
-          ...(
-            [
-              "salle_5",
-              "salle_6",
-              "salle_7",
-              "15",
-              "16",
-              "18",
-              "160",
-              "1217",
-            ] as const
-          ).map((id) => ({
-            id,
-            role: [] as string[],
-            type: "hot-desk",
-            name: `Reserved Area ${id}`,
-          })),
-        ];
+        // ORANGE: Blocked (inaccessible service areas)
+        ...(
+          [
+            "salle_5",
+            "salle_6",
+            "salle_7",
+            "15",
+            "16",
+            "18",
+            "160",
+            "1217",
+          ] as const
+        ).map((id) => ({
+          id,
+          role: [] as string[],
+          type: "hot-desk",
+          name: `Reserved Area ${id}`,
+        })),
+      ];
 
       // Cleanup all existing spaces
       const existingSpaces = await (strapi as any)
@@ -447,44 +447,187 @@ export default {
       // 3. Seed Professional Subscription Plans
       console.log("💎 Seeding Professional Subscription Plans...");
       const plansToSeed = [
-        { name: "Étudiant Basique", description: "Accès standard aux espaces d'étude.", price: 15, type: "basic", target_role: "student", features: ["WiFi Illimité", "Accès zones calmes", "5 crédits impression"], max_credits: 5 },
-        { name: "Étudiant Pro", description: "Accès étendu et prioritaire.", price: 30, type: "premium", target_role: "student", features: ["Accès 24/7", "Salle de réunion", "15 crédits impression"], max_credits: 15 },
-        { name: "Pro Essentiel", description: "Pour les freelances et nomades.", price: 80, type: "basic", target_role: "professional", features: ["Coworking open-space", "Café illimité", "10h réunion"], max_credits: 10 },
-        { name: "Pro Premium", description: "Solution bureau dédié complète.", price: 180, type: "premium", target_role: "professional", features: ["Bureau dédié", "Domiciliation entreprise", "Salles illimitées"], max_credits: 9999 },
-        { name: "Association Communauté", description: "Idéal pour les réunions régulières.", price: 100, type: "basic", target_role: "association", features: ["Bureau partagé", "2 événements/mois"], max_credits: 20 },
-        { name: "Association Expansion", description: "Pour les associations actives.", price: 250, type: "premium", target_role: "association", features: ["Privatisation week-end", "Événements illimités"], max_credits: 9999 },
-        { name: "Formateur Solo", description: "Accès flexible aux salles.", price: 60, type: "basic", target_role: "trainer", features: ["Salles de cours", "Projecteur inclus"], max_credits: 10 },
-        { name: "Formateur Expert", description: "Outils avancés et visibilité.", price: 150, type: "premium", target_role: "trainer", features: ["Salles premium", "Vidéoconférence Pro", "Étudiants illimités"], max_credits: 9999 }
+        // STUDENT
+        {
+          name: "Étudiant Basique",
+          description: "Accès standard aux espaces d'étude.",
+          price: 15,
+          type: "basic",
+          target_role: "student",
+          features: [
+            "WiFi Illimité",
+            "Accès zones calmes",
+            "5 crédits impression",
+          ],
+          max_credits: 5,
+        },
+        {
+          name: "Étudiant Premium",
+          description: "Accès étendu et prioritaire.",
+          price: 30,
+          type: "premium",
+          target_role: "student",
+          features: ["Accès 24/7", "Salle de réunion", "15 crédits impression"],
+          max_credits: 15,
+        },
+        {
+          name: "Étudiant Entreprise",
+          description: "L'expérience étudiante ultime.",
+          price: 45,
+          type: "enterprise",
+          target_role: "student",
+          features: [
+            "Accès 24/7",
+            "Salles illimitées",
+            "Impressions illimitées",
+          ],
+          max_credits: 9999,
+        },
+        // TRAINER
+        {
+          name: "Formateur Solo",
+          description: "Accès flexible aux salles.",
+          price: 60,
+          type: "basic",
+          target_role: "trainer",
+          features: ["Salles de cours", "Projecteur inclus"],
+          max_credits: 10,
+        },
+        {
+          name: "Formateur Expert",
+          description: "Outils avancés et visibilité.",
+          price: 150,
+          type: "premium",
+          target_role: "trainer",
+          features: [
+            "Salles premium",
+            "Vidéoconférence Pro",
+            "Support prioritaire",
+          ],
+          max_credits: 50,
+        },
+        {
+          name: "Formateur Institution",
+          description: "Pour les centres de formation.",
+          price: 250,
+          type: "enterprise",
+          target_role: "trainer",
+          features: [
+            "Salles en accès illimité",
+            "Support dédié",
+            "Espaces de stockage",
+          ],
+          max_credits: 9999,
+        },
+        // PROFESSIONAL
+        {
+          name: "Pro Essentiel",
+          description: "Pour les freelances et nomades.",
+          price: 80,
+          type: "basic",
+          target_role: "professional",
+          features: ["Coworking open-space", "Café illimité", "10h réunion"],
+          max_credits: 10,
+        },
+        {
+          name: "Pro Premium",
+          description: "Solution bureau dédié.",
+          price: 180,
+          type: "premium",
+          target_role: "professional",
+          features: ["Bureau dédié", "Domiciliation entreprise", "50h réunion"],
+          max_credits: 50,
+        },
+        {
+          name: "Pro Entreprise",
+          description: "Solution complète.",
+          price: 250,
+          type: "enterprise",
+          target_role: "professional",
+          features: [
+            "Bureau dédié illimité",
+            "Domiciliation entreprise",
+            "Salles illimitées",
+          ],
+          max_credits: 9999,
+        },
+        // ASSOCIATION
+        {
+          name: "Association Communauté",
+          description: "Idéal pour les réunions régulières.",
+          price: 100,
+          type: "basic",
+          target_role: "association",
+          features: ["Bureau partagé", "2 événements/mois"],
+          max_credits: 20,
+        },
+        {
+          name: "Association Expansion",
+          description: "Pour les associations actives.",
+          price: 250,
+          type: "premium",
+          target_role: "association",
+          features: ["Privatisation week-end", "5 événements/mois"],
+          max_credits: 100,
+        },
+        {
+          name: "Association Élite",
+          description: "Accès total pour les grandes ONG.",
+          price: 400,
+          type: "enterprise",
+          target_role: "association",
+          features: [
+            "Bureau privatif",
+            "Événements illimités",
+            "Support dédié",
+          ],
+          max_credits: 9999,
+        },
       ];
 
-      const newPlanNames = plansToSeed.map(p => p.name);
+      const newPlanNames = plansToSeed.map((p) => p.name);
 
       // Cleanup: delete old plans not in new list
-      const allExistingPlans = await strapi.entityService.findMany("api::subscription-plan.subscription-plan" as any, {} as any);
-      for (const ep of (allExistingPlans as any[])) {
+      const allExistingPlans = await strapi.entityService.findMany(
+        "api::subscription-plan.subscription-plan" as any,
+        {} as any,
+      );
+      for (const ep of allExistingPlans as any[]) {
         if (!newPlanNames.includes(ep.name)) {
           console.log(`🗑️ Deleting old plan: ${ep.name}`);
-          await strapi.entityService.delete("api::subscription-plan.subscription-plan" as any, ep.id);
+          await strapi.entityService.delete(
+            "api::subscription-plan.subscription-plan" as any,
+            ep.id,
+          );
         }
       }
 
       for (const pData of plansToSeed) {
-        const existing = await strapi.entityService.findMany("api::subscription-plan.subscription-plan" as any, {
-          filters: { name: pData.name }
-        } as any);
+        const existing = await strapi.entityService.findMany(
+          "api::subscription-plan.subscription-plan" as any,
+          {
+            filters: { name: pData.name },
+          } as any,
+        );
 
         if ((existing as any[]).length > 0) {
-          await strapi.entityService.update("api::subscription-plan.subscription-plan" as any, (existing as any[])[0].id, {
-            data: pData
-          } as any);
+          await strapi.entityService.update(
+            "api::subscription-plan.subscription-plan" as any,
+            (existing as any[])[0].id,
+            {
+              data: pData,
+            } as any,
+          );
         } else {
-          await strapi.entityService.create("api::subscription-plan.subscription-plan" as any, {
-            data: { ...pData, duration_days: 30, publishedAt: new Date() }
-          } as any);
+          await strapi.entityService.create(
+            "api::subscription-plan.subscription-plan" as any,
+            {
+              data: { ...pData, duration_days: 30, publishedAt: new Date() },
+            } as any,
+          );
         }
       }
       console.log("✅ [BOOTSTRAP] Subscription plans seeded and cleaned");
-
     } catch (error) {
       console.error("❌ Bootstrap error:", error);
     }

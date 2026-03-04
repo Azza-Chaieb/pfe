@@ -2,9 +2,7 @@
  * Lifecycle hooks for user-subscription
  */
 
-console.log("🧩 [LIFECYCLE] user-subscription lifecycles.js LOADED");
-
-module.exports = {
+export default {
   async beforeCreate(event) {
     const { data } = event.params;
     strapi.log.debug(
@@ -14,10 +12,11 @@ module.exports = {
     // Set initial status to pending
     data.status = "pending";
 
-    // If payment method is cash, set the 2-hour deadline
-    if (data.payment_method === "cash") {
+    // Deadline calculation is now handled below in the plan-fetching block for dynamic values
+    // or if no plan is provided, we set a default 2 hours later.
+    if (data.payment_method === "cash" && !data.payment_deadline) {
       const deadline = new Date();
-      deadline.setHours(deadline.getHours() + 2);
+      deadline.setMinutes(deadline.getMinutes() + 2);
       data.payment_deadline = deadline;
     }
 
@@ -39,6 +38,14 @@ module.exports = {
           endDate.setDate(endDate.getDate() + duration);
           data.end_date = endDate.toISOString().split("T")[0];
           data.remaining_credits = plan.max_credits || 0;
+
+          // NEW: Adjust deadline based on plan's setting if it's cash payment
+          if (data.payment_method === "cash") {
+            const deadline = new Date();
+            const mins = plan.deadline_hours || 2;
+            deadline.setMinutes(deadline.getMinutes() + mins);
+            data.payment_deadline = deadline;
+          }
         }
       } catch (err) {
         console.error("Error fetching plan in lifecycle:", err);
@@ -74,6 +81,7 @@ module.exports = {
           subscription.user.email,
           subscription.user.fullname || subscription.user.username,
           subscription.plan.name,
+          subscription.payment_deadline,
         );
       } else {
         strapi.log.warn(
@@ -96,14 +104,14 @@ module.exports = {
 
     if (data.status) {
       try {
-        // Use Entity Service as a fallback if documentId is actually a numeric ID
-        const subscription = await strapi.entityService.findOne(
+        // Use Entity Service - cast to any to handle populated relation types
+        const subscription = (await strapi.entityService.findOne(
           "api::user-subscription.user-subscription",
           result.id,
           {
             populate: ["user", "plan"],
           },
-        );
+        )) as any;
 
         if (!subscription || !subscription.user || !subscription.plan) {
           strapi.log.warn(
@@ -133,6 +141,18 @@ module.exports = {
             strapi.log.info(
               `[Lifecycle] Email service call completed for ${user.email}`,
             );
+
+            // Cleanup: Clear deadline once active
+            if (subscription.payment_deadline) {
+              await strapi.entityService.update(
+                "api::user-subscription.user-subscription",
+                result.id,
+                { data: { payment_deadline: null } },
+              );
+              strapi.log.debug(
+                `[Lifecycle] Cleared payment_deadline for active sub ${documentId}`,
+              );
+            }
           } catch (emailErr) {
             strapi.log.error(
               `[Lifecycle] Failed to send email via service: ${emailErr.message}`,
@@ -143,14 +163,40 @@ module.exports = {
 
         if (status === "cancelled") {
           strapi.log.debug(
-            `[Lifecycle] Sending Rejection email to ${user.email}`,
+            `[Lifecycle] Sending Rejection/Expiration email to ${user.email}`,
           );
-          await emailService.sendSubscriptionRejected(
-            user.email,
-            user.fullname || user.username,
-            plan.name,
-            rejection_reason || "Demande annulée par l'administration.",
+          try {
+            await emailService.sendSubscriptionRejected(
+              user.email,
+              user.fullname || user.username,
+              plan.name,
+              rejection_reason ||
+                "Demande annulée automatiquement ou par l'administration.",
+            );
+          } catch (emailErr: any) {
+            strapi.log.error(
+              `[Lifecycle] Failed to send rejection email: ${emailErr.message}`,
+            );
+          }
+        }
+
+        // NEW: If status is still pending but deadline was updated by admin
+        if (status === "pending" && data.payment_deadline) {
+          strapi.log.info(
+            `[Lifecycle] Admin updated deadline for pending sub ${documentId}. Resending notification.`,
           );
+          try {
+            await emailService.sendSubscriptionRequest(
+              user.email,
+              user.fullname || user.username,
+              plan.name,
+              subscription.payment_deadline,
+            );
+          } catch (emailErr: any) {
+            strapi.log.error(
+              `[Lifecycle] Failed to resend request email: ${emailErr.message}`,
+            );
+          }
         }
       } catch (err) {
         strapi.log.error("Error in afterUpdate lifecycle:", err);

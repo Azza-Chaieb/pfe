@@ -55,7 +55,7 @@ const SubscriptionManagement = () => {
         await api.put(`/user-subscriptions/${id}`, {
           data: {
             status: newStatus,
-            rejection_reason: rejection_reason || undefined
+            rejection_reason: rejection_reason || undefined,
           },
         });
 
@@ -93,10 +93,11 @@ const SubscriptionManagement = () => {
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-widest ${filter === f
+                className={`px-4 py-2 rounded-lg text-xs font-bold transition-all uppercase tracking-widest ${
+                  filter === f
                     ? "bg-blue-600 text-white shadow-md"
                     : "text-slate-400 hover:text-slate-600"
-                  }`}
+                }`}
               >
                 {f === "all"
                   ? "Tous"
@@ -155,9 +156,9 @@ const SubscriptionManagement = () => {
                 </tr>
               ) : (
                 filtered.map((sub) => {
-                  const data = sub.attributes || sub;
-                  const user = data.user?.data?.attributes || data.user || {};
-                  const plan = data.plan?.data?.attributes || data.plan || {};
+                  const data = sub; // In Strapi 5 findMany, attributes are flattened
+                  const user = data.user || {};
+                  const plan = data.plan || {};
                   const statusColors = {
                     pending: "bg-amber-100 text-amber-700 border-amber-200",
                     active:
@@ -174,7 +175,7 @@ const SubscriptionManagement = () => {
                       <td className="px-6 py-4">
                         <div className="flex flex-col">
                           <span className="font-bold text-slate-800">
-                            {user.username || "Inconnu"}
+                            {user.username || user.fullname || "Inconnu"}
                           </span>
                           <span className="text-[10px] text-slate-400">
                             {user.email || "N/A"}
@@ -184,9 +185,7 @@ const SubscriptionManagement = () => {
                       <td className="px-6 py-4">
                         <span className="px-2 py-1 rounded-md bg-blue-50 text-blue-700 text-[10px] font-black border border-blue-100">
                           {plan.name ||
-                            (data.plan?.id
-                              ? `Plan #${data.plan.id}`
-                              : "Plan inconnu")}
+                            (plan.id ? `Plan #${plan.id}` : "Plan inconnu")}
                         </span>
                       </td>
                       <td className="px-6 py-4">

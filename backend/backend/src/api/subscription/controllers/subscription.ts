@@ -15,22 +15,19 @@ export default factories.createCoreController(
     async getPlans(ctx) {
       try {
         const { role } = ctx.query as any;
-        const filters: any = { publishedAt: { $notNull: true } };
+        const filters: any = {};
 
         if (role) {
-          filters.$or = [
-            { target_role: role },
-            { target_role: "all" }
-          ];
+          filters.target_role = { $in: [role, "all"] };
         }
 
-        const plans = await strapi.entityService.findMany(
-          "api::subscription-plan.subscription-plan" as any,
-          {
-            sort: [{ price: "asc" }],
+        const plans = await (strapi as any)
+          .documents("api::subscription-plan.subscription-plan")
+          .findMany({
+            sort: ["price:asc"],
             filters,
-          } as any,
-        );
+            status: "published",
+          });
         ctx.body = { data: plans };
       } catch (err) {
         strapi.log.error("getPlans error:", err);

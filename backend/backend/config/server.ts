@@ -1,3 +1,5 @@
+import cronTasks from "./cron";
+
 export default ({ env }) => ({
   host: env("HOST", "0.0.0.0"),
   port: env.int("PORT", 1337),
@@ -12,5 +14,6 @@ export default ({ env }) => ({
   },
   cron: {
     enabled: true,
+    tasks: cronTasks,
   },
 });
