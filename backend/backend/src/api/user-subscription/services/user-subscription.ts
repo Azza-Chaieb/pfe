@@ -234,7 +234,7 @@ export default factories.createCoreService(
             payment_deadline:
               paymentMethod === "cash"
                 ? new Date(
-                    Date.now() + (plan.deadline_hours || 2) * 60 * 1000,
+                    Date.now() + (plan.deadline_hours || 2) * 60 * 60 * 1000,
                   ).toISOString()
                 : null,
           },

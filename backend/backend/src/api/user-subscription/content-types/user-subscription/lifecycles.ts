@@ -16,7 +16,7 @@ export default {
     // or if no plan is provided, we set a default 2 hours later.
     if (data.payment_method === "cash" && !data.payment_deadline) {
       const deadline = new Date();
-      deadline.setMinutes(deadline.getMinutes() + 2);
+      deadline.setHours(deadline.getHours() + 2);
       data.payment_deadline = deadline;
     }
 
@@ -42,8 +42,8 @@ export default {
           // NEW: Adjust deadline based on plan's setting if it's cash payment
           if (data.payment_method === "cash") {
             const deadline = new Date();
-            const mins = plan.deadline_hours || 2;
-            deadline.setMinutes(deadline.getMinutes() + mins);
+            const hours = plan.deadline_hours || 2;
+            deadline.setHours(deadline.getHours() + hours);
             data.payment_deadline = deadline;
           }
         }
