@@ -6,6 +6,7 @@ import {
   createPayment,
   submitPaymentProof,
 } from "../../services/bookingService";
+import { getMySubscription } from "../../services/subscriptionService";
 import PaymentSelector from "../payment/PaymentSelector";
 
 /**
@@ -17,6 +18,8 @@ const BookingModal = ({ space, coworkingSpaceId, initialDate, initialChairId, on
   const [showPaymentSelector, setShowPaymentSelector] = useState(false);
   const [createdReservation, setCreatedReservation] = useState(null);
   const [existingReservations, setExistingReservations] = useState([]);
+  const [activeSubscription, setActiveSubscription] = useState(null);
+  const [isCheckingSubscription, setIsCheckingSubscription] = useState(true);
 
   const [selectedChair, setSelectedChair] = useState(initialChairId ? parseInt(initialChairId) : null);
   const [occupiedChairs, setOccupiedChairs] = useState([]);
@@ -33,6 +36,25 @@ const BookingModal = ({ space, coworkingSpaceId, initialDate, initialChairId, on
 
   const navigate = useNavigate();
   const isSubmitting = useRef(false);
+
+  useEffect(() => {
+    const fetchSub = async () => {
+      try {
+        const userString = localStorage.getItem("user");
+        if (userString) {
+          const user = JSON.parse(userString);
+          setIsCheckingSubscription(true);
+          const sub = await getMySubscription(user.id);
+          setActiveSubscription(sub);
+        }
+      } catch (err) {
+        console.error("Failed to fetch subscription:", err);
+      } finally {
+        setIsCheckingSubscription(false);
+      }
+    };
+    fetchSub();
+  }, []);
 
   // Fetch current reservations for the selected date
   useEffect(() => {
@@ -170,8 +192,18 @@ const BookingModal = ({ space, coworkingSpaceId, initialDate, initialChairId, on
       const res = await createReservation(bookingData);
       setCreatedReservation(res.data);
 
-      // Instead of finalizing, show payment selector
-      setShowPaymentSelector(true);
+      if (activeSubscription) {
+        window.alert("Réservation confirmée ! (Inclus dans votre abonnement)");
+        onClose();
+        const userObj = JSON.parse(localStorage.getItem("user") || "{}");
+        navigate(
+          userObj.user_type === "professional"
+            ? "/professional/bookings"
+            : "/student/bookings"
+        );
+      } else {
+        setShowPaymentSelector(true);
+      }
       setBookingLoading(false);
     } catch (error) {
       console.error("Booking Error Full Output:", error);
@@ -264,6 +296,16 @@ const BookingModal = ({ space, coworkingSpaceId, initialDate, initialChairId, on
     // Base Space Price - handle potential string values from API
     const pHourly = parseFloat(attrs.pricing_hourly || 0);
     const pDaily = parseFloat(attrs.pricing_daily || 0);
+
+    console.log("[DEBUG] Pricing Data:", {
+      spaceName: attrs.name,
+      pHourly,
+      pDaily,
+      durationHours,
+      durationDays,
+      allDay: formData.allDay,
+      rawAttrs: attrs
+    });
 
     if (!formData.allDay && durationHours < 8 && pHourly > 0) {
       total += durationHours * pHourly;
@@ -745,14 +787,16 @@ const BookingModal = ({ space, coworkingSpaceId, initialDate, initialChairId, on
 
           <button
             onClick={handleBooking}
-            disabled={bookingLoading || hasConflict}
-            className={`w-full py-6 text-white font-black text-[11px] uppercase tracking-[0.2em] rounded-[1.5rem] shadow-2xl transition-all ${bookingLoading || hasConflict ? "bg-slate-300 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700 active:scale-95 shadow-blue-500/30"}`}
+            disabled={bookingLoading || hasConflict || isCheckingSubscription}
+            className={`w-full py-6 text-white font-black text-[11px] uppercase tracking-[0.2em] rounded-[1.5rem] shadow-2xl transition-all ${bookingLoading || hasConflict || isCheckingSubscription ? "bg-slate-300 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700 active:scale-95 shadow-blue-500/30"}`}
           >
-            {bookingLoading
-              ? "VALIDATION..."
-              : hasConflict
-                ? "NON DISPONIBLE"
-                : "CONFIRMER LA RÉSERVATION"}
+            {isCheckingSubscription
+              ? "VÉRIFICATION..."
+              : bookingLoading
+                ? "VALIDATION..."
+                : hasConflict
+                  ? "NON DISPONIBLE"
+                  : "CONFIRMER LA RÉSERVATION"}
           </button>
 
           <p className="mt-6 text-center text-[9px] text-slate-400 font-bold uppercase tracking-widest leading-relaxed">

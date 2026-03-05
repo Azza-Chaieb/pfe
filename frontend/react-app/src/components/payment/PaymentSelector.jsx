@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const PaymentSelector = ({ amount, onSelect, onCancel }) => {
   const [method, setMethod] = useState("");
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const bankDetails = {
     bankName: "Banque Centrale de SunSpace",
@@ -150,34 +152,52 @@ const PaymentSelector = ({ amount, onSelect, onCancel }) => {
           </label>
         </div>
 
-        <div style={{ marginTop: "30px", display: "flex", gap: "10px" }}>
+        <div style={{ marginTop: "30px", display: "flex", flexDirection: "column", gap: "10px" }}>
+          <div style={{ display: "flex", gap: "10px" }}>
+            <button
+              onClick={onCancel}
+              style={{
+                flex: 1,
+                padding: "12px",
+                borderRadius: "8px",
+                border: "1px solid #ddd",
+                background: "none",
+                fontWeight: "bold",
+              }}
+            >
+              Annuler
+            </button>
+            <button
+              onClick={handleConfirm}
+              style={{
+                flex: 1,
+                padding: "12px",
+                borderRadius: "8px",
+                border: "none",
+                background: "#4A90E2",
+                color: "white",
+                fontWeight: "bold",
+                opacity: !method ? 0.5 : 1,
+              }}
+              disabled={!method}
+            >
+              Confirmer
+            </button>
+          </div>
           <button
-            onClick={onCancel}
+            onClick={() => navigate("/subscription-plans")}
             style={{
-              flex: 1,
+              width: "100%",
               padding: "12px",
               borderRadius: "8px",
-              border: "1px solid #ddd",
-              background: "none",
-            }}
-          >
-            Annuler
-          </button>
-          <button
-            onClick={handleConfirm}
-            style={{
-              flex: 1,
-              padding: "12px",
-              borderRadius: "8px",
-              border: "none",
-              background: "#4A90E2",
-              color: "white",
+              border: "2px solid #FF9800",
+              background: "#FFF4E5",
+              color: "#E65100",
               fontWeight: "bold",
-              opacity: !method ? 0.5 : 1,
+              cursor: "pointer",
             }}
-            disabled={!method}
           >
-            Confirmer
+            Acheter un abonnement
           </button>
         </div>
       </div>
