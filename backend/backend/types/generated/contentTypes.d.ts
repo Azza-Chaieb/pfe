@@ -587,6 +587,46 @@ export interface ApiCoworkingSpaceCoworkingSpace
   };
 }
 
+export interface ApiEquipmentLockEquipmentLock
+  extends Struct.CollectionTypeSchema {
+  collectionName: "equipment_locks";
+  info: {
+    description: "Temporary locks for equipment selection during booking";
+    displayName: "Equipment Lock";
+    pluralName: "equipment-locks";
+    singularName: "equipment-lock";
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+    end_time: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    equipment: Schema.Attribute.Relation<
+      "manyToOne",
+      "api::equipment.equipment"
+    >;
+    expires_at: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::equipment-lock.equipment-lock"
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    start_time: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+    user: Schema.Attribute.Relation<
+      "manyToOne",
+      "plugin::users-permissions.user"
+    >;
+  };
+}
+
 export interface ApiEquipmentEquipment extends Struct.CollectionTypeSchema {
   collectionName: "equipments";
   info: {
@@ -599,6 +639,8 @@ export interface ApiEquipmentEquipment extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
+    available_quantity: Schema.Attribute.Integer &
+      Schema.Attribute.DefaultTo<1>;
     bookings: Schema.Attribute.Relation<"manyToMany", "api::booking.booking">;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
@@ -617,8 +659,12 @@ export interface ApiEquipmentEquipment extends Struct.CollectionTypeSchema {
     price_type: Schema.Attribute.Enumeration<["hourly", "daily", "one-time"]> &
       Schema.Attribute.DefaultTo<"one-time">;
     publishedAt: Schema.Attribute.DateTime;
-    quantity: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<1>;
     spaces: Schema.Attribute.Relation<"manyToMany", "api::space.space">;
+    status: Schema.Attribute.Enumeration<
+      ["disponible", "en_rupture", "en_maintenance"]
+    > &
+      Schema.Attribute.DefaultTo<"disponible">;
+    total_quantity: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<1>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
@@ -1670,6 +1716,7 @@ declare module "@strapi/strapi" {
       "api::booking.booking": ApiBookingBooking;
       "api::course.course": ApiCourseCourse;
       "api::coworking-space.coworking-space": ApiCoworkingSpaceCoworkingSpace;
+      "api::equipment-lock.equipment-lock": ApiEquipmentLockEquipmentLock;
       "api::equipment.equipment": ApiEquipmentEquipment;
       "api::etudiant-profil.etudiant-profil": ApiEtudiantProfilEtudiantProfil;
       "api::formateur-profil.formateur-profil": ApiFormateurProfilFormateurProfil;

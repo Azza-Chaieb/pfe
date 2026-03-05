@@ -1,13 +1,7 @@
-/**
- * @module equipmentService
- * @description API service for managing equipment resources.
- */
-
 import api from "./apiClient";
 
 /**
  * Fetches all equipments with their relations.
- * @returns {Promise<Object>} The response containing the equipment list.
  */
 export const getEquipments = async () => {
   try {
@@ -21,8 +15,6 @@ export const getEquipments = async () => {
 
 /**
  * Creates a new equipment.
- * @param {Object} data - The equipment data.
- * @returns {Promise<Object>} The created equipment.
  */
 export const createEquipment = async (data) => {
   try {
@@ -36,24 +28,22 @@ export const createEquipment = async (data) => {
 
 /**
  * Updates an existing equipment.
- * @param {string|number} id - Resource ID.
- * @param {Object} data - Updated data.
- * @returns {Promise<Object>} The updated equipment.
  */
 export const updateEquipment = async (id, data) => {
   try {
     const response = await api.put(`/equipments/${id}`, { data });
     return response.data;
   } catch (error) {
-    console.error(`[equipmentService] Error updating equipment ${id}:`, error);
+    console.error(
+      `[equipmentService] Error refreshing equipment ${id}:`,
+      error,
+    );
     throw error;
   }
 };
 
 /**
  * Removes an equipment from the database.
- * @param {string|number} id - Resource ID.
- * @returns {Promise<boolean>}
  */
 export const deleteEquipment = async (id) => {
   try {
@@ -61,6 +51,44 @@ export const deleteEquipment = async (id) => {
     return true;
   } catch (error) {
     console.error(`[equipmentService] Error deleting equipment ${id}:`, error);
+    throw error;
+  }
+};
+
+// --- Selection & Availability Logic ---
+
+export const getEquipmentAvailability = async (id, start, end) => {
+  try {
+    const response = await api.get(`/equipments/${id}/availability`, {
+      params: { start, end },
+    });
+    return response.data.data.availableQty;
+  } catch (error) {
+    console.error("Error fetching equipment availability", error);
+    return 0;
+  }
+};
+
+export const lockEquipment = async (equipmentId, start_time, end_time) => {
+  try {
+    const response = await api.post("/equipment-locks/lock", {
+      data: { equipmentId, start_time, end_time },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error locking equipment", error);
+    throw error;
+  }
+};
+
+export const unlockEquipment = async (equipmentId) => {
+  try {
+    const response = await api.post("/equipment-locks/unlock", {
+      data: { equipmentId },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error unlocking equipment", error);
     throw error;
   }
 };

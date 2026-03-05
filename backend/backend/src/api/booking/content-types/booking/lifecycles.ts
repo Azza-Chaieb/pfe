@@ -23,6 +23,8 @@ export default {
   async afterCreate(event) {
     const { result } = event;
     await sendConfirmationEmail(result);
+    // Sync equipment availability immediately
+    await strapi.service("api::equipment.equipment").synchronizeAvailability();
   },
 
   async afterUpdate(event) {
@@ -45,6 +47,14 @@ export default {
     ) {
       await sendConfirmationEmail(result);
     }
+
+    // Sync equipment availability immediately on any update
+    await strapi.service("api::equipment.equipment").synchronizeAvailability();
+  },
+
+  async afterDelete(event) {
+    // Sync equipment availability immediately after deletion
+    await strapi.service("api::equipment.equipment").synchronizeAvailability();
   },
 };
 
@@ -159,6 +169,93 @@ async function handleBookingLogic(event) {
           console.error(`[Booking Lifecycle] Conflict check error:`, err);
           throw err;
         }
+      }
+
+      // 2.5 Equipment Availability Validation
+      let equipmentIds = [];
+      if (data.equipments) {
+        if (data.equipments.connect) {
+          equipmentIds = data.equipments.connect.map((e) =>
+            typeof e === "object" ? e.id : e,
+          );
+        } else if (Array.isArray(data.equipments)) {
+          equipmentIds = data.equipments.map((e) =>
+            typeof e === "object" ? e.id : e,
+          );
+        }
+      }
+
+      if (equipmentIds && equipmentIds.length > 0) {
+        console.log(
+          `[Booking Lifecycle] Validating availability for equipments: ${equipmentIds.join(", ")}`,
+        );
+
+        for (const eqId of equipmentIds) {
+          // Find the equipment's total quantity
+          const equipment = await strapi.entityService.findOne(
+            "api::equipment.equipment",
+            eqId,
+          );
+          if (!equipment) continue;
+
+          // Find overlapping bookings that include this equipment
+          const overlapFilters: any = {
+            status: { $in: ["pending", "confirmed"] },
+            equipments: eqId,
+            $or: [
+              {
+                $and: [
+                  { start_time: { $lte: data.start_time } },
+                  { end_time: { $gt: data.start_time } },
+                ],
+              },
+              {
+                $and: [
+                  { start_time: { $lt: data.end_time } },
+                  { end_time: { $gte: data.end_time } },
+                ],
+              },
+              {
+                $and: [
+                  { start_time: { $gte: data.start_time } },
+                  { end_time: { $lte: data.end_time } },
+                ],
+              },
+            ],
+          };
+
+          // EXCLUDE CURRENT RECORD
+          if (currentId || currentDocId) {
+            const exclusion: any = { $and: [] };
+            if (currentId) exclusion.$and.push({ id: { $ne: currentId } });
+            if (currentDocId)
+              exclusion.$and.push({ documentId: { $ne: currentDocId } });
+
+            overlapFilters.$and = overlapFilters.$and || [];
+            overlapFilters.$and.push(exclusion);
+          }
+
+          const overlappingBookings = await strapi.entityService.findMany(
+            "api::booking.booking",
+            {
+              filters: overlapFilters,
+            },
+          );
+
+          // Each booking consumes 1 quantity of the equipment
+          const consumedQuantity = overlappingBookings.length;
+          const totalQty = equipment.total_quantity || 1;
+
+          if (consumedQuantity >= totalQty) {
+            console.warn(
+              `[Booking Lifecycle] Equipment ${equipment.name} is fully booked during this period.`,
+            );
+            throw new ApplicationError(
+              `L'équipement "${equipment.name}" n'est pas disponible pour les dates et heures sélectionnées. (Quantité totale atteinte)`,
+            );
+          }
+        }
+        console.log(`[Booking Lifecycle] All equipments are available.`);
       }
 
       // 3. Role-Based Access Control (RBAC)

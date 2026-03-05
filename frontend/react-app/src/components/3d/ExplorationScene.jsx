@@ -101,7 +101,91 @@ const ExplorationScene = () => {
             }
           }
 
-          setSpaces(spacesData);
+          // --- TABLE CLUSTERING LOGIC ---
+          const getClusterKey = (space) => {
+            const attr = space.attributes || space;
+            const mesh = (attr.mesh_name || "").toLowerCase();
+            const name = (attr.name || "").toLowerCase();
+
+            const numMatch = mesh.match(/bureau_(\d+)/);
+            const num = numMatch ? parseInt(numMatch[1]) : null;
+
+            if ((num >= 258 && num <= 275) || mesh === "bureau_276")
+              return "table_top_center";
+            if ((num >= 716 && num <= 723) || mesh === "bureau_280")
+              return "table_top_left";
+            if ((num >= 700 && num <= 706) || mesh === "bureau_277")
+              return "table_left_1";
+            if ((num >= 710 && num <= 715) || mesh === "bureau_278")
+              return "table_left_2";
+            if (mesh === "bureau_279") return "table_left_3";
+            if ((num >= 742 && num <= 751) || mesh === "bureau_293")
+              return "table_round_1";
+            if ((num >= 770 && num <= 779) || mesh === "bureau_310")
+              return "table_round_2";
+            if ((num >= 801 && num <= 810) || mesh === "bureau_327")
+              return "table_round_3";
+            if ((num >= 829 && num <= 835) || mesh === "bureau_344")
+              return "table_round_4";
+
+            if (
+              attr.is_per_chair ||
+              name.includes("desk") ||
+              name.includes("bureau")
+            )
+              return "other_chairs";
+            return null;
+          };
+
+          const clusters = {};
+          const others = [];
+          spacesData.forEach((s) => {
+            const key = getClusterKey(s);
+            if (key) {
+              if (!clusters[key]) clusters[key] = [];
+              clusters[key].push(s);
+            } else {
+              others.push(s);
+            }
+          });
+
+          const clusterNames = {
+            table_top_center: "Table Open Space - Centre",
+            table_top_left: "Table Open Space - Haut Gauche",
+            table_left_1: "Bureau Collaboratif 1",
+            table_left_2: "Bureau Collaboratif 2",
+            table_left_3: "Bureau Collaboratif 3",
+            table_round_1: "Table Ronde A",
+            table_round_2: "Table Ronde B",
+            table_round_3: "Table Ronde C",
+            table_round_4: "Table Ronde D",
+            other_chairs: "Autres Places",
+          };
+
+          const aggregatedSpaces = Object.keys(clusters).map((key) => {
+            const clusterSpaces = clusters[key];
+            const first = clusterSpaces[0];
+            const firstAttrs = first.attributes || first;
+            return {
+              id: 999000 + Object.keys(clusters).indexOf(key),
+              documentId: `virtual-${key}`,
+              attributes: {
+                ...firstAttrs,
+                name: clusterNames[key] || "Table Open Space",
+                capacity: clusterSpaces.reduce(
+                  (sum, s) => sum + ((s.attributes || s).capacity || 1),
+                  0,
+                ),
+                mesh_name: `cluster:${key}`,
+                is_per_chair: true,
+                _is_virtual: true,
+                _cluster_key: key,
+                _originalIds: clusterSpaces.map((s) => s.id),
+              },
+            };
+          });
+
+          setSpaces([...others, ...aggregatedSpaces]);
         } else {
           console.warn(
             "[DEBUG] No coworking space found for spaceId:",
@@ -139,6 +223,15 @@ const ExplorationScene = () => {
     if (spaceId) fetchSpaceData();
   }, [spaceId]);
 
+  useEffect(() => {
+    if (spaces.length > 0) {
+      console.log(
+        "[DEBUG] Available Mesh Names in Strapi:",
+        spaces.map((s) => s.attributes?.mesh_name || s.mesh_name),
+      );
+    }
+  }, [spaces]);
+
   // Get the current user type
   const userStr = localStorage.getItem("user");
   const user = userStr ? JSON.parse(userStr) : null;
@@ -147,18 +240,47 @@ const ExplorationScene = () => {
   // Map occupancy status to spaces
   const spacesWithStatus = spaces.map((s) => {
     const spaceIdNumeric = s.id;
-    const isBooked = reservations.some((r) => {
+    const sAttrs = s.attributes || s;
+    const isPerChair = sAttrs.is_per_chair || false;
+    const capacity = sAttrs.capacity || 1;
+
+    // Find all reservations for this space
+    const spaceReservations = reservations.filter((r) => {
       const rAttrs = r.attributes || r;
       const resSpaceId =
         rAttrs.space?.data?.id || rAttrs.space?.id || rAttrs.space;
+
+      if (sAttrs._is_virtual && sAttrs._originalIds) {
+        return sAttrs._originalIds.includes(resSpaceId);
+      }
       return resSpaceId === spaceIdNumeric;
     });
 
-    const sAttrs = s.attributes || s;
-    const accessibleBy = sAttrs.accessible_by || s.accessible_by || [];
+    let isBooked = false;
+
+    if (isPerChair) {
+      // For per-chair spaces, sum up the participants
+      const totalBookedChairs = spaceReservations.reduce((sum, r) => {
+        const rAttrs = r.attributes || r;
+        return sum + (rAttrs.participants || 1);
+      }, 0);
+      isBooked = totalBookedChairs >= capacity;
+    } else {
+      // Normal spaces: Booked if there's any reservation
+      isBooked = spaceReservations.length > 0;
+    }
+
+    let accessibleBy = sAttrs.accessible_by || s.accessible_by || [];
+    if (typeof accessibleBy === "string") {
+      try {
+        accessibleBy = JSON.parse(accessibleBy);
+      } catch (e) {
+        accessibleBy = [];
+      }
+    }
 
     // Check if the current user is allowed to book this space.
-    // If accessibleBy is completely empty and it isn't specifically empty by design, maybe grant access or block? 
+    // If accessibleBy is completely empty and it isn't specifically empty by design, maybe grant access or block?
     // From requirements: Restrooms, etc. have empty array `[]` meaning NOT bookable. Default to unbookable if not explicitly in `accessible_by`.
     // Exception for 'admin' who could book anything if needed, but let's strictly stick to the types.
     let isAccessible = true;
@@ -273,9 +395,38 @@ const ExplorationScene = () => {
             const docId = sAttrs.documentId ? sAttrs.documentId.toString() : "";
             const name = normalize(sAttrs.name || "");
 
+            // Support comma-separated mesh_names in Strapi and wildcard prefix
+            if (mesh.includes(",")) {
+              const meshParts = mesh.split(",").map((m) => m.trim());
+              for (const part of meshParts) {
+                if (part.endsWith("*")) {
+                  const prefix = part.slice(0, -1);
+                  if (elNorm.startsWith(prefix)) return true;
+                } else if (part === elNorm) {
+                  return true;
+                }
+              }
+            } else {
+              if (mesh.endsWith("*")) {
+                const prefix = mesh.slice(0, -1);
+                if (elNorm.startsWith(prefix)) return true;
+              }
+            }
+
             // 1. Precise mesh_name match or Sub-element (like bureau_student_left_1 matches bureau_student_left)
-            if (mesh && (mesh === elNorm || elNorm.startsWith(mesh + "_"))) return true;
-            if (mesh && mesh.includes(elNorm)) return true;
+            if (
+              mesh &&
+              (mesh === elNorm ||
+                (!mesh.endsWith("*") && elNorm.startsWith(mesh + "_")))
+            )
+              return true;
+            if (
+              mesh &&
+              !mesh.includes(",") &&
+              !mesh.endsWith("*") &&
+              mesh.includes(elNorm)
+            )
+              return true;
 
             // 2. Element ID digits match numeric ID or documentId
             if (elDigits && (sid === elDigits || docId === elDigits))
@@ -287,11 +438,21 @@ const ExplorationScene = () => {
             return false;
           });
 
+          // --- FALLBACK MAPPING ---
+          if (!matched && elNorm.startsWith("bureau_")) {
+            matched = spacesWithStatus.find((s) => {
+              const name = normalize((s.attributes || s).name || "");
+              return name.includes("etudiant") || name.includes("open");
+            });
+          }
+
           // If matched, extract the chair index from the element ID if applicable
           let initialChairId = null;
           if (matched) {
-            const mesh = normalize((matched.attributes || matched).mesh_name || "");
-            if (mesh && elNorm.startsWith(mesh + "_")) {
+            const mesh = normalize(
+              (matched.attributes || matched).mesh_name || "",
+            );
+            if (mesh && !mesh.includes(",") && elNorm.startsWith(mesh + "_")) {
               // Extract the part after the mesh name as the chair ID
               initialChairId = elNorm.replace(mesh + "_", "");
             }

@@ -232,7 +232,73 @@ export default {
         }
       }
 
-      // 2. Definitive Spaces Config
+      // 2. Seed Equipments
+      console.log("📦 Seeding Equipments...");
+      const equipmentsToSeed = [
+        {
+          name: 'Écran 4K 27"',
+          description: "Moniteur haute résolution pour graphisme et code.",
+          price: 15,
+          price_type: "daily",
+          total_quantity: 5,
+          available_quantity: 5,
+          status: "disponible",
+        },
+        {
+          name: "Cafetière Nespresso",
+          description: "Accès illimité aux capsules de café premium.",
+          price: 5,
+          price_type: "one-time",
+          total_quantity: 10,
+          available_quantity: 10,
+          status: "disponible",
+        },
+        {
+          name: "Projecteur HD",
+          description: "Projecteur pour présentations et réunions.",
+          price: 30,
+          price_type: "hourly",
+          total_quantity: 2,
+          available_quantity: 2,
+          status: "disponible",
+        },
+        {
+          name: "Whiteboard Mobile",
+          description: "Tableau blanc avec marqueurs inclus.",
+          price: 0,
+          price_type: "one-time",
+          total_quantity: 4,
+          available_quantity: 4,
+          status: "disponible",
+        },
+      ];
+
+      const equipmentDocIds: string[] = [];
+      for (const eq of equipmentsToSeed) {
+        const existing = await (strapi as any)
+          .documents("api::equipment.equipment")
+          .findMany({
+            filters: { name: eq.name },
+          });
+
+        if (existing.length > 0) {
+          equipmentDocIds.push(existing[0].documentId);
+          // Optional: update to ensure schema matches
+          await (strapi as any).documents("api::equipment.equipment").update({
+            documentId: existing[0].documentId,
+            data: eq,
+          });
+        } else {
+          const created = await (strapi as any)
+            .documents("api::equipment.equipment")
+            .create({
+              data: { ...eq, publishedAt: new Date() },
+            });
+          equipmentDocIds.push(created.documentId);
+        }
+      }
+
+      // 3. Definitive Spaces Config
       const everyoneRoles = [
         "student",
         "trainer",
@@ -427,6 +493,11 @@ export default {
               coworking_space: csDocId
                 ? { connect: [{ documentId: csDocId }] }
                 : undefined,
+              equipments: {
+                connect: equipmentDocIds.map((docId) => ({
+                  documentId: docId,
+                })),
+              },
             },
             status: "published",
           });

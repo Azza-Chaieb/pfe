@@ -155,6 +155,11 @@ export default {
             });
         }
       }
+
+      // --- NEW: Real-time Equipment Availability Tracking ---
+      await strapi
+        .service("api::equipment.equipment")
+        .synchronizeAvailability();
     } catch (globalErr: any) {
       console.error(`[CRON][ERROR] Global failure:`, globalErr.message);
     }
@@ -180,32 +185,46 @@ export default {
         let updateRequired = false;
         const updates: any = {};
         const userEmail = (sub as any).user?.email;
-        const userName = (sub as any).user?.fullname || (sub as any).user?.username || "Client";
+        const userName =
+          (sub as any).user?.fullname ||
+          (sub as any).user?.username ||
+          "Client";
 
         if (!userEmail) continue;
 
         // 1. Expiration Alert
         if (!sub.expiration_alert_sent && sub.end_date) {
           const endDate = new Date(sub.end_date as string);
-          const daysLeft = Math.ceil((endDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+          const daysLeft = Math.ceil(
+            (endDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+          );
 
           if (daysLeft > 0 && daysLeft <= 3) {
-            console.log(`${logPrefix} Sending expiration alert to ${userEmail} (Sub: ${sub.documentId})`);
+            console.log(
+              `${logPrefix} Sending expiration alert to ${userEmail} (Sub: ${sub.documentId})`,
+            );
             try {
-              await strapi.plugin("email").service("email").send({
-                to: userEmail,
-                from: "contact@sunspace.com", // should ideally be configured en env vars
-                subject: "🚨 Urgence : Votre abonnement expire très bientôt !",
-                text: `Bonjour ${userName},\n\nVotre abonnement " ${(sub as any).plan?.name || ""} " expire dans ${daysLeft} jours.\nConnectez-vous dès maintenant pour le renouveler et conserver vos avantages.\n\nL'équipe SunSpace`,
-                html: `<h3>Bonjour ${userName},</h3>
+              await strapi
+                .plugin("email")
+                .service("email")
+                .send({
+                  to: userEmail,
+                  from: "contact@sunspace.com", // should ideally be configured en env vars
+                  subject:
+                    "🚨 Urgence : Votre abonnement expire très bientôt !",
+                  text: `Bonjour ${userName},\n\nVotre abonnement " ${(sub as any).plan?.name || ""} " expire dans ${daysLeft} jours.\nConnectez-vous dès maintenant pour le renouveler et conserver vos avantages.\n\nL'équipe SunSpace`,
+                  html: `<h3>Bonjour ${userName},</h3>
                        <p>Votre abonnement <strong>${(sub as any).plan?.name || ""}</strong> expire dans <strong>${daysLeft} jours</strong>.</p>
                        <p>Connectez-vous à votre espace pour le renouveler et conserver tous vos avantages professionnels.</p>
-                       <p>À bientôt,<br/>L'équipe SunSpace</p>`
-              });
+                       <p>À bientôt,<br/>L'équipe SunSpace</p>`,
+                });
               updates.expiration_alert_sent = true;
               updateRequired = true;
             } catch (err: any) {
-              console.error(`${logPrefix} Failed to send expiration email to ${userEmail}`, err.message);
+              console.error(
+                `${logPrefix} Failed to send expiration email to ${userEmail}`,
+                err.message,
+              );
             }
           }
         }
@@ -215,36 +234,52 @@ export default {
           const maxCredits = (sub as any).plan?.max_credits || 0;
           const remainingCredits = (sub.remaining_credits as number) || 0;
 
-          if (maxCredits > 0 && remainingCredits <= Math.ceil(maxCredits * 0.10)) {
-            console.log(`${logPrefix} Sending low credits alert to ${userEmail} (Sub: ${sub.documentId})`);
+          if (
+            maxCredits > 0 &&
+            remainingCredits <= Math.ceil(maxCredits * 0.1)
+          ) {
+            console.log(
+              `${logPrefix} Sending low credits alert to ${userEmail} (Sub: ${sub.documentId})`,
+            );
             try {
-              await strapi.plugin("email").service("email").send({
-                to: userEmail,
-                from: "contact@sunspace.com",
-                subject: "⚠️ Crédits faibles sur votre abonnement SunSpace",
-                text: `Bonjour ${userName},\n\nIl ne vous reste plus que ${remainingCredits} crédit(s) sur votre forfait ${(sub as any).plan?.name || ""}.\nPensez à passer à un forfait supérieur ou à recharger depuis votre tableau de bord.\n\nL'équipe SunSpace`,
-                html: `<h3>Bonjour ${userName},</h3>
+              await strapi
+                .plugin("email")
+                .service("email")
+                .send({
+                  to: userEmail,
+                  from: "contact@sunspace.com",
+                  subject: "⚠️ Crédits faibles sur votre abonnement SunSpace",
+                  text: `Bonjour ${userName},\n\nIl ne vous reste plus que ${remainingCredits} crédit(s) sur votre forfait ${(sub as any).plan?.name || ""}.\nPensez à passer à un forfait supérieur ou à recharger depuis votre tableau de bord.\n\nL'équipe SunSpace`,
+                  html: `<h3>Bonjour ${userName},</h3>
                        <p>Il ne vous reste plus que <strong>${remainingCredits} crédit(s)</strong> sur votre abonnement <strong>${(sub as any).plan?.name || ""}</strong>.</p>
                        <p>Ce niveau représente moins de 10% de votre maximum. Vous pouvez passer à un forfait plus important directement depuis l'application pour ne manquer de rien.</p>
-                       <p>L'équipe SunSpace</p>`
-              });
+                       <p>L'équipe SunSpace</p>`,
+                });
               updates.low_credits_alert_sent = true;
               updateRequired = true;
             } catch (err: any) {
-              console.error(`${logPrefix} Failed to send low credits email to ${userEmail}`, err.message);
+              console.error(
+                `${logPrefix} Failed to send low credits email to ${userEmail}`,
+                err.message,
+              );
             }
           }
         }
 
         if (updateRequired) {
-          await strapi.documents("api::user-subscription.user-subscription").update({
-            documentId: sub.documentId,
-            data: updates,
-          });
+          await strapi
+            .documents("api::user-subscription.user-subscription")
+            .update({
+              documentId: sub.documentId,
+              data: updates,
+            });
         }
       }
     } catch (err: any) {
-      console.error(`${logPrefix} Error running email alerts cron:`, err.message);
+      console.error(
+        `${logPrefix} Error running email alerts cron:`,
+        err.message,
+      );
     }
   },
 };

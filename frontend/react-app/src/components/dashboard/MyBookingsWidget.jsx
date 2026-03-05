@@ -1,6 +1,32 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../../api";
 
 const MyBookingsWidget = ({ bookings = [], onSeeAll, fullPage = false }) => {
+  const navigate = useNavigate();
+  const [firstSpaceDocId, setFirstSpaceDocId] = useState(null);
+
+  useEffect(() => {
+    if (fullPage) {
+      // Pre-fetch the first coworking space so we can navigate directly to 3D
+      api
+        .get("/coworking-spaces?pagination[pageSize]=1")
+        .then((res) => {
+          const first = res.data?.data?.[0];
+          if (first) setFirstSpaceDocId(first.documentId || first.id);
+        })
+        .catch(() => {});
+    }
+  }, [fullPage]);
+
+  const handleExplore = () => {
+    if (firstSpaceDocId) {
+      navigate(`/explore/${firstSpaceDocId}`);
+    } else {
+      navigate("/spaces");
+    }
+  };
+
   return (
     <div
       className={`bg-white/80 backdrop-blur-md p-6 rounded-2xl ${fullPage ? "" : "shadow-xl border border-white/20"}`}
@@ -63,12 +89,12 @@ const MyBookingsWidget = ({ bookings = [], onSeeAll, fullPage = false }) => {
           <p className="text-xs text-blue-600 font-bold uppercase tracking-widest mb-4">
             Besoin d'un nouvel espace ?
           </p>
-          <a
-            href="/spaces"
+          <button
+            onClick={handleExplore}
             className="inline-block px-8 py-4 bg-blue-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-200 hover:scale-[1.02] transition-all"
           >
-            Explorer le catalogue 3D
-          </a>
+            🧊 Explorer le catalogue 3D
+          </button>
         </div>
       )}
     </div>

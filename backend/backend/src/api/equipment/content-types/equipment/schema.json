@@ -31,11 +31,7 @@
     },
     "price_type": {
       "type": "enumeration",
-      "enum": [
-        "hourly",
-        "daily",
-        "one-time"
-      ],
+      "enum": ["hourly", "daily", "one-time"],
       "default": "one-time"
     },
     "bookings": {
@@ -44,9 +40,18 @@
       "target": "api::booking.booking",
       "mappedBy": "equipments"
     },
-    "quantity": {
+    "total_quantity": {
       "type": "integer",
       "default": 1
+    },
+    "available_quantity": {
+      "type": "integer",
+      "default": 1
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["disponible", "en_rupture", "en_maintenance"],
+      "default": "disponible"
     }
   }
 }

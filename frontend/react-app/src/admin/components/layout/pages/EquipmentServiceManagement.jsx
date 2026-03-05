@@ -36,6 +36,7 @@ const EquipmentServiceManagement = () => {
     description: "",
     price: "",
     price_type: "one-time",
+    total_quantity: 1, // NEW: default to 1
   });
 
   // Confirmation Dialogue State
@@ -85,6 +86,7 @@ const EquipmentServiceManagement = () => {
         description: attrs.description || "",
         price: attrs.price || "",
         price_type: attrs.price_type || "one-time",
+        total_quantity: attrs.total_quantity || 1, // Load existing
       });
     } else {
       setEditingItem(null);
@@ -93,6 +95,7 @@ const EquipmentServiceManagement = () => {
         description: "",
         price: "",
         price_type: "one-time",
+        total_quantity: 1, // Reset
       });
     }
     setIsModalOpen(true);
@@ -278,6 +281,9 @@ const EquipmentServiceManagement = () => {
                   <th className="p-10 text-[11px] font-black text-slate-400 uppercase tracking-[0.25em]">
                     Fréquence
                   </th>
+                  <th className="p-10 text-[11px] font-black text-slate-400 uppercase tracking-[0.25em]">
+                    Disponibilité
+                  </th>
                   <th className="p-10 text-[11px] font-black text-slate-400 uppercase tracking-[0.25em] text-right">
                     Contrôles
                   </th>
@@ -339,6 +345,35 @@ const EquipmentServiceManagement = () => {
                                 ? "Journalier"
                                 : "Unique"}
                           </span>
+                        </td>
+                        <td className="p-10">
+                          {activeTab === "equipments" ? (
+                            <div className="flex flex-col gap-1">
+                              <span className="text-xs font-bold text-slate-700">
+                                {attrs.available_quantity ?? 1} /{" "}
+                                {attrs.total_quantity ?? 1}
+                              </span>
+                              <span
+                                className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full w-fit ${
+                                  attrs.status === "en_rupture"
+                                    ? "bg-rose-50 text-rose-600"
+                                    : attrs.status === "en_maintenance"
+                                      ? "bg-amber-50 text-amber-600"
+                                      : "bg-emerald-50 text-emerald-600"
+                                }`}
+                              >
+                                {attrs.status === "en_rupture"
+                                  ? "Rupture"
+                                  : attrs.status === "en_maintenance"
+                                    ? "Maintenance"
+                                    : "Disponible"}
+                              </span>
+                            </div>
+                          ) : (
+                            <span className="text-[10px] text-slate-400 italic">
+                              Ilimité
+                            </span>
+                          )}
                         </td>
                         <td className="p-10 text-right">
                           <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity translate-x-4 group-hover:translate-x-0">
@@ -469,6 +504,28 @@ const EquipmentServiceManagement = () => {
                         </select>
                       </div>
                     </div>
+
+                    {/* NEW: Quantité pour l'équipement */}
+                    {activeTab === "equipments" && (
+                      <div>
+                        <label className="text-[10px] font-black text-slate-500 uppercase ml-2 mb-3 block tracking-[0.25em]">
+                          Quantité Totale
+                        </label>
+                        <input
+                          type="number"
+                          name="total_quantity"
+                          value={formData.total_quantity}
+                          onChange={handleChange}
+                          min="1"
+                          placeholder="1"
+                          className="w-full px-8 py-5 bg-slate-50 border border-slate-100 rounded-[1.5rem] outline-none font-black text-slate-900 focus:ring-4 focus:ring-blue-500/5 focus:border-blue-400 transition-all shadow-inner"
+                        />
+                        <p className="mt-2 text-[10px] text-slate-400 italic font-bold">
+                          La quantité de cet équipement disponible à la location
+                          simultanée.
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   <div className="pt-8 flex justify-end gap-5">

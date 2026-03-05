@@ -127,11 +127,48 @@ const InteractiveSvgMap = ({
       return spaces?.find((s) => {
         const sAttrs = s.attributes || s;
         const mesh = normalize(sAttrs.mesh_name || "");
+
+        // Support comma-separated mesh_names in Strapi (e.g., "bureau_276, bureau_277")
+        if (mesh.includes(",")) {
+          const meshParts = mesh.split(",").map((m) => m.trim());
+          if (meshParts.includes(elNorm)) return true;
+        }
+
         const sid = s.id ? s.id.toString() : "";
         const docId = sAttrs.documentId ? sAttrs.documentId.toString() : "";
 
-        if (mesh && (mesh === elNorm || elNorm.startsWith(mesh + "_"))) return true;
-        if (mesh && mesh.includes(elNorm)) return true;
+        // Support comma-separated mesh_names in Strapi (e.g., "bureau_276, bureau_*")
+        // and also wildcard suffix support (e.g., "bureau_*" matching "bureau_276")
+        if (mesh.includes(",")) {
+          const meshParts = mesh.split(",").map((m) => m.trim());
+          for (const part of meshParts) {
+            if (part.endsWith("*")) {
+              const prefix = part.slice(0, -1);
+              if (elNorm.startsWith(prefix)) return true;
+            } else if (part === elNorm) {
+              return true;
+            }
+          }
+        } else {
+          if (mesh.endsWith("*")) {
+            const prefix = mesh.slice(0, -1);
+            if (elNorm.startsWith(prefix)) return true;
+          }
+        }
+
+        if (
+          mesh &&
+          (mesh === elNorm ||
+            (!mesh.endsWith("*") && elNorm.startsWith(mesh + "_")))
+        )
+          return true;
+        if (
+          mesh &&
+          !mesh.includes(",") &&
+          !mesh.endsWith("*") &&
+          mesh.includes(elNorm)
+        )
+          return true;
         if (elDigits && (sid === elDigits || docId === elDigits)) return true;
 
         const name = normalize(sAttrs.name || "");
@@ -139,6 +176,60 @@ const InteractiveSvgMap = ({
 
         return false;
       });
+
+      // --- CLUSTER MAPPING ---
+      const getClusterKeyForElement = (elId) => {
+        const norm = normalize(elId);
+        const numMatch = norm.match(/bureau_(\d+)/);
+        const num = numMatch ? parseInt(numMatch[1]) : null;
+
+        if ((num >= 258 && num <= 275) || norm === "bureau_276")
+          return "table_top_center";
+        if ((num >= 716 && num <= 723) || norm === "bureau_280")
+          return "table_top_left";
+        if ((num >= 700 && num <= 706) || norm === "bureau_277")
+          return "table_left_1";
+        if ((num >= 710 && num <= 715) || norm === "bureau_278")
+          return "table_left_2";
+        if (norm === "bureau_279") return "table_left_3";
+        if ((num >= 742 && num <= 751) || norm === "bureau_293")
+          return "table_round_1";
+        if ((num >= 770 && num <= 779) || norm === "bureau_310")
+          return "table_round_2";
+        if ((num >= 801 && num <= 810) || norm === "bureau_327")
+          return "table_round_3";
+        if ((num >= 829 && num <= 835) || norm === "bureau_344")
+          return "table_round_4";
+        return null;
+      };
+
+      const clusterKey = getClusterKeyForElement(elementId);
+      if (clusterKey) {
+        const clusterSpace = spaces?.find(
+          (s) => (s.attributes || s)._cluster_key === clusterKey,
+        );
+        if (clusterSpace) return clusterSpace;
+      }
+
+      // --- FALLBACK MAPPING ---
+      // If no explicit match found, check if it's a student desk (bureau_XXX)
+      if (!matched && elNorm.startsWith("bureau_")) {
+        const studentSpace = spaces?.find((s) => {
+          const sAttrs = s.attributes || s;
+          const name = normalize(sAttrs.name || "");
+          return (
+            name.includes("etudiant") ||
+            name.includes("open") ||
+            name.includes("desk") ||
+            name.includes("chair") ||
+            name.includes("bureau") ||
+            sAttrs._is_virtual
+          );
+        });
+        if (studentSpace) return studentSpace;
+      }
+
+      return matched;
     };
 
     interactiveElements.forEach((el) => {
@@ -183,12 +274,18 @@ const InteractiveSvgMap = ({
       // Event Handlers
       el.onclick = (e) => {
         e.stopPropagation();
+        console.log(
+          `[SVG click] Element ID = ${elementId}, SpaceData exist = ${!!spaceData}, Status = ${status}`,
+        );
         if (status === "INACCESSIBLE" || status === "UNKNOWN") return;
         // Use the matched space's mesh_name as the canonical ID
         const canonicalId = (() => {
           const sAttrs = spaceData?.attributes || spaceData;
           return sAttrs?.mesh_name || spaceData?.mesh_name || elementId;
         })();
+        console.log(
+          `[SVG click] Firing onSelectSpace with canonialId = ${canonicalId}`,
+        );
         if (spaceData) onSelectSpace(canonicalId);
       };
 
@@ -237,12 +334,13 @@ const InteractiveSvgMap = ({
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
               <div
-                className={`w-2 h-2 rounded-full ${hoveredSpace.status === "BOOKED"
-                  ? "bg-red-500"
-                  : hoveredSpace.status === "AVAILABLE"
-                    ? "bg-emerald-500"
-                    : "bg-slate-500"
-                  }`}
+                className={`w-2 h-2 rounded-full ${
+                  hoveredSpace.status === "BOOKED"
+                    ? "bg-red-500"
+                    : hoveredSpace.status === "AVAILABLE"
+                      ? "bg-emerald-500"
+                      : "bg-slate-500"
+                }`}
               />
               <span className="text-[9px] uppercase tracking-widest font-black text-slate-400">
                 {hoveredSpace.status === "UNKNOWN"

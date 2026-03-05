@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "equipment_locks",
+  "info": {
+    "singularName": "equipment-lock",
+    "pluralName": "equipment-locks",
+    "displayName": "Equipment Lock",
+    "description": "Temporary locks for equipment selection during booking"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "equipment": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::equipment.equipment"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "start_time": {
+      "type": "datetime",
+      "required": true
+    },
+    "end_time": {
+      "type": "datetime",
+      "required": true
+    },
+    "expires_at": {
+      "type": "datetime",
+      "required": true
+    }
+  }
+}
