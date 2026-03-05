@@ -1069,13 +1069,20 @@ export interface ApiUserSubscriptionUserSubscription
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
+    discount_amount: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<0>;
     end_date: Schema.Attribute.Date & Schema.Attribute.Required;
+    expiration_alert_sent: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    final_price: Schema.Attribute.Decimal;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       "oneToMany",
       "api::user-subscription.user-subscription"
     > &
       Schema.Attribute.Private;
+    low_credits_alert_sent: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    original_price: Schema.Attribute.Decimal;
     payment_deadline: Schema.Attribute.DateTime;
     payment_method: Schema.Attribute.Enumeration<["cash", "card"]> &
       Schema.Attribute.DefaultTo<"cash">;

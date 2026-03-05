@@ -70,6 +70,24 @@
     },
     "rejection_reason": {
       "type": "string"
+    },
+    "low_credits_alert_sent": {
+      "type": "boolean",
+      "default": false
+    },
+    "expiration_alert_sent": {
+      "type": "boolean",
+      "default": false
+    },
+    "original_price": {
+      "type": "decimal"
+    },
+    "discount_amount": {
+      "type": "decimal",
+      "default": 0
+    },
+    "final_price": {
+      "type": "decimal"
     }
   }
 }

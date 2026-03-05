@@ -303,5 +303,93 @@ export default factories.createCoreController(
         ctx.badRequest(err.message || "Erreur lors du renouvellement.");
       }
     },
+
+    /**
+     * GET /api/subscriptions/history
+     */
+    async getHistory(ctx) {
+      try {
+        let userId = ctx.state.user?.id;
+
+        // If auth: false, try manual extraction from Bearer token
+        if (!userId && ctx.request.header.authorization) {
+          try {
+            const token = ctx.request.header.authorization.replace(
+              "Bearer ",
+              "",
+            );
+            const decoded = await strapi
+              .plugin("users-permissions")
+              .service("jwt")
+              .verify(token);
+            userId = decoded.id;
+          } catch (err) {
+            strapi.log.debug(
+              "Manual JWT verification failed in subscription.getHistory",
+            );
+          }
+        }
+
+        if (!userId) return ctx.unauthorized("Authentification requise.");
+
+        const subscriptionService = strapi.service(
+          "api::user-subscription.user-subscription",
+        ) as any;
+        const history = await subscriptionService.findAllByUser(userId);
+        ctx.body = { data: history };
+      } catch (err) {
+        strapi.log.error("getHistory error:", err);
+        ctx.internalServerError(
+          "Erreur lors de la récupération de l'historique.",
+        );
+      }
+    },
+
+    /**
+     * GET /api/subscriptions/:id/invoice
+     */
+    async downloadInvoice(ctx) {
+      try {
+        let userId = ctx.state.user?.id;
+
+        // If auth: false, try manual extraction from Bearer token
+        if (!userId && ctx.request.header.authorization) {
+          try {
+            const token = ctx.request.header.authorization.replace(
+              "Bearer ",
+              "",
+            );
+            const decoded = await strapi
+              .plugin("users-permissions")
+              .service("jwt")
+              .verify(token);
+            userId = decoded.id;
+          } catch (err) {
+            strapi.log.debug(
+              "Manual JWT verification failed in subscription.downloadInvoice",
+            );
+          }
+        }
+
+        if (!userId) return ctx.unauthorized("Authentification requise.");
+
+        const { id } = ctx.params;
+        if (!id) return ctx.badRequest("L'ID de l'abonnement est requis.");
+
+        const subscriptionService = strapi.service(
+          "api::user-subscription.user-subscription",
+        ) as any;
+
+        const pdfDoc = await subscriptionService.generateInvoice(Number(id), userId);
+
+        ctx.set("Content-Type", "application/pdf");
+        ctx.set("Content-Disposition", `attachment; filename="facture-${id}.pdf"`);
+
+        ctx.body = pdfDoc;
+      } catch (err: any) {
+        strapi.log.error("downloadInvoice error:", err);
+        ctx.badRequest(err.message || "Erreur lors du téléchargement de la facture.");
+      }
+    },
   }),
 );

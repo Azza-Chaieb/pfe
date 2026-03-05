@@ -45,5 +45,17 @@ export default {
       handler: "api::subscription.subscription.renew",
       config: { auth: false, policies: [], middlewares: [] },
     },
+    {
+      method: "GET",
+      path: "/subscriptions/history",
+      handler: "api::subscription.subscription.getHistory",
+      config: { auth: false, policies: [], middlewares: [] },
+    },
+    {
+      method: "GET",
+      path: "/subscriptions/:id/invoice",
+      handler: "api::subscription.subscription.downloadInvoice",
+      config: { auth: false, policies: [], middlewares: [] },
+    },
   ],
 };
