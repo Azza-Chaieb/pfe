@@ -42,8 +42,9 @@ export const getRecentActivity = async () => {
 
 export const getUserReservations = async (userId, page = 1, pageSize = 25) => {
   try {
+    // Nested object population is more robust for deep relations in Strapi v5
     const response = await api.get(
-      `/bookings?filters[user][id][$eq]=${userId}&populate[0]=space&populate[1]=payment&sort=start_time:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}`,
+      `/bookings?filters[user][id][$eq]=${userId}&populate[space][populate]=*&populate[payment]=true&populate[equipments]=true&populate[services]=true&sort=start_time:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}`
     );
     return response.data;
   } catch (error) {
@@ -59,7 +60,7 @@ export const getProfessionalBookings = async (
 ) => {
   try {
     const response = await api.get(
-      `/bookings?filters[user][id][$eq]=${userId}&populate[0]=space&populate[1]=payment&sort=start_time:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}`,
+      `/bookings?filters[user][id][$eq]=${userId}&populate[space][populate]=*&populate[payment]=true&populate[equipments]=true&populate[services]=true&sort=start_time:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}`
     );
     return response.data;
   } catch (error) {
@@ -71,8 +72,10 @@ export const getProfessionalBookings = async (
 export const getAllReservations = async (page = 1, pageSize = 50) => {
   try {
     const response = await api.get(
-      `/bookings?populate[0]=user&populate[1]=space&populate[2]=space.coworking_space&populate[3]=payment&populate[4]=payment.proof_url&sort[0]=start_time:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}`,
+      `/bookings?populate[user]=true&populate[space][populate]=*&populate[payment][populate][proof_url]=true&populate[equipments]=true&populate[services]=true&sort[0]=start_time:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}`
     );
+
+
     return response.data;
   } catch (error) {
     console.error("Error fetching all reservations:", error);

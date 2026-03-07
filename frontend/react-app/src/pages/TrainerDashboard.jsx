@@ -305,9 +305,18 @@ const TrainerDashboard = ({ activeTab = "dashboard" }) => {
                   return (
                     <tr key={booking.id}>
                       <td className="py-4 font-bold text-slate-700">
-                        {space.name
-                          ? `${coworking.name || "Espace"} - ${space.name}`
-                          : coworking.name || "Espace"}
+                        {(() => {
+                          const getSpaceDisplayName = () => {
+                            if (space.name) return `${coworking.name || "SunSpace"} - ${space.name}`;
+                            if (space.mesh_name) return `${coworking.name || "SunSpace"} - ${space.mesh_name.replace(/bureau_/i, 'Bureau ')}`;
+                            if (space.type) {
+                              const types = { 'meeting-room': 'Réunion', 'event-space': 'Événementiel', 'hot-desk': 'Hot Desk', 'fixed-desk': 'Bureau Fixe' };
+                              return `${coworking.name || "SunSpace"} - Espace ${types[space.type] || space.type}`;
+                            }
+                            return coworking.name || "SunSpace";
+                          };
+                          return getSpaceDisplayName();
+                        })()}
                       </td>
                       <td className="py-4 text-center text-slate-500">
                         {new Date(data.date).toLocaleDateString()}

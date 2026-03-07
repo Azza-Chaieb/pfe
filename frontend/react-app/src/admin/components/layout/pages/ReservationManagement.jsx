@@ -65,19 +65,19 @@ const ReservationManagement = () => {
     pending: reservations.filter(
       (r) => (r.attributes?.status || r.status) === "pending",
     ).length,
-    confirmed: reservations.filter(
-      (r) => (r.attributes?.status || r.status) === "confirmed",
-    ).length,
     revenue: reservations
-      .filter((r) => (r.attributes?.status || r.status) === "confirmed")
-      .reduce(
-        (sum, r) =>
-          sum + (Number(r.attributes?.total_price || r.total_price) || 0),
-        0,
-      ),
+      .filter((r) => {
+        const status = r.attributes?.status || r.status;
+        return status === "confirmed";
+      })
+      .reduce((sum, r) => {
+        const data = r.attributes || r;
+        const payment = data.payment?.data?.attributes || data.payment || {};
+        return sum + (Number(data.total_price || payment.amount) || 0);
+      }, 0),
     today: reservations.filter((r) => {
-      const attrs = r.attributes || r;
-      const date = new Date(attrs.start_time || attrs.start_time);
+      const data = r.attributes || r;
+      const date = new Date(data.start_time);
       const today = new Date();
       return date.toDateString() === today.toDateString();
     }).length,
@@ -86,15 +86,15 @@ const ReservationManagement = () => {
   const [dateRange, setDateRange] = useState({ start: "", end: "" });
 
   const filteredReservations = reservations.filter((res) => {
-    const attrs = res.attributes || res;
+    const data = res.attributes || res;
 
     // Status Filter
-    const matchesFilter = filter === "all" || attrs.status === filter;
+    const matchesFilter = filter === "all" || data.status === filter;
 
     // Search Filter
-    const user = attrs.user?.data?.attributes || attrs.user || {};
+    const user = data.user?.data?.attributes || data.user || {};
     const userName = user.fullname || user.username || "";
-    const space = attrs.space?.data?.attributes || attrs.space || {};
+    const space = data.space?.data?.attributes || data.space || {};
     const spaceName = space.name || "";
     const matchesSearch =
       userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -104,7 +104,7 @@ const ReservationManagement = () => {
     // Date Range Filter
     let matchesDate = true;
     if (dateRange.start || dateRange.end) {
-      const resDate = new Date(attrs.start_time);
+      const resDate = new Date(data.start_time);
       if (dateRange.start && resDate < new Date(dateRange.start))
         matchesDate = false;
       if (dateRange.end && resDate > new Date(dateRange.end))
@@ -255,11 +255,10 @@ const ReservationManagement = () => {
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`px-5 py-3 rounded-[1.8rem] text-[9px] font-black uppercase tracking-widest transition-all ${
-                  filter === f
-                    ? "bg-slate-900 text-white shadow-lg shadow-slate-900/30"
-                    : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"
-                }`}
+                className={`px-5 py-3 rounded-[1.8rem] text-[9px] font-black uppercase tracking-widest transition-all ${filter === f
+                  ? "bg-slate-900 text-white shadow-lg shadow-slate-900/30"
+                  : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"
+                  }`}
               >
                 {f === "all"
                   ? "Tous"
@@ -324,17 +323,24 @@ const ReservationManagement = () => {
                   </tr>
                 ) : (
                   filteredReservations.map((res) => {
-                    const attrs = res.attributes || res;
-                    const user =
-                      attrs.user?.data?.attributes || attrs.user || {};
-                    const space =
-                      attrs.space?.data?.attributes || attrs.space || {};
-                    const coworking =
-                      attrs.coworking_space?.data?.attributes ||
-                      attrs.coworking_space ||
-                      {};
-                    const payment =
-                      attrs.payment?.data?.attributes || attrs.payment || null;
+                    const data = res.attributes || res;
+                    const user = data.user?.data?.attributes || data.user || {};
+
+                    const spaceData = data.space?.data || data.space;
+                    const space = spaceData?.attributes || spaceData || {};
+
+                    // Coworking data can come from space or directly from booking
+                    const directCoworkingData = data.coworking_space?.data || data.coworking_space;
+                    const spaceCoworkingData = space.coworking_space?.data || space.coworking_space;
+                    const coworkingData = directCoworkingData || spaceCoworkingData;
+                    const coworking = coworkingData?.attributes || coworkingData || {};
+
+                    const equipmentData = data.equipments?.data || data.equipments || [];
+                    const firstEquipment = equipmentData[0]?.attributes || equipmentData[0] || null;
+                    const serviceData = data.services?.data || data.services || [];
+                    const firstService = serviceData[0]?.attributes || serviceData[0] || null;
+
+                    const payment = data.payment?.data?.attributes || data.payment || null;
 
                     return (
                       <tr
@@ -359,17 +365,57 @@ const ReservationManagement = () => {
                           </div>
                         </td>
                         <td className="px-6 py-8">
-                          <p className="text-sm font-black text-slate-800 leading-tight">
-                            {space.name || "Espace"}
-                          </p>
-                          <p className="text-[11px] text-blue-500 font-extrabold uppercase tracking-tight mt-0.5">
-                            {coworking.name || "SunSpace"}
-                          </p>
+                          {(() => {
+                            const spaceAttrs = data.space?.data?.attributes || data.space || {};
+                            const equips = data.equipments?.data || data.equipments || [];
+                            const firstEquip = equips[0]?.attributes || equips[0] || null;
+
+                            const getSpaceDisplayName = () => {
+                              // 1. Primary: Use the actual relation if populated
+                              if (spaceAttrs.name) return spaceAttrs.name;
+                              if (spaceAttrs.mesh_name) {
+                                return spaceAttrs.mesh_name.replace(/bureau_/i, 'Bureau ').replace(/_/g, ' ');
+                              }
+                              if (spaceAttrs.type) {
+                                const types = {
+                                  'meeting-room': 'Salle de Réunion',
+                                  'event-space': 'Espace Événementiel',
+                                  'hot-desk': 'Hot Desk',
+                                  'fixed-desk': 'Bureau Fixe'
+                                };
+                                return types[spaceAttrs.type] || spaceAttrs.type;
+                              }
+
+                              // 2. Redundancy Fallback: Use data stored in extras
+                              if (data.extras?.spaceName) return data.extras.spaceName;
+
+                              // 3. Last resort: Coworking name or SunSpace
+                              return coworking.name || data.extras?.coworkingName || "SunSpace";
+                            };
+
+                            const primaryName = getSpaceDisplayName();
+                            let badge = "";
+
+                            if (spaceAttrs.name || spaceAttrs.mesh_name || data.extras?.spaceName) {
+                              badge = firstEquip?.name ? `+ ${firstEquip.name}` : "";
+                            } else if (firstEquip?.name) {
+                              badge = "ÉQUIPEMENT";
+                            } else {
+                              badge = "SUNSPACE";
+                            }
+
+                            return (
+                              <>
+                                <p className="text-sm font-black text-slate-800 leading-tight">{primaryName}</p>
+                                <p className="text-[11px] text-blue-500 font-extrabold uppercase tracking-tight mt-0.5">{badge}</p>
+                              </>
+                            );
+                          })()}
                         </td>
                         <td className="px-6 py-8">
                           <div className="flex flex-col">
                             <p className="text-sm font-black text-slate-800">
-                              {new Date(attrs.start_time).toLocaleDateString(
+                              {new Date(data.start_time).toLocaleDateString(
                                 "fr-FR",
                                 {
                                   day: "numeric",
@@ -379,12 +425,12 @@ const ReservationManagement = () => {
                               )}
                             </p>
                             <span className="text-[10px] font-black bg-blue-50 text-blue-600 px-2 py-0.5 rounded-md self-start mt-1">
-                              {new Date(attrs.start_time).toLocaleTimeString(
+                              {new Date(data.start_time).toLocaleTimeString(
                                 "fr-FR",
                                 { hour: "2-digit", minute: "2-digit" },
                               )}{" "}
                               -{" "}
-                              {new Date(attrs.end_time).toLocaleTimeString(
+                              {new Date(data.end_time).toLocaleTimeString(
                                 "fr-FR",
                                 { hour: "2-digit", minute: "2-digit" },
                               )}
@@ -394,7 +440,53 @@ const ReservationManagement = () => {
                         <td className="px-6 py-8">
                           <div className="flex flex-col">
                             <p className="text-base font-black text-slate-900">
-                              {attrs.total_price || 0}{" "}
+                              {(() => {
+                                const storedPrice = Number(data.total_price || data.totalPrice || payment?.amount);
+                                if (storedPrice > 0) return storedPrice.toFixed(2);
+
+                                // Fallback calculation if price is missing/0
+                                const start = new Date(data.start_time);
+                                const end = new Date(data.end_time);
+                                const hours = Math.ceil((end - start) / (1000 * 60 * 60));
+
+                                if (hours > 0) {
+                                  let calcPrice = 0;
+                                  let pHourly = space.pricing_hourly || 0;
+
+                                  // Emergency fallback
+                                  if (pHourly === 0 && space.type) {
+                                    if (space.type === "meeting-room") pHourly = 15;
+                                    else if (space.type === "event-space") pHourly = 20;
+                                    else if (space.type === "hot-desk" || space.type === "fixed-desk") pHourly = 5;
+                                  }
+
+                                  if (pHourly > 0) {
+                                    calcPrice += hours * pHourly * (data.participants || 1);
+                                  }
+
+                                  // Add equipments
+                                  equipmentData.forEach(eq => {
+                                    const ep = eq.attributes || eq;
+                                    if (ep.price) {
+                                      if (ep.price_type === 'hourly') calcPrice += ep.price * hours;
+                                      else calcPrice += ep.price;
+                                    }
+                                  });
+
+                                  // Add services
+                                  serviceData.forEach(sv => {
+                                    const sp = sv.attributes || sv;
+                                    if (sp.price) {
+                                      if (sp.price_type === 'hourly') calcPrice += sp.price * hours;
+                                      else calcPrice += sp.price;
+                                    }
+                                  });
+
+                                  if (calcPrice > 0) return calcPrice.toFixed(2);
+                                }
+
+                                return "0.00";
+                              })()}
                               <span className="text-xs font-bold text-slate-400">
                                 DT
                               </span>
@@ -411,17 +503,16 @@ const ReservationManagement = () => {
                         <td className="px-6 py-8">
                           <div className="flex flex-col gap-2">
                             <div
-                              className={`px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest text-center shadow-sm ${
-                                attrs.status === "confirmed"
-                                  ? "bg-emerald-50 text-emerald-600 border border-emerald-100"
-                                  : attrs.status === "pending"
-                                    ? "bg-amber-50 text-amber-600 border border-amber-100"
-                                    : "bg-rose-50 text-rose-600 border border-rose-100"
-                              }`}
+                              className={`px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest text-center shadow-sm ${data.status === "confirmed"
+                                ? "bg-emerald-50 text-emerald-600 border border-emerald-100"
+                                : data.status === "pending"
+                                  ? "bg-amber-50 text-amber-600 border border-amber-100"
+                                  : "bg-rose-50 text-rose-600 border border-rose-100"
+                                }`}
                             >
-                              {attrs.status === "pending"
+                              {data.status === "pending"
                                 ? "Attente"
-                                : attrs.status === "confirmed"
+                                : data.status === "confirmed"
                                   ? "Validé"
                                   : "Annulé"}
                             </div>
@@ -451,15 +542,15 @@ const ReservationManagement = () => {
                             )}
 
                             <div className="flex flex-col gap-2 min-w-[120px]">
-                              {attrs.status === "pending" && (
+                              {data.status === "pending" && (
                                 <button
                                   onClick={() =>
                                     payment
                                       ? handleConfirmPayment(payment.id)
                                       : handleStatusUpdate(
-                                          res.documentId || res.id,
-                                          "confirmed",
-                                        )
+                                        res.documentId || res.id,
+                                        "confirmed",
+                                      )
                                   }
                                   disabled={actionLoading}
                                   className="py-2.5 bg-slate-900 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-lg shadow-slate-200 disabled:opacity-50"
@@ -467,7 +558,7 @@ const ReservationManagement = () => {
                                   {actionLoading ? "..." : "Confirmer"}
                                 </button>
                               )}
-                              {attrs.status !== "cancelled" && (
+                              {data.status !== "cancelled" && (
                                 <button
                                   onClick={() =>
                                     handleStatusUpdate(

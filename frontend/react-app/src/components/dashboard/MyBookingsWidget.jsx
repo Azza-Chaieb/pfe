@@ -15,7 +15,7 @@ const MyBookingsWidget = ({ bookings = [], onSeeAll, fullPage = false }) => {
           const first = res.data?.data?.[0];
           if (first) setFirstSpaceDocId(first.documentId || first.id);
         })
-        .catch(() => {});
+        .catch(() => { });
     }
   }, [fullPage]);
 
@@ -54,11 +54,21 @@ const MyBookingsWidget = ({ bookings = [], onSeeAll, fullPage = false }) => {
               key={booking.id}
               className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100 shadow-sm hover:shadow-md transition-all"
             >
-              <div className="font-bold text-blue-800 mb-1">
-                {booking.spaceName}
+              <div className="flex justify-between items-start mb-1">
+                <div className="font-bold text-blue-800 flex-1">
+                  {booking.spaceName}
+                </div>
+                <div className="text-[10px] font-black text-slate-900 bg-white/60 px-2 py-0.5 rounded-md border border-white/40">
+                  {Number(booking.totalPrice || 0).toFixed(2)} DT
+                </div>
               </div>
-              <div className="text-sm text-gray-600 mb-2 flex items-center gap-2">
-                <span className="opacity-60">📅</span> {booking.date}
+              <div className="text-sm text-gray-600 mb-2 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="opacity-60">📅</span> {booking.date}
+                </div>
+                <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-full ${booking.status === 'confirmed' ? 'bg-emerald-100 text-emerald-600' : 'bg-orange-100 text-orange-600'}`}>
+                  {booking.status === 'confirmed' ? 'Confirmé' : booking.status === 'cancelled' ? 'Annulé' : 'Attente'}
+                </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-[10px] px-2.5 py-1 bg-white text-blue-700 rounded-full font-black uppercase border border-blue-50 shadow-sm">
@@ -67,7 +77,12 @@ const MyBookingsWidget = ({ bookings = [], onSeeAll, fullPage = false }) => {
                 <button
                   onClick={() =>
                     alert(
-                      `Détails de la réservation pour : ${booking.spaceName}\nDate : ${booking.date}\nHeure : ${booking.time}`,
+                      `Détails de la réservation pour : ${booking.spaceName}\n` +
+                      `Date : ${booking.date}\n` +
+                      `Heure : ${booking.time}\n` +
+                      `Participants : ${booking.participants || 1}\n` +
+                      (booking.equipmentNames ? `Équipements : ${booking.equipmentNames}\n` : "") +
+                      (booking.serviceNames ? `Services : ${booking.serviceNames}` : "")
                     )
                   }
                   className="text-[9px] font-black uppercase text-blue-600 hover:text-blue-800 tracking-widest underline decoration-2 underline-offset-4 decoration-blue-200"

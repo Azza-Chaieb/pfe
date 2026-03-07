@@ -9,6 +9,7 @@ import paymentConfirmationEmail from "../templates/payment-confirmation";
 import subscriptionRequestEmail from "../templates/subscription-request";
 import subscriptionConfirmedEmail from "../templates/subscription-confirmed";
 import subscriptionRejectedEmail from "../templates/subscription-rejected";
+import reservationRequestEmail from "../templates/reservation-request";
 
 export default ({ strapi }) => {
   const getEmailService = () => {
@@ -281,6 +282,39 @@ export default ({ strapi }) => {
         );
       } catch (error) {
         strapi.log.error("Failed to send subscription rejected email:", error);
+      }
+    },
+
+    /**
+     * Send reservation request pending email (Cash payment)
+     */
+    async sendReservationRequest(
+      userEmail: string,
+      userName: string,
+      reservationDetails: any,
+      paymentDeadline: string | null = null,
+    ) {
+      try {
+        strapi.log.debug(
+          `[EmailService] Attempting to send Reservation Request email to ${userEmail} for space ${reservationDetails.spaceName}`,
+        );
+        const htmlContent = reservationRequestEmail(
+          userName,
+          reservationDetails,
+          paymentDeadline,
+          FRONTEND_URL,
+        );
+        await getEmailService().send({
+          to: userEmail,
+          from: DEFAULT_FROM,
+          subject: `⌛ Demande de réservation ${reservationDetails.spaceName} reçue`,
+          html: htmlContent,
+        });
+        strapi.log.info(
+          `[EmailService] Reservation request email sent to ${userEmail}`,
+        );
+      } catch (error) {
+        strapi.log.error("Failed to send reservation request email:", error);
       }
     },
   };

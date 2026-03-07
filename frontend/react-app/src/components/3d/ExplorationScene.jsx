@@ -180,7 +180,7 @@ const ExplorationScene = () => {
                 is_per_chair: true,
                 _is_virtual: true,
                 _cluster_key: key,
-                _originalIds: clusterSpaces.map((s) => s.id),
+                _originalIds: clusterSpaces.map((s) => s.documentId || s.id),
               },
             };
           });

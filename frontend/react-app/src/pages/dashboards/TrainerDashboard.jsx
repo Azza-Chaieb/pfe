@@ -299,36 +299,127 @@ const TrainerDashboard = ({ activeTab = "dashboard" }) => {
                   <th className="pb-4 font-black text-slate-400 uppercase tracking-widest text-center">
                     Date
                   </th>
+                  <th className="pb-4 font-black text-slate-400 uppercase tracking-widest text-center">
+                    Prix
+                  </th>
                   <th className="pb-4 font-black text-slate-400 uppercase tracking-widest text-right">
                     Statut
+                  </th>
+                  <th className="pb-4 font-black text-slate-400 uppercase tracking-widest text-right">
+                    Actions
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
-                {bookings.map((booking) => {
-                  const data = booking.attributes || booking;
-                  const space =
-                    data.space?.data?.attributes || data.space || {};
-                  const coworking =
-                    data.coworking_space?.data?.attributes ||
-                    data.coworking_space ||
-                    {};
+                {bookings.map((item) => {
+                  const data = item.attributes || item;
+                  // Defensive mapping for nested/flat Strapi data
+                  const spaceRaw = data.space?.data || data.space || {};
+                  const space = spaceRaw?.attributes || spaceRaw || {};
+
+                  // Coworking can come from space or directly from booking
+                  const cwRaw = space.coworking_space?.data || space.coworking_space ||
+                    data.coworking_space?.data || data.coworking_space || {};
+                  const coworking = cwRaw?.attributes || cwRaw || {};
+
+                  const startDate = new Date(data.start_time || data.date);
+                  const endDate = new Date(data.end_time);
+
+                  const getSpaceDisplayName = () => {
+                    // Prioritize the actual space name or formatted mesh name
+                    if (space.name) return space.name;
+
+                    if (space.mesh_name) {
+                      return space.mesh_name.replace(/bureau_/i, 'Bureau ').replace(/_/g, ' ');
+                    }
+
+                    if (space.type) {
+                      const types = {
+                        'meeting-room': 'Salle de Réunion',
+                        'event-space': 'Espace Événementiel',
+                        'hot-desk': 'Hot Desk',
+                        'fixed-desk': 'Bureau Fixe'
+                      };
+                      return types[space.type] || space.type;
+                    }
+
+                    // 2. Redundancy Fallback: Use data stored in extras (if we started saving it)
+                    if (data.extras?.spaceName) return data.extras.spaceName;
+
+                    // 3. Last resort: Coworking name or SunSpace
+                    return coworking.name || data.extras?.coworkingName || "SunSpace";
+                  };
+
+                  const totalPrice = (() => {
+                    const storedPrice = Number(data.total_price || data.totalPrice || data.payment?.data?.attributes?.amount || data.payment?.amount);
+                    if (storedPrice > 0) return storedPrice.toFixed(2);
+
+                    const hours = Math.ceil((endDate - startDate) / (1000 * 60 * 60));
+                    if (hours > 0) {
+                      let calcPrice = 0;
+                      let pHourly = space.pricing_hourly || 0;
+
+                      if (pHourly === 0 && space.type) {
+                        if (space.type === "meeting-room") pHourly = 15;
+                        else if (space.type === "event-space") pHourly = 20;
+                        else if (space.type === "hot-desk" || space.type === "fixed-desk") pHourly = 5;
+                      }
+
+                      if (pHourly > 0) calcPrice += hours * pHourly * (data.participants || 1);
+
+                      (data.equipments?.data || data.equipments || []).forEach(eq => {
+                        const p = eq.attributes || eq;
+                        if (p.price) calcPrice += (p.price_type === 'hourly' ? p.price * hours : p.price);
+                      });
+
+                      (data.services?.data || data.services || []).forEach(sv => {
+                        const p = sv.attributes || sv;
+                        if (p.price) calcPrice += (p.price_type === 'hourly' ? p.price * hours : p.price);
+                      });
+                      return calcPrice.toFixed(2);
+                    }
+                    return "0.00";
+                  })();
+
+                  const spaceNameLabel = getSpaceDisplayName();
+
                   return (
-                    <tr key={booking.id}>
+                    <tr key={item.id}>
                       <td className="py-4 font-bold text-slate-700">
-                        {space.name
-                          ? `${coworking.name || "Espace"} - ${space.name}`
-                          : coworking.name || "Espace"}
+                        {spaceNameLabel}
                       </td>
                       <td className="py-4 text-center text-slate-500">
-                        {new Date(data.date).toLocaleDateString()}
+                        {startDate.toLocaleDateString()}
+                      </td>
+                      <td className="py-4 text-center font-black text-slate-900">
+                        {totalPrice} DT
                       </td>
                       <td className="py-4 text-right">
                         <span
                           className={`px-3 py-1 rounded-full text-[9px] font-black uppercase ${data.status === "confirmed" ? "bg-emerald-50 text-emerald-600" : "bg-orange-50 text-orange-600"}`}
                         >
-                          {data.status || "En attente"}
+                          {data.status === 'confirmed' ? 'Confirmé' : data.status === 'cancelled' ? 'Annulé' : 'Attente'}
                         </span>
+                      </td>
+                      <td className="py-4 text-right">
+                        <button
+                          onClick={() => {
+                            const eqNames = (data.equipments?.data || data.equipments || []).map(eq => (eq.attributes || eq).name).join(", ");
+                            const svNames = (data.services?.data || data.services || []).map(sv => (sv.attributes || sv).name).join(", ");
+                            const participants = data.participants || data.extras?.contact?.participants || 1;
+                            alert(
+                              `Détails : ${spaceNameLabel}\n` +
+                              `Date : ${startDate.toLocaleDateString()}\n` +
+                              `Heure : ${startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${endDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}\n` +
+                              `Participants : ${participants}\n` +
+                              (eqNames ? `Équipements : ${eqNames}\n` : "") +
+                              (svNames ? `Services : ${svNames}` : "")
+                            );
+                          }}
+                          className="text-[9px] font-black uppercase text-blue-600 hover:text-blue-800 underline transition-all"
+                        >
+                          Détails
+                        </button>
                       </td>
                     </tr>
                   );

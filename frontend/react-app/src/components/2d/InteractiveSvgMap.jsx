@@ -124,7 +124,7 @@ const InteractiveSvgMap = ({
       const elNorm = normalize(elementId);
       const elDigits = extractDigits(elementId);
 
-      return spaces?.find((s) => {
+      const matched = spaces?.find((s) => {
         const sAttrs = s.attributes || s;
         const mesh = normalize(sAttrs.mesh_name || "");
 
@@ -176,6 +176,8 @@ const InteractiveSvgMap = ({
 
         return false;
       });
+
+      if (matched) return matched;
 
       // --- CLUSTER MAPPING ---
       const getClusterKeyForElement = (elId) => {
@@ -334,13 +336,12 @@ const InteractiveSvgMap = ({
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
               <div
-                className={`w-2 h-2 rounded-full ${
-                  hoveredSpace.status === "BOOKED"
+                className={`w-2 h-2 rounded-full ${hoveredSpace.status === "BOOKED"
                     ? "bg-red-500"
                     : hoveredSpace.status === "AVAILABLE"
                       ? "bg-emerald-500"
                       : "bg-slate-500"
-                }`}
+                  }`}
               />
               <span className="text-[9px] uppercase tracking-widest font-black text-slate-400">
                 {hoveredSpace.status === "UNKNOWN"

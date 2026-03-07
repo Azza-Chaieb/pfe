@@ -25,7 +25,11 @@
     },
     "price_type": {
       "type": "enumeration",
-      "enum": ["hourly", "daily", "one-time"],
+      "enum": [
+        "hourly",
+        "daily",
+        "one-time"
+      ],
       "default": "one-time"
     },
     "quantity": {
@@ -43,6 +47,9 @@
       "relation": "manyToMany",
       "target": "api::booking.booking",
       "mappedBy": "services"
+    },
+    "configuration": {
+      "type": "json"
     }
   }
 }

@@ -10,13 +10,22 @@ import {
   cancelReservation,
   updateReservation,
 } from "../../services/bookingService";
+import {
+  getEquipments,
+  getEquipmentAvailability,
+  lockEquipment,
+  unlockEquipment
+} from "../../services/equipmentService";
+import { getServicesList } from "../../services/serviceService";
 
 const BookingCalendar = ({ userId }) => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editData, setEditData] = useState({ date: "", timeSlot: "" });
+  const [allEquipments, setAllEquipments] = useState([]);
+  const [allServices, setAllServices] = useState([]);
+  const [equipmentQuantities, setEquipmentQuantities] = useState({});
+  const [serviceQuantities, setServiceQuantities] = useState({});
   const [actionLoading, setActionLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -27,58 +36,104 @@ const BookingCalendar = ({ userId }) => {
       const data = response.data || [];
 
       const mappedEvents = data.map((res) => {
-        console.log(`[Calendar] Raw Reservation Data:`, res);
         const attrs = res.attributes || res;
         const startTime = attrs.start_time;
         const endTime = attrs.end_time;
-        const timeSlot = attrs.time_slot || ""; // Fallback for legacy
+        const timeSlot = attrs.time_slot || "";
 
-        let start,
-          end,
-          allDay = false;
+        // Defensive mapping for nested/flat Strapi data
+        const spaceRaw = attrs.space?.data || attrs.space || {};
+        const spaceAttrs = spaceRaw?.attributes || (typeof spaceRaw === 'object' ? spaceRaw : {});
+        const coworkingRaw = spaceAttrs.coworking_space?.data || spaceAttrs.coworking_space || {};
+        const coworking = coworkingRaw?.attributes || coworkingRaw || {};
 
+        const getSpaceDisplayName = () => {
+          if (spaceAttrs.name) return spaceAttrs.name;
+          if (spaceAttrs.mesh_name) {
+            return spaceAttrs.mesh_name.replace(/bureau_/i, 'Bureau ').replace(/_/g, ' ');
+          }
+          if (spaceAttrs.type) {
+            const types = {
+              'meeting-room': 'Salle de Réunion',
+              'event-space': 'Espace Événementiel',
+              'hot-desk': 'Hot Desk',
+              'fixed-desk': 'Bureau Fixe'
+            };
+            return types[spaceAttrs.type] || spaceAttrs.type;
+          }
+          // 2. Redundancy Fallback: Use data stored in extras (if we started saving it)
+          if (attrs.extras?.spaceName) return attrs.extras.spaceName;
+
+          // 3. Last resort: Coworking name or SunSpace
+          return coworking.name || attrs.extras?.coworkingName || "SunSpace";
+        };
+
+        const spaceNameLabel = getSpaceDisplayName();
+
+        const totalPrice = (() => {
+          const storedPrice = Number(attrs.total_price || attrs.totalPrice || attrs.payment?.data?.attributes?.amount || attrs.payment?.amount);
+          if (storedPrice > 0) return storedPrice.toFixed(2);
+
+          const start = new Date(startTime);
+          const end = new Date(endTime);
+          const hours = Math.ceil((end - start) / (1000 * 60 * 60));
+          if (hours > 0) {
+            let calcPrice = 0;
+            let pHourly = parseFloat(spaceAttrs.pricing_hourly || 0);
+
+            if (pHourly === 0 && spaceAttrs.type) {
+              if (spaceAttrs.type === "meeting-room") pHourly = 15;
+              else if (spaceAttrs.type === "event-space") pHourly = 20;
+              else if (spaceAttrs.type === "hot-desk" || spaceAttrs.type === "fixed-desk") pHourly = 5;
+            }
+
+            if (pHourly > 0) calcPrice += hours * pHourly * (attrs.participants || 1);
+
+            (attrs.equipments?.data || attrs.equipments || []).forEach(eq => {
+              const p = eq.attributes || eq;
+              if (p.price) calcPrice += (p.price_type === 'hourly' ? p.price * hours : p.price);
+            });
+
+            (attrs.services?.data || attrs.services || []).forEach(sv => {
+              const p = sv.attributes || sv;
+              if (p.price) calcPrice += (p.price_type === 'hourly' ? p.price * hours : p.price);
+            });
+            return calcPrice.toFixed(2);
+          }
+          return "0.00";
+        })();
+
+        let start, end, allDay = false;
         if (startTime && endTime) {
           start = startTime;
           end = endTime;
-        } else if (timeSlot === "Full Day") {
-          start = date;
-          allDay = true;
         } else {
-          const times = timeSlot.split(" - ");
-          if (times.length === 2) {
-            start = `${date}T${times[0]}:00`;
-            end = `${date}T${times[1]}:00`;
-          } else {
-            start = date;
-            allDay = true;
-          }
+          start = attrs.date || attrs.start_time;
+          allDay = true;
         }
 
-        // Status colors
-        let color = "#3b82f6"; // Default Blue
-        if (attrs.status === "confirmed") color = "#10b981"; // Emerald
-        if (attrs.status === "pending") color = "#f59e0b"; // Amber
-        if (attrs.status === "cancelled") color = "#ef4444"; // Red
+        let color = "#3b82f6";
+        if (attrs.status === "confirmed") color = "#10b981";
+        if (attrs.status === "pending") color = "#f59e0b";
+        if (attrs.status === "cancelled") color = "#ef4444";
 
         return {
           id: res.id,
-          title:
-            attrs.space?.data?.attributes?.name ||
-            attrs.space?.name ||
-            "Réservation",
+          title: spaceNameLabel,
           start,
           end,
           allDay,
           extendedProps: {
             status: attrs.status,
-            documentId: res.documentId, // CRITICAL: Ensure documentId is here
-            spaceName: attrs.space?.data?.attributes?.name || attrs.space?.name,
-            coworkingName:
-              attrs.coworking_space?.data?.attributes?.name ||
-              attrs.coworking_space?.name,
+            documentId: res.documentId || res.id,
+            spaceName: spaceNameLabel,
+            coworkingName: coworking.name || "SunSpace",
             timeSlot: timeSlot,
-            totalPrice: attrs.total_price || attrs.totalPrice || 0,
-            equipment: attrs.equipment || [],
+            totalPrice: totalPrice,
+            equipment: attrs.equipments?.data || attrs.equipments || [],
+            services: attrs.services?.data || attrs.services || [],
+            extras: attrs.extras || {},
+            space: spaceAttrs, // Keep normalized space attributes for price calculation
           },
           backgroundColor: color,
           borderColor: "transparent",
@@ -94,14 +149,23 @@ const BookingCalendar = ({ userId }) => {
   };
 
   const handleDateClick = (arg) => {
-    if (
-      window.confirm(
-        `Voulez-vous créer une réservation pour le ${arg.dateStr} ?`,
-      )
-    ) {
+    if (window.confirm(`Voulez-vous créer une réservation pour le ${arg.dateStr} ?`)) {
       navigate("/explore/5");
     }
   };
+
+  useEffect(() => {
+    const loadStaticData = async () => {
+      try {
+        const [eqRes, srvRes] = await Promise.all([getEquipments(), getServicesList()]);
+        setAllEquipments(eqRes.data || []);
+        setAllServices(srvRes.data || []);
+      } catch (err) {
+        console.error("Error loading equipment/services for calendar:", err);
+      }
+    };
+    loadStaticData();
+  }, []);
 
   useEffect(() => {
     if (userId) {
@@ -109,12 +173,11 @@ const BookingCalendar = ({ userId }) => {
     }
   }, [userId]);
 
+
   const handleCancel = async () => {
-    if (!window.confirm("Êtes-vous sûr de vouloir annuler cette réservation ?"))
-      return;
+    if (!window.confirm("Êtes-vous sûr de vouloir annuler cette réservation ?")) return;
     try {
       setActionLoading(true);
-      // Use documentId for update
       const docId = selectedEvent.extendedProps.documentId;
       await cancelReservation(docId);
       setSelectedEvent(null);
@@ -128,45 +191,6 @@ const BookingCalendar = ({ userId }) => {
     }
   };
 
-  const handleUpdate = async () => {
-    try {
-      setActionLoading(true);
-      // Try to use documentId, fallback to id
-      const resId = selectedEvent.extendedProps.documentId || selectedEvent.id;
-
-      let start_time, end_time;
-
-      if (editData.timeSlot === "Full Day") {
-        start_time = `${editData.date}T08:00:00.000Z`;
-        end_time = `${editData.date}T19:00:00.000Z`;
-      } else {
-        const times = editData.timeSlot.split(" - ");
-        if (times.length === 2) {
-          start_time = `${editData.date}T${times[0]}:00.000Z`;
-          end_time = `${editData.date}T${times[1]}:00.000Z`;
-        } else {
-          start_time = `${editData.date}T08:00:00.000Z`;
-          end_time = `${editData.date}T19:00:00.000Z`;
-        }
-      }
-
-      await updateReservation(resId, {
-        start_time,
-        end_time,
-        status: "pending", // Reset to pending for re-validation if modified
-      });
-
-      setIsEditing(false);
-      setSelectedEvent(null);
-      await fetchReservations();
-      alert("Réservation modifiée avec succès.");
-    } catch (error) {
-      console.error("Error updating reservation:", error);
-      alert("Erreur lors de la modification.");
-    } finally {
-      setActionLoading(false);
-    }
-  };
 
   if (loading) {
     return (
@@ -190,7 +214,11 @@ const BookingCalendar = ({ userId }) => {
         locale={frLocale}
         height="auto"
         eventClick={(info) => {
-          setSelectedEvent(info.event);
+          const event = info.event;
+          const extras = event.extendedProps.extras || {};
+          setSelectedEvent(event);
+          setEquipmentQuantities(extras.equipmentQuantities || {});
+          setServiceQuantities(extras.serviceQuantities || {});
         }}
         dateClick={handleDateClick}
         eventClassNames="cursor-pointer hover:scale-[1.02] transition-transform font-bold text-[10px]"
@@ -200,21 +228,23 @@ const BookingCalendar = ({ userId }) => {
         nowIndicator={true}
       />
 
-      {/* Event Detail Modal */}
       {selectedEvent && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[10000] flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden border border-slate-100">
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[10000] flex items-center justify-center p-4 animate-fade-in"
+          onClick={() => setSelectedEvent(null)}
+        >
+          <div className="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden border border-slate-100"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="p-8">
               <div className="flex justify-between items-start mb-6">
                 <div>
                   <span
-                    className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${
-                      selectedEvent.extendedProps.status === "confirmed"
-                        ? "bg-emerald-50 text-emerald-600"
-                        : selectedEvent.extendedProps.status === "pending"
-                          ? "bg-amber-50 text-amber-600"
-                          : "bg-red-50 text-red-600"
-                    }`}
+                    className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${selectedEvent.extendedProps.status === "confirmed"
+                      ? "bg-emerald-50 text-emerald-600"
+                      : selectedEvent.extendedProps.status === "pending"
+                        ? "bg-amber-50 text-amber-600"
+                        : "bg-red-50 text-red-600"
+                      }`}
                   >
                     {selectedEvent.extendedProps.status || "En attente"}
                   </span>
@@ -260,103 +290,64 @@ const BookingCalendar = ({ userId }) => {
                       Prix Total
                     </p>
                     <p className="text-sm font-bold text-slate-700">
-                      {selectedEvent.extendedProps.totalPrice || 0} DTN
+                      {(selectedEvent.extendedProps.totalPrice || 0)} DTN
                     </p>
                   </div>
                 </div>
+
+                {/* Chosen Equipments/Services section */}
+                {(selectedEvent.extendedProps.equipment?.length > 0 || selectedEvent.extendedProps.services?.length > 0) && (
+                  <div className="p-4 bg-slate-50 rounded-2xl space-y-2">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
+                      Options choisies
+                    </p>
+                    {selectedEvent.extendedProps.equipment.map(eq => {
+                      const name = eq.attributes?.name || eq.name;
+                      const qty = selectedEvent.extendedProps.extras?.equipmentQuantities?.[eq.documentId || eq.id] || 1;
+                      return (
+                        <div key={eq.id} className="flex justify-between items-center text-xs font-bold text-slate-600">
+                          <span>🛠️ {name}</span>
+                          <span className="bg-white px-2 py-0.5 rounded-lg border border-slate-200">x{qty}</span>
+                        </div>
+                      );
+                    })}
+                    {selectedEvent.extendedProps.services.map(srv => {
+                      const name = srv.attributes?.name || srv.name;
+                      const qty = selectedEvent.extendedProps.extras?.serviceQuantities?.[srv.documentId || srv.id] || 1;
+                      return (
+                        <div key={srv.id} className="flex justify-between items-center text-xs font-bold text-slate-600">
+                          <span>✨ {name}</span>
+                          <span className="bg-white px-2 py-0.5 rounded-lg border border-slate-200">x{qty}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
 
-              {isEditing ? (
-                <div className="space-y-4 mb-6">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">
-                      Nouvelle Date
-                    </label>
-                    <input
-                      type="date"
-                      value={editData.date}
-                      onChange={(e) =>
-                        setEditData({ ...editData, date: e.target.value })
-                      }
-                      className="w-full p-4 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">
-                      Nouveau Créneau
-                    </label>
-                    <select
-                      value={editData.timeSlot}
-                      onChange={(e) =>
-                        setEditData({ ...editData, timeSlot: e.target.value })
-                      }
-                      className="w-full p-4 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="08:00 - 12:00">08:00 - 12:00</option>
-                      <option value="13:00 - 17:00">13:00 - 17:00</option>
-                      <option value="08:00 - 17:00">
-                        08:00 - 17:00 (Journée)
-                      </option>
-                      <option value="Full Day">Full Day</option>
-                    </select>
-                  </div>
-                  <div className="flex gap-3 pt-4">
-                    <button
-                      onClick={() => setIsEditing(false)}
-                      className="flex-1 py-4 bg-slate-100 text-slate-600 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all"
-                    >
-                      Annuler
-                    </button>
-                    <button
-                      onClick={handleUpdate}
-                      disabled={actionLoading}
-                      className="flex-1 py-4 bg-blue-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-blue-200 hover:bg-blue-700 disabled:opacity-50 transition-all"
-                    >
-                      {actionLoading ? "..." : "Confirmer"}
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {(selectedEvent.extendedProps.status === "pending" ||
-                    selectedEvent.extendedProps.status === "confirmed") && (
-                    <div className="flex gap-3">
-                      <button
-                        onClick={() => {
-                          setIsEditing(true);
-                          setEditData({
-                            date: selectedEvent.startStr.split("T")[0],
-                            timeSlot: selectedEvent.extendedProps.timeSlot,
-                          });
-                        }}
-                        className="flex-1 py-4 bg-blue-50 text-blue-600 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-100 transition-all"
-                      >
-                        Modifier
-                      </button>
-                      <button
-                        onClick={handleCancel}
-                        disabled={actionLoading}
-                        className="flex-1 py-4 bg-red-50 text-red-600 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-red-100 transition-all"
-                      >
-                        {actionLoading ? "..." : "Annuler"}
-                      </button>
-                    </div>
-                  )}
-                  <p className="text-[9px] text-slate-400 font-medium text-center px-4 italic leading-tight">
-                    * L'annulation est immédiate. Pour une modification, nous
-                    vérifierons à nouveau la disponibilité de l'espace.
-                  </p>
+              <div className="space-y-3">
+                {selectedEvent.extendedProps.status === "pending" && (
                   <button
-                    onClick={() => setSelectedEvent(null)}
-                    className="w-full py-4 mt-2 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-lg hover:bg-black transition-all"
+                    onClick={handleCancel}
+                    disabled={actionLoading}
+                    className="w-full py-4 bg-red-50 text-red-600 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-red-100 transition-all"
                   >
-                    Fermer
+                    {actionLoading ? "..." : "Annuler la réservation"}
                   </button>
-                </div>
-              )}
+                )}
+                <p className="text-[9px] text-slate-400 font-medium text-center px-4 italic leading-tight">
+                  * L'annulation est immédiate. Une fois annulée, la disponibilité de l'espace sera libérée.
+                </p>
+                <button
+                  onClick={() => setSelectedEvent(null)}
+                  className="w-full py-4 mt-2 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-lg hover:bg-black transition-all"
+                >
+                  Fermer
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        </div >
       )}
 
       <style>{`
@@ -404,8 +395,22 @@ const BookingCalendar = ({ userId }) => {
             padding: 2px 4px;
             border-radius: 6px !important;
         }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f8fafc;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
       `}</style>
-    </div>
+    </div >
   );
 };
 

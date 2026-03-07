@@ -1,0 +1,38 @@
+[33mcommit f4086cf45de3e07e3d87f86a18b4696c71855693[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Merge: 5b1b8e3 d3d3641
+Author: azza <azachaieb@gmail.com>
+Date:   Thu Feb 12 04:02:45 2026 +0100
+
+    Resolve duplicates in backend schemas
+
+ .prettierrc                                        |     4 [32m+[m
+ .../content-types/admin-profil/schema.json         |     4 [32m+[m[31m-[m
+ .../content-types/association-profil/schema.json   |     4 [32m+[m[31m-[m
+ .../content-types/etudiant-profil/schema.json      |    14 [32m+[m
+ .../etudiant-profil/controllers/etudiant-profil.ts |     7 [32m+[m
+ .../api/etudiant-profil/routes/etudiant-profil.ts  |     7 [32m+[m
+ .../etudiant-profil/services/etudiant-profil.ts    |     7 [32m+[m
+ .../content-types/formateur-profil/schema.json     |    23 [32m+[m
+ .../controllers/formateur-profil.ts                |     7 [32m+[m
+ .../formateur-profil/routes/formateur-profil.ts    |     7 [32m+[m
+ .../formateur-profil/services/formateur-profil.ts  |     7 [32m+[m
+ .../documentation/1.0.0/full_documentation.json    | 15286 [32m++++++++++[m[31m---------[m
+ frontend/react-app/package-lock.json               |  1181 [32m+[m[31m-[m
+ frontend/react-app/package.json                    |    22 [32m+[m
+ frontend/react-app/postcss.config.js               |     5 [32m+[m
+ frontend/react-app/public/firebase-messaging-sw.js |    21 [32m+[m[31m-[m
+ frontend/react-app/src/App.jsx                     |    22 [32m+[m[31m-[m
+ .../src/components/common/ProtectedRoute.jsx       |    13 [32m+[m
+ .../react-app/src/components/common/Sidebar.jsx    |    46 [32m+[m
+ frontend/react-app/src/firebase.js                 |    30 [32m+[m[31m-[m
+ frontend/react-app/src/index.css                   |    16 [32m+[m[31m-[m
+ frontend/react-app/src/layouts/AdminLayout.jsx     |    22 [32m+[m
+ frontend/react-app/src/main.jsx                    |    26 [32m+[m[31m-[m
+ .../react-app/src/pages/admin/AdminDashboard.jsx   |   126 [32m+[m
+ frontend/react-app/src/pages/admin/Login.jsx       |    78 [32m+[m
+ frontend/react-app/src/services/api.js             |    49 [32m+[m
+ .../react-app/src/services/notificationService.js  |    54 [32m+[m
+ frontend/react-app/src/styles/admin.css            |   147 [32m+[m
+ frontend/react-app/tailwind.config.js              |    19 [32m+[m
+ frontend/react-app/vite.config.js                  |     6 [32m+[m[31m-[m
+ 30 files changed, 9971 insertions(+), 7289 deletions(-)

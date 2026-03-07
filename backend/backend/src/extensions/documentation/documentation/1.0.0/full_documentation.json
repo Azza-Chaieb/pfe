@@ -14,7 +14,7 @@
       "name": "Apache 2.0",
       "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "x-generation-date": "2026-03-05T23:33:35.080Z"
+    "x-generation-date": "2026-03-06T23:38:25.298Z"
   },
   "x-strapi-config": {
     "plugins": [
@@ -15046,6 +15046,7 @@
                                     }
                                   }
                                 },
+                                "configuration": {},
                                 "createdAt": {
                                   "type": "string",
                                   "format": "date-time"
@@ -20968,6 +20969,7 @@
                                                 }
                                               }
                                             },
+                                            "configuration": {},
                                             "createdAt": {
                                               "type": "string",
                                               "format": "date-time"
@@ -24234,6 +24236,7 @@
                                       }
                                     }
                                   },
+                                  "configuration": {},
                                   "createdAt": {
                                     "type": "string",
                                     "format": "date-time"
@@ -28662,6 +28665,7 @@
                               }
                             }
                           },
+                          "configuration": {},
                           "createdAt": {
                             "type": "string",
                             "format": "date-time"
@@ -35790,6 +35794,7 @@
                                           }
                                         }
                                       },
+                                      "configuration": {},
                                       "createdAt": {
                                         "type": "string",
                                         "format": "date-time"
@@ -38619,6 +38624,7 @@
                             }
                           }
                         },
+                        "configuration": {},
                         "createdAt": {
                           "type": "string",
                           "format": "date-time"
@@ -42438,6 +42444,7 @@
                   "example": "string or id"
                 }
               },
+              "configuration": {},
               "locale": {
                 "type": "string"
               },
@@ -44588,6 +44595,7 @@
                                       }
                                     }
                                   },
+                                  "configuration": {},
                                   "createdAt": {
                                     "type": "string",
                                     "format": "date-time"
@@ -45808,6 +45816,7 @@
               }
             }
           },
+          "configuration": {},
           "createdAt": {
             "type": "string",
             "format": "date-time"
@@ -51289,6 +51298,7 @@
                                 }
                               }
                             },
+                            "configuration": {},
                             "createdAt": {
                               "type": "string",
                               "format": "date-time"
@@ -53920,6 +53930,7 @@
                                     }
                                   }
                                 },
+                                "configuration": {},
                                 "createdAt": {
                                   "type": "string",
                                   "format": "date-time"
