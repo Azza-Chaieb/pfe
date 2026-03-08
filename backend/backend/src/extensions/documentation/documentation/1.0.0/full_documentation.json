@@ -14,7 +14,7 @@
       "name": "Apache 2.0",
       "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "x-generation-date": "2026-03-06T23:38:25.298Z"
+    "x-generation-date": "2026-03-08T08:31:54.561Z"
   },
   "x-strapi-config": {
     "plugins": [
@@ -12778,8 +12778,7 @@
           "data": {
             "required": [
               "start_time",
-              "end_time",
-              "status"
+              "end_time"
             ],
             "type": "object",
             "properties": {
@@ -12881,6 +12880,18 @@
                 "example": "string or id"
               },
               "extras": {},
+              "payment_method": {
+                "type": "string",
+                "enum": [
+                  "on_site",
+                  "bank_transfer",
+                  "subscription"
+                ]
+              },
+              "payment_deadline": {
+                "type": "string",
+                "format": "date-time"
+              },
               "locale": {
                 "type": "string"
               },
@@ -12941,8 +12952,7 @@
         "type": "object",
         "required": [
           "start_time",
-          "end_time",
-          "status"
+          "end_time"
         ],
         "properties": {
           "id": {
@@ -15430,6 +15440,18 @@
                             }
                           },
                           "extras": {},
+                          "payment_method": {
+                            "type": "string",
+                            "enum": [
+                              "on_site",
+                              "bank_transfer",
+                              "subscription"
+                            ]
+                          },
+                          "payment_deadline": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
                           "createdAt": {
                             "type": "string",
                             "format": "date-time"
@@ -16324,6 +16346,18 @@
             }
           },
           "extras": {},
+          "payment_method": {
+            "type": "string",
+            "enum": [
+              "on_site",
+              "bank_transfer",
+              "subscription"
+            ]
+          },
+          "payment_deadline": {
+            "type": "string",
+            "format": "date-time"
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time"
@@ -21353,6 +21387,18 @@
                                         }
                                       },
                                       "extras": {},
+                                      "payment_method": {
+                                        "type": "string",
+                                        "enum": [
+                                          "on_site",
+                                          "bank_transfer",
+                                          "subscription"
+                                        ]
+                                      },
+                                      "payment_deadline": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                      },
                                       "createdAt": {
                                         "type": "string",
                                         "format": "date-time"
@@ -24620,6 +24666,18 @@
                               }
                             },
                             "extras": {},
+                            "payment_method": {
+                              "type": "string",
+                              "enum": [
+                                "on_site",
+                                "bank_transfer",
+                                "subscription"
+                              ]
+                            },
+                            "payment_deadline": {
+                              "type": "string",
+                              "format": "date-time"
+                            },
                             "createdAt": {
                               "type": "string",
                               "format": "date-time"
@@ -28590,6 +28648,18 @@
                                   }
                                 },
                                 "extras": {},
+                                "payment_method": {
+                                  "type": "string",
+                                  "enum": [
+                                    "on_site",
+                                    "bank_transfer",
+                                    "subscription"
+                                  ]
+                                },
+                                "payment_deadline": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
                                 "createdAt": {
                                   "type": "string",
                                   "format": "date-time"
@@ -36178,6 +36248,18 @@
                                   }
                                 },
                                 "extras": {},
+                                "payment_method": {
+                                  "type": "string",
+                                  "enum": [
+                                    "on_site",
+                                    "bank_transfer",
+                                    "subscription"
+                                  ]
+                                },
+                                "payment_deadline": {
+                                  "type": "string",
+                                  "format": "date-time"
+                                },
                                 "createdAt": {
                                   "type": "string",
                                   "format": "date-time"
@@ -40264,6 +40346,18 @@
                 }
               },
               "extras": {},
+              "payment_method": {
+                "type": "string",
+                "enum": [
+                  "on_site",
+                  "bank_transfer",
+                  "subscription"
+                ]
+              },
+              "payment_deadline": {
+                "type": "string",
+                "format": "date-time"
+              },
               "createdAt": {
                 "type": "string",
                 "format": "date-time"
@@ -44979,6 +45073,18 @@
                               }
                             },
                             "extras": {},
+                            "payment_method": {
+                              "type": "string",
+                              "enum": [
+                                "on_site",
+                                "bank_transfer",
+                                "subscription"
+                              ]
+                            },
+                            "payment_deadline": {
+                              "type": "string",
+                              "format": "date-time"
+                            },
                             "createdAt": {
                               "type": "string",
                               "format": "date-time"
@@ -51223,6 +51329,18 @@
                                     }
                                   },
                                   "extras": {},
+                                  "payment_method": {
+                                    "type": "string",
+                                    "enum": [
+                                      "on_site",
+                                      "bank_transfer",
+                                      "subscription"
+                                    ]
+                                  },
+                                  "payment_deadline": {
+                                    "type": "string",
+                                    "format": "date-time"
+                                  },
                                   "createdAt": {
                                     "type": "string",
                                     "format": "date-time"
@@ -54314,6 +54432,18 @@
                             }
                           },
                           "extras": {},
+                          "payment_method": {
+                            "type": "string",
+                            "enum": [
+                              "on_site",
+                              "bank_transfer",
+                              "subscription"
+                            ]
+                          },
+                          "payment_deadline": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
                           "createdAt": {
                             "type": "string",
                             "format": "date-time"

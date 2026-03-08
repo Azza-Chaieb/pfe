@@ -73,27 +73,34 @@ const AssociationDashboard = ({ activeTab = "dashboard" }) => {
               const space = spaceRaw?.attributes || spaceRaw || {};
 
               // Coworking can come from space or directly from booking
-              const cwRaw = space.coworking_space?.data || space.coworking_space ||
-                data.coworking_space?.data || data.coworking_space || {};
+              const cwRaw =
+                space.coworking_space?.data ||
+                space.coworking_space ||
+                data.coworking_space?.data ||
+                data.coworking_space ||
+                {};
               const coworking = cwRaw?.attributes || cwRaw || {};
 
               const startDate = new Date(data.start_time);
               const endDate = new Date(data.end_time);
 
-              const equipmentData = data.equipments?.data || data.equipments || [];
+              const equipmentData =
+                data.equipments?.data || data.equipments || [];
               const serviceData = data.services?.data || data.services || [];
 
               const getSpaceDisplayName = () => {
                 if (space.name) return space.name;
                 if (space.mesh_name) {
-                  return space.mesh_name.replace(/bureau_/i, 'Bureau ').replace(/_/g, ' ');
+                  return space.mesh_name
+                    .replace(/bureau_/i, "Bureau ")
+                    .replace(/_/g, " ");
                 }
                 if (space.type) {
                   const types = {
-                    'meeting-room': 'Salle de Réunion',
-                    'event-space': 'Espace Événementiel',
-                    'hot-desk': 'Hot Desk',
-                    'fixed-desk': 'Bureau Fixe'
+                    "meeting-room": "Salle de Réunion",
+                    "event-space": "Espace Événementiel",
+                    "hot-desk": "Hot Desk",
+                    "fixed-desk": "Bureau Fixe",
                   };
                   return types[space.type] || space.type;
                 }
@@ -101,15 +108,24 @@ const AssociationDashboard = ({ activeTab = "dashboard" }) => {
                 if (data.extras?.spaceName) return data.extras.spaceName;
 
                 // 3. Last resort: Coworking name or SunSpace
-                return coworking.name || data.extras?.coworkingName || "SunSpace";
+                return (
+                  coworking.name || data.extras?.coworkingName || "SunSpace"
+                );
               };
 
               // Price calculation logic
               const totalPrice = (() => {
-                const storedPrice = Number(data.total_price || data.totalPrice || data.payment?.data?.attributes?.amount || data.payment?.amount);
+                const storedPrice = Number(
+                  data.total_price ||
+                    data.totalPrice ||
+                    data.payment?.data?.attributes?.amount ||
+                    data.payment?.amount,
+                );
                 if (storedPrice > 0) return storedPrice;
 
-                const hours = Math.ceil((endDate - startDate) / (1000 * 60 * 60));
+                const hours = Math.ceil(
+                  (endDate - startDate) / (1000 * 60 * 60),
+                );
                 if (hours > 0) {
                   let calcPrice = 0;
                   let pHourly = space.pricing_hourly || 0;
@@ -117,19 +133,28 @@ const AssociationDashboard = ({ activeTab = "dashboard" }) => {
                   if (pHourly === 0 && space.type) {
                     if (space.type === "meeting-room") pHourly = 15;
                     else if (space.type === "event-space") pHourly = 20;
-                    else if (space.type === "hot-desk" || space.type === "fixed-desk") pHourly = 5;
+                    else if (
+                      space.type === "hot-desk" ||
+                      space.type === "fixed-desk"
+                    )
+                      pHourly = 5;
                   }
 
-                  if (pHourly > 0) calcPrice += hours * pHourly * (data.participants || 1);
+                  if (pHourly > 0)
+                    calcPrice += hours * pHourly * (data.participants || 1);
 
-                  equipmentData.forEach(eq => {
+                  equipmentData.forEach((eq) => {
                     const p = eq.attributes || eq;
-                    if (p.price) calcPrice += (p.price_type === 'hourly' ? p.price * hours : p.price);
+                    if (p.price)
+                      calcPrice +=
+                        p.price_type === "hourly" ? p.price * hours : p.price;
                   });
 
-                  serviceData.forEach(sv => {
+                  serviceData.forEach((sv) => {
                     const p = sv.attributes || sv;
-                    if (p.price) calcPrice += (p.price_type === 'hourly' ? p.price * hours : p.price);
+                    if (p.price)
+                      calcPrice +=
+                        p.price_type === "hourly" ? p.price * hours : p.price;
                   });
                   return calcPrice;
                 }
@@ -147,9 +172,33 @@ const AssociationDashboard = ({ activeTab = "dashboard" }) => {
                 status: data.status,
                 totalPrice: totalPrice,
                 time: `${startDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })} - ${endDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`,
-                equipmentNames: equipmentData.map(eq => (eq.attributes || eq).name).join(", "),
-                serviceNames: serviceData.map(sv => (sv.attributes || sv).name).join(", "),
-                participants: data.participants || data.extras?.contact?.participants || 1,
+                equipmentNames: (data.equipments?.data || data.equipments || [])
+                  .map((eq) => eq.attributes?.name || eq.name || "")
+                  .filter(Boolean)
+                  .join(", "),
+                serviceNames: (() => {
+                  const dbServices = (
+                    data.services?.data ||
+                    data.services ||
+                    []
+                  )
+                    .map((sv) => sv.attributes?.name || sv.name || "")
+                    .filter(Boolean);
+                  const fallbackMap = {
+                    "fallback-print": "Impression",
+                    "fallback-catering": "Catering / Déjeuner",
+                    "fallback-it-support": "Support Technique IT",
+                    "fallback-coffee": "Cafétérie Premium",
+                  };
+                  const fallbackServices = Object.keys(
+                    data.extras?.serviceQuantities || {},
+                  )
+                    .filter((id) => id.startsWith("fallback-"))
+                    .map((id) => fallbackMap[id] || id);
+                  return [...dbServices, ...fallbackServices].join(", ");
+                })(),
+                participants:
+                  data.participants || data.extras?.contact?.participants || 1,
               };
             }),
           );
@@ -440,7 +489,10 @@ const AssociationDashboard = ({ activeTab = "dashboard" }) => {
   const handleCancelSubscription = async () => {
     if (window.confirm("Êtes-vous sûr de vouloir annuler votre abonnement ?")) {
       try {
-        const subId = subscription?.id || subscription?.documentId || subscription?.data?.id;
+        const subId =
+          subscription?.id ||
+          subscription?.documentId ||
+          subscription?.data?.id;
         if (subId) await cancelSub(subId);
         setSubscription(null);
         alert("Abonnement annulé avec succès.");

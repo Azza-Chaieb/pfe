@@ -110,3 +110,37 @@ export const getAllUserSubscriptions = async () => {
   );
   return response.data;
 };
+/**
+ * Get subscription history for the current user
+ */
+export const getSubscriptionHistory = async () => {
+  const response = await api.get("/subscriptions/history");
+  return response.data;
+};
+
+/**
+ * Download invoice PDF for a specific subscription
+ * Handles the binary blob response and triggers a browser download.
+ */
+export const downloadInvoice = async (
+  subscriptionId: number,
+  filename = "facture.pdf",
+) => {
+  const response = await api.get(`/subscriptions/${subscriptionId}/invoice`, {
+    responseType: "blob",
+  });
+
+  // Create a URL for the blob and trigger download
+  const url = window.URL.createObjectURL(new Blob([response.data]));
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", filename);
+  document.body.appendChild(link);
+  link.click();
+
+  // Clean up
+  link.parentNode?.removeChild(link);
+  window.URL.revokeObjectURL(url);
+
+  return true;
+};

@@ -23,8 +23,7 @@
     "status": {
       "type": "enumeration",
       "enum": ["pending", "confirmed", "cancelled", "completed"],
-      "default": "pending",
-      "required": true
+      "default": "pending"
     },
     "total_price": {
       "type": "decimal"
@@ -70,6 +69,13 @@
     },
     "extras": {
       "type": "json"
+    },
+    "payment_method": {
+      "type": "enumeration",
+      "enum": ["on_site", "bank_transfer", "subscription"]
+    },
+    "payment_deadline": {
+      "type": "datetime"
     }
   }
 }

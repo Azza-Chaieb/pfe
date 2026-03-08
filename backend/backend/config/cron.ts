@@ -160,6 +160,79 @@ export default {
       await strapi
         .service("api::equipment.equipment")
         .synchronizeAvailability();
+
+      // --- NEW: Auto-cancel expired on-site payment bookings ---
+      try {
+        const expiredBookings = await strapi
+          .documents("api::booking.booking")
+          .findMany({
+            filters: {
+              status: "pending",
+              payment_method: "on_site",
+              payment_deadline: { $lt: now.toISOString() },
+            },
+            populate: ["user", "space"],
+          });
+
+        if (expiredBookings && expiredBookings.length > 0) {
+          console.log(
+            `${logPrefix} Found ${expiredBookings.length} expired on-site booking(s) to cancel.`,
+          );
+
+          for (const booking of expiredBookings) {
+            try {
+              await strapi.documents("api::booking.booking").update({
+                documentId: booking.documentId,
+                data: { status: "cancelled" },
+              });
+              console.log(
+                `${logPrefix} [BOOKING] Cancelled expired booking ${booking.documentId} (user: ${(booking as any).user?.email})`,
+              );
+
+              // Send cancellation email
+              const userEmail = (booking as any).user?.email;
+              const userName =
+                (booking as any).user?.fullname ||
+                (booking as any).user?.username ||
+                "Client";
+              const spaceName =
+                (booking as any).space?.name || "Espace de coworking";
+              if (userEmail) {
+                try {
+                  await strapi
+                    .plugin("email")
+                    .service("email")
+                    .send({
+                      to: userEmail,
+                      from: process.env.SMTP_FROM || "contact@sunspace.com",
+                      subject:
+                        "❌ Réservation annulée – délai de paiement dépassé",
+                      html: `
+                      <h2>Bonjour ${userName},</h2>
+                      <p>Votre réservation pour <strong>${spaceName}</strong> a été <strong>automatiquement annulée</strong>
+                      car le délai de paiement en espèces a expiré.</p>
+                      <p>Si vous souhaitez réserver à nouveau, veuillez utiliser notre application.</p>
+                      <p>L'équipe SunSpace</p>
+                    `,
+                    });
+                } catch (mailErr: any) {
+                  console.error(
+                    `${logPrefix} [BOOKING] Failed to send cancellation email: ${mailErr.message}`,
+                  );
+                }
+              }
+            } catch (updateErr: any) {
+              console.error(
+                `${logPrefix} [BOOKING] Failed to cancel booking ${booking.documentId}: ${updateErr.message}`,
+              );
+            }
+          }
+        }
+      } catch (bookingCronErr: any) {
+        console.error(
+          `${logPrefix} [BOOKING CRON ERROR] ${bookingCronErr.message}`,
+        );
+      }
     } catch (globalErr: any) {
       console.error(`[CRON][ERROR] Global failure:`, globalErr.message);
     }

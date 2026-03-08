@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
 import SubscriptionPlans from "../../pages/public/SubscriptionPlans";
+import {
+  getSubscriptionHistory,
+  downloadInvoice,
+} from "../../services/subscriptionService";
 
 const SubscriptionSection = ({ subscription, onCancel, onNavigateToPlans }) => {
   const subAttrs = subscription
@@ -23,9 +27,28 @@ const SubscriptionSection = ({ subscription, onCancel, onNavigateToPlans }) => {
 
   const [timeLeft, setTimeLeft] = useState("");
   const [showPlans, setShowPlans] = useState(false);
+  const [history, setHistory] = useState([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+  const [downloading, setDownloading] = useState(null); // stores sub ID being downloaded
 
   // If no subscription at all, we should probably show plans by default or a prompt
   const hasAnySub = !!subscription;
+
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        setLoadingHistory(true);
+        const res = await getSubscriptionHistory();
+        setHistory(res.data || []);
+      } catch (err) {
+        console.error("Failed to fetch history", err);
+      } finally {
+        setLoadingHistory(false);
+      }
+    };
+
+    fetchHistory();
+  }, []);
 
   useEffect(() => {
     const updateCountdown = () => {
@@ -70,6 +93,21 @@ const SubscriptionSection = ({ subscription, onCancel, onNavigateToPlans }) => {
     subAttrs?.end_date,
   ]);
 
+  const handleDownloadInvoice = async (subId, date) => {
+    try {
+      setDownloading(subId);
+      const formattedDate = new Date(date)
+        .toLocaleDateString("fr-FR")
+        .replace(/\//g, "-");
+      await downloadInvoice(subId, `facture-sunspace-${formattedDate}.pdf`);
+    } catch (err) {
+      console.error("Download error:", err);
+      alert("Erreur lors du téléchargement de la facture.");
+    } finally {
+      setDownloading(null);
+    }
+  };
+
   const planColors = {
     basic: "from-slate-600 to-slate-800",
     premium: "from-blue-600 to-indigo-800",
@@ -77,8 +115,72 @@ const SubscriptionSection = ({ subscription, onCancel, onNavigateToPlans }) => {
   };
   const gradient = planColors[planType] || planColors.basic;
 
+  // Alert Logic
+  const maxCredits = planAttrs?.max_credits || 0;
+  const isLowCredits =
+    isActive && maxCredits > 0 && credits <= Math.ceil(maxCredits * 0.1);
+
+  const isExpiringSoon =
+    isActive &&
+    subAttrs?.end_date &&
+    (() => {
+      const diff = new Date(subAttrs.end_date).getTime() - new Date().getTime();
+      const days = diff / (1000 * 60 * 60 * 24);
+      return days > 0 && days <= 3;
+    })();
+
   return (
     <div className="max-w-3xl mx-auto py-8 space-y-8 animate-fade-in">
+      {/* Alert Banners */}
+      <div className="space-y-3">
+        {isExpiringSoon && (
+          <div className="bg-gradient-to-r from-orange-500 to-rose-600 text-white px-6 py-4 rounded-3xl shadow-lg shadow-orange-200 border border-white/20 flex items-center justify-between animate-bounce-subtle">
+            <div className="flex items-center gap-4">
+              <span className="text-2xl">🚨</span>
+              <div>
+                <h4 className="font-black text-xs uppercase tracking-widest">
+                  Expiration Imminente
+                </h4>
+                <p className="text-[10px] font-medium opacity-90">
+                  Votre abonnement se termine dans moins de 3 jours.
+                  Renouvelez-le pour garder vos accès !
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowPlans(true)}
+              className="bg-white text-orange-600 text-[9px] font-black uppercase px-4 py-2 rounded-xl hover:bg-orange-50 transition-colors shadow-sm"
+            >
+              Renouveler
+            </button>
+          </div>
+        )}
+
+        {isLowCredits && (
+          <div className="bg-gradient-to-r from-amber-400 to-orange-500 text-white px-6 py-4 rounded-3xl shadow-lg shadow-amber-200 border border-white/20 flex items-center justify-between animate-fade-in">
+            <div className="flex items-center gap-4">
+              <span className="text-2xl">⚠️</span>
+              <div>
+                <h4 className="font-black text-xs uppercase tracking-widest">
+                  Crédits Presque Épuisés
+                </h4>
+                <p className="text-[10px] font-medium opacity-90">
+                  Il ne vous reste que {credits} crédits (
+                  {Math.round((credits / maxCredits) * 100)}%). Pensez à
+                  recharger.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowPlans(true)}
+              className="bg-white text-amber-600 text-[9px] font-black uppercase px-4 py-2 rounded-xl hover:bg-amber-50 transition-colors shadow-sm"
+            >
+              Prendre plus
+            </button>
+          </div>
+        )}
+      </div>
+
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-black text-slate-800 tracking-tighter">
@@ -195,6 +297,17 @@ const SubscriptionSection = ({ subscription, onCancel, onNavigateToPlans }) => {
               >
                 {isPending ? "Voir les autres plans" : "Changer de forfait"}
               </button>
+              {isActive && (
+                <button
+                  onClick={() =>
+                    handleDownloadInvoice(subAttrs.id, subAttrs.createdAt)
+                  }
+                  disabled={!!downloading}
+                  className="px-5 py-3 bg-white text-blue-600 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-50 transition-all shadow-sm disabled:opacity-50"
+                >
+                  {downloading === subAttrs.id ? "..." : "Facture 📄"}
+                </button>
+              )}
               {isPending && (
                 <button
                   onClick={onCancel}
@@ -285,6 +398,89 @@ const SubscriptionSection = ({ subscription, onCancel, onNavigateToPlans }) => {
           </button>
         </div>
       )}
+
+      {/* Subscription History Section */}
+      <div className="pt-10 border-t border-slate-100">
+        <h2 className="text-xl font-black text-slate-800 tracking-tight mb-6 flex items-center gap-3">
+          Historique & Archive 📂
+        </h2>
+
+        {loadingHistory ? (
+          <div className="text-center py-10 italic text-slate-400">
+            Chargement de l'historique...
+          </div>
+        ) : history.length === 0 ? (
+          <div className="bg-slate-50 rounded-3xl p-8 text-center text-slate-400 font-medium italic">
+            Aucun ancien abonnement trouvé.
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {history.map((h) => {
+              const hData = h;
+              const hPlan = hData.plan || {};
+              const hDate = new Date(hData.createdAt).toLocaleDateString(
+                "fr-FR",
+              );
+              const hStatus = hData.status;
+
+              return (
+                <div
+                  key={h.id}
+                  className="bg-white/60 backdrop-blur-sm border border-slate-100 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4 group hover:bg-white transition-all shadow-sm hover:shadow-md"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-xl grayscale group-hover:grayscale-0 transition-all">
+                      {hStatus === "active"
+                        ? "✅"
+                        : hStatus === "pending"
+                          ? "⏳"
+                          : "📁"}
+                    </div>
+                    <div>
+                      <h4 className="font-black text-slate-800 text-sm">
+                        Plan {hPlan.name || "Standard"}
+                      </h4>
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                        Demandé le {hDate} •{" "}
+                        {hData.billing_cycle === "yearly"
+                          ? "Annuel"
+                          : "Mensuel"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4">
+                    <span
+                      className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${
+                        hStatus === "active"
+                          ? "bg-emerald-50 text-emerald-600 border-emerald-100"
+                          : hStatus === "cancelled"
+                            ? "bg-rose-50 text-rose-600 border-rose-100"
+                            : "bg-slate-100 text-slate-500 border-slate-200"
+                      }`}
+                    >
+                      {hStatus === "active"
+                        ? "Actif / Payé"
+                        : hStatus === "cancelled"
+                          ? "Annulé/Refusé"
+                          : hStatus}
+                    </span>
+                    <button
+                      onClick={() =>
+                        handleDownloadInvoice(h.id, hData.createdAt)
+                      }
+                      disabled={!!downloading}
+                      className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 hover:text-blue-800 transition-colors disabled:opacity-50"
+                    >
+                      {downloading === h.id ? "..." : "Facture PDF"}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

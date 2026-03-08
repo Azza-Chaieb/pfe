@@ -149,9 +149,16 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
                         </td>
                         <td className="py-4 text-right">
                           <span
-                            className={`px-3 py-1 rounded-full text-[9px] font-black uppercase ${data.status === "confirmed" ? "bg-emerald-50 text-emerald-600" : "bg-orange-50 text-orange-600"}`}
+                            className={`px-3 py-1 rounded-full text-[9px] font-black uppercase ${data.status === "cancelled" || new Date(data.end_time || data.start_time) < new Date() ? "bg-slate-100 text-slate-500" : data.status === "confirmed" ? "bg-emerald-50 text-emerald-600" : "bg-orange-50 text-orange-600"}`}
                           >
-                            {data.status || "En attente"}
+                            {data.status === "cancelled"
+                              ? "Annulée"
+                              : new Date(data.end_time || data.start_time) <
+                                  new Date()
+                                ? "Terminé"
+                                : data.status === "confirmed"
+                                  ? "Confirmée"
+                                  : "En attente"}
                           </span>
                         </td>
                       </tr>
@@ -299,9 +306,16 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
                       </td>
                       <td className="py-5 text-right">
                         <span
-                          className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase ${data.status === "confirmed" ? "bg-emerald-50 text-emerald-600" : "bg-orange-50 text-orange-600"}`}
+                          className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase ${data.status === "cancelled" || new Date(data.end_time || data.start_time) < new Date() ? "bg-slate-100 text-slate-500" : data.status === "confirmed" ? "bg-emerald-50 text-emerald-600" : "bg-orange-50 text-orange-600"}`}
                         >
-                          {data.status || "En attente"}
+                          {data.status === "cancelled"
+                            ? "Annulée"
+                            : new Date(data.end_time || data.start_time) <
+                                new Date()
+                              ? "Terminé"
+                              : data.status === "confirmed"
+                                ? "Confirmée"
+                                : "En attente"}
                         </span>
                       </td>
                     </tr>

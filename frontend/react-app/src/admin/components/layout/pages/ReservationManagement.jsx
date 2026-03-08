@@ -255,10 +255,11 @@ const ReservationManagement = () => {
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`px-5 py-3 rounded-[1.8rem] text-[9px] font-black uppercase tracking-widest transition-all ${filter === f
-                  ? "bg-slate-900 text-white shadow-lg shadow-slate-900/30"
-                  : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"
-                  }`}
+                className={`px-5 py-3 rounded-[1.8rem] text-[9px] font-black uppercase tracking-widest transition-all ${
+                  filter === f
+                    ? "bg-slate-900 text-white shadow-lg shadow-slate-900/30"
+                    : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"
+                }`}
               >
                 {f === "all"
                   ? "Tous"
@@ -330,17 +331,26 @@ const ReservationManagement = () => {
                     const space = spaceData?.attributes || spaceData || {};
 
                     // Coworking data can come from space or directly from booking
-                    const directCoworkingData = data.coworking_space?.data || data.coworking_space;
-                    const spaceCoworkingData = space.coworking_space?.data || space.coworking_space;
-                    const coworkingData = directCoworkingData || spaceCoworkingData;
-                    const coworking = coworkingData?.attributes || coworkingData || {};
+                    const directCoworkingData =
+                      data.coworking_space?.data || data.coworking_space;
+                    const spaceCoworkingData =
+                      space.coworking_space?.data || space.coworking_space;
+                    const coworkingData =
+                      directCoworkingData || spaceCoworkingData;
+                    const coworking =
+                      coworkingData?.attributes || coworkingData || {};
 
-                    const equipmentData = data.equipments?.data || data.equipments || [];
-                    const firstEquipment = equipmentData[0]?.attributes || equipmentData[0] || null;
-                    const serviceData = data.services?.data || data.services || [];
-                    const firstService = serviceData[0]?.attributes || serviceData[0] || null;
+                    const equipmentData =
+                      data.equipments?.data || data.equipments || [];
+                    const firstEquipment =
+                      equipmentData[0]?.attributes || equipmentData[0] || null;
+                    const serviceData =
+                      data.services?.data || data.services || [];
+                    const firstService =
+                      serviceData[0]?.attributes || serviceData[0] || null;
 
-                    const payment = data.payment?.data?.attributes || data.payment || null;
+                    const payment =
+                      data.payment?.data?.attributes || data.payment || null;
 
                     return (
                       <tr
@@ -366,38 +376,56 @@ const ReservationManagement = () => {
                         </td>
                         <td className="px-6 py-8">
                           {(() => {
-                            const spaceAttrs = data.space?.data?.attributes || data.space || {};
-                            const equips = data.equipments?.data || data.equipments || [];
-                            const firstEquip = equips[0]?.attributes || equips[0] || null;
+                            const spaceAttrs =
+                              data.space?.data?.attributes || data.space || {};
+                            const equips =
+                              data.equipments?.data || data.equipments || [];
+                            const firstEquip =
+                              equips[0]?.attributes || equips[0] || null;
 
                             const getSpaceDisplayName = () => {
                               // 1. Primary: Use the actual relation if populated
                               if (spaceAttrs.name) return spaceAttrs.name;
                               if (spaceAttrs.mesh_name) {
-                                return spaceAttrs.mesh_name.replace(/bureau_/i, 'Bureau ').replace(/_/g, ' ');
+                                return spaceAttrs.mesh_name
+                                  .replace(/bureau_/i, "Bureau ")
+                                  .replace(/_/g, " ");
                               }
                               if (spaceAttrs.type) {
                                 const types = {
-                                  'meeting-room': 'Salle de Réunion',
-                                  'event-space': 'Espace Événementiel',
-                                  'hot-desk': 'Hot Desk',
-                                  'fixed-desk': 'Bureau Fixe'
+                                  "meeting-room": "Salle de Réunion",
+                                  "event-space": "Espace Événementiel",
+                                  "hot-desk": "Hot Desk",
+                                  "fixed-desk": "Bureau Fixe",
                                 };
-                                return types[spaceAttrs.type] || spaceAttrs.type;
+                                return (
+                                  types[spaceAttrs.type] || spaceAttrs.type
+                                );
                               }
 
                               // 2. Redundancy Fallback: Use data stored in extras
-                              if (data.extras?.spaceName) return data.extras.spaceName;
+                              if (data.extras?.spaceName)
+                                return data.extras.spaceName;
 
                               // 3. Last resort: Coworking name or SunSpace
-                              return coworking.name || data.extras?.coworkingName || "SunSpace";
+                              return (
+                                coworking.name ||
+                                data.extras?.coworkingName ||
+                                "SunSpace"
+                              );
                             };
 
                             const primaryName = getSpaceDisplayName();
                             let badge = "";
 
-                            if (spaceAttrs.name || spaceAttrs.mesh_name || data.extras?.spaceName) {
-                              badge = firstEquip?.name ? `+ ${firstEquip.name}` : "";
+                            if (
+                              spaceAttrs.name ||
+                              spaceAttrs.mesh_name ||
+                              data.extras?.spaceName
+                            ) {
+                              badge = firstEquip?.name
+                                ? `+ ${firstEquip.name}`
+                                : "";
                             } else if (firstEquip?.name) {
                               badge = "ÉQUIPEMENT";
                             } else {
@@ -406,8 +434,12 @@ const ReservationManagement = () => {
 
                             return (
                               <>
-                                <p className="text-sm font-black text-slate-800 leading-tight">{primaryName}</p>
-                                <p className="text-[11px] text-blue-500 font-extrabold uppercase tracking-tight mt-0.5">{badge}</p>
+                                <p className="text-sm font-black text-slate-800 leading-tight">
+                                  {primaryName}
+                                </p>
+                                <p className="text-[11px] text-blue-500 font-extrabold uppercase tracking-tight mt-0.5">
+                                  {badge}
+                                </p>
                               </>
                             );
                           })()}
@@ -441,13 +473,20 @@ const ReservationManagement = () => {
                           <div className="flex flex-col">
                             <p className="text-base font-black text-slate-900">
                               {(() => {
-                                const storedPrice = Number(data.total_price || data.totalPrice || payment?.amount);
-                                if (storedPrice > 0) return storedPrice.toFixed(2);
+                                const storedPrice = Number(
+                                  data.total_price ||
+                                    data.totalPrice ||
+                                    payment?.amount,
+                                );
+                                if (storedPrice > 0)
+                                  return storedPrice.toFixed(2);
 
                                 // Fallback calculation if price is missing/0
                                 const start = new Date(data.start_time);
                                 const end = new Date(data.end_time);
-                                const hours = Math.ceil((end - start) / (1000 * 60 * 60));
+                                const hours = Math.ceil(
+                                  (end - start) / (1000 * 60 * 60),
+                                );
 
                                 if (hours > 0) {
                                   let calcPrice = 0;
@@ -455,34 +494,46 @@ const ReservationManagement = () => {
 
                                   // Emergency fallback
                                   if (pHourly === 0 && space.type) {
-                                    if (space.type === "meeting-room") pHourly = 15;
-                                    else if (space.type === "event-space") pHourly = 20;
-                                    else if (space.type === "hot-desk" || space.type === "fixed-desk") pHourly = 5;
+                                    if (space.type === "meeting-room")
+                                      pHourly = 15;
+                                    else if (space.type === "event-space")
+                                      pHourly = 20;
+                                    else if (
+                                      space.type === "hot-desk" ||
+                                      space.type === "fixed-desk"
+                                    )
+                                      pHourly = 5;
                                   }
 
                                   if (pHourly > 0) {
-                                    calcPrice += hours * pHourly * (data.participants || 1);
+                                    calcPrice +=
+                                      hours *
+                                      pHourly *
+                                      (data.participants || 1);
                                   }
 
                                   // Add equipments
-                                  equipmentData.forEach(eq => {
+                                  equipmentData.forEach((eq) => {
                                     const ep = eq.attributes || eq;
                                     if (ep.price) {
-                                      if (ep.price_type === 'hourly') calcPrice += ep.price * hours;
-                                      else calcPrice += ep.price;
+                                      if (ep.price_type === "hourly")
+                                        calcPrice += Number(ep.price) * hours;
+                                      else calcPrice += Number(ep.price);
                                     }
                                   });
 
                                   // Add services
-                                  serviceData.forEach(sv => {
+                                  serviceData.forEach((sv) => {
                                     const sp = sv.attributes || sv;
                                     if (sp.price) {
-                                      if (sp.price_type === 'hourly') calcPrice += sp.price * hours;
-                                      else calcPrice += sp.price;
+                                      if (sp.price_type === "hourly")
+                                        calcPrice += Number(sp.price) * hours;
+                                      else calcPrice += Number(sp.price);
                                     }
                                   });
 
-                                  if (calcPrice > 0) return calcPrice.toFixed(2);
+                                  if (calcPrice > 0)
+                                    return calcPrice.toFixed(2);
                                 }
 
                                 return "0.00";
@@ -503,12 +554,13 @@ const ReservationManagement = () => {
                         <td className="px-6 py-8">
                           <div className="flex flex-col gap-2">
                             <div
-                              className={`px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest text-center shadow-sm ${data.status === "confirmed"
-                                ? "bg-emerald-50 text-emerald-600 border border-emerald-100"
-                                : data.status === "pending"
-                                  ? "bg-amber-50 text-amber-600 border border-amber-100"
-                                  : "bg-rose-50 text-rose-600 border border-rose-100"
-                                }`}
+                              className={`px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest text-center shadow-sm ${
+                                data.status === "confirmed"
+                                  ? "bg-emerald-50 text-emerald-600 border border-emerald-100"
+                                  : data.status === "pending"
+                                    ? "bg-amber-50 text-amber-600 border border-amber-100"
+                                    : "bg-rose-50 text-rose-600 border border-rose-100"
+                              }`}
                             >
                               {data.status === "pending"
                                 ? "Attente"
@@ -548,9 +600,9 @@ const ReservationManagement = () => {
                                     payment
                                       ? handleConfirmPayment(payment.id)
                                       : handleStatusUpdate(
-                                        res.documentId || res.id,
-                                        "confirmed",
-                                      )
+                                          res.documentId || res.id,
+                                          "confirmed",
+                                        )
                                   }
                                   disabled={actionLoading}
                                   className="py-2.5 bg-slate-900 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-lg shadow-slate-200 disabled:opacity-50"

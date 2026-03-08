@@ -380,15 +380,23 @@ export default factories.createCoreController(
           "api::user-subscription.user-subscription",
         ) as any;
 
-        const pdfDoc = await subscriptionService.generateInvoice(Number(id), userId);
+        const pdfDoc = await subscriptionService.generateInvoice(
+          Number(id),
+          userId,
+        );
 
         ctx.set("Content-Type", "application/pdf");
-        ctx.set("Content-Disposition", `attachment; filename="facture-${id}.pdf"`);
+        ctx.set(
+          "Content-Disposition",
+          `attachment; filename="facture-${id}.pdf"`,
+        );
 
         ctx.body = pdfDoc;
       } catch (err: any) {
         strapi.log.error("downloadInvoice error:", err);
-        ctx.badRequest(err.message || "Erreur lors du téléchargement de la facture.");
+        ctx.badRequest(
+          err.message || "Erreur lors du téléchargement de la facture.",
+        );
       }
     },
   }),

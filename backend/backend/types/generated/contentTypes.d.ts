@@ -494,6 +494,10 @@ export interface ApiBookingBooking extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     payment: Schema.Attribute.Relation<"oneToOne", "api::payment.payment">;
+    payment_deadline: Schema.Attribute.DateTime;
+    payment_method: Schema.Attribute.Enumeration<
+      ["on_site", "bank_transfer", "subscription"]
+    >;
     publishedAt: Schema.Attribute.DateTime;
     repeat_until: Schema.Attribute.Date;
     services: Schema.Attribute.Relation<"manyToMany", "api::service.service">;
@@ -502,7 +506,6 @@ export interface ApiBookingBooking extends Struct.CollectionTypeSchema {
     status: Schema.Attribute.Enumeration<
       ["pending", "confirmed", "cancelled", "completed"]
     > &
-      Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<"pending">;
     total_price: Schema.Attribute.Decimal;
     updatedAt: Schema.Attribute.DateTime;

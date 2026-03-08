@@ -5,6 +5,7 @@ import {
   createReservation,
   createPayment,
   submitPaymentProof,
+  cancelReservation,
 } from "../../services/bookingService";
 import { getMySubscription } from "../../services/subscriptionService";
 import {
@@ -64,55 +65,120 @@ const BookingModal = ({
   if (servicesList.length === 0) {
     servicesList = [
       {
-        id: 'fallback-print',
-        name: 'Impression',
+        id: "fallback-print",
+        name: "Impression",
         price: 0.2,
-        price_type: 'one-time',
+        price_type: "one-time",
         configuration: {
           fields: [
-            { name: 'file', type: 'file', label: 'Uploader le document', required: true },
-            { name: 'pages', type: 'number', label: 'Nombre de copies', min: 1, default: 1, required: true }
-          ]
-        }
+            {
+              name: "file",
+              type: "file",
+              label: "Uploader le document",
+              required: true,
+            },
+            {
+              name: "pages",
+              type: "number",
+              label: "Nombre de copies",
+              min: 1,
+              default: 1,
+              required: true,
+            },
+          ],
+        },
       },
       {
-        id: 'fallback-catering',
-        name: 'Catering / Déjeuner',
+        id: "fallback-catering",
+        name: "Catering / Déjeuner",
         price: 15,
-        price_type: 'one-time',
+        price_type: "one-time",
         configuration: {
           fields: [
-            { name: 'menu', type: 'select', label: 'Choix du menu', options: ['Végétarien', 'Standard', 'Premium'], required: true },
-            { name: 'quantite', type: 'number', label: 'Nombre de repas', min: 1, default: 1, required: true },
-            { name: 'allergies', type: 'text', label: 'Allergies éventuelles', placeholder: 'Ex: Sans gluten' }
-          ]
-        }
+            {
+              name: "menu",
+              type: "select",
+              label: "Choix du menu",
+              options: ["Végétarien", "Standard", "Premium"],
+              required: true,
+            },
+            {
+              name: "quantite",
+              type: "number",
+              label: "Nombre de repas",
+              min: 1,
+              default: 1,
+              required: true,
+            },
+            {
+              name: "allergies",
+              type: "text",
+              label: "Allergies éventuelles",
+              placeholder: "Ex: Sans gluten",
+            },
+          ],
+        },
       },
       {
-        id: 'fallback-it-support',
-        name: 'Support Technique IT',
+        id: "fallback-it-support",
+        name: "Support Technique IT",
         price: 25,
-        price_type: 'one-time',
+        price_type: "one-time",
         configuration: {
           fields: [
-            { name: 'type', type: 'select', label: 'Nature du besoin', options: ['Aide Réseau/WiFi', 'Installation Logiciel', 'Configuration Matériel'], required: true },
-            { name: 'quantite', type: 'number', label: 'Nombre d\'heures', min: 1, default: 1, required: true },
-            { name: 'details', type: 'text', label: 'Précisions', placeholder: 'Ex: Installation de Docker' }
-          ]
-        }
+            {
+              name: "type",
+              type: "select",
+              label: "Nature du besoin",
+              options: [
+                "Aide Réseau/WiFi",
+                "Installation Logiciel",
+                "Configuration Matériel",
+              ],
+              required: true,
+            },
+            {
+              name: "quantite",
+              type: "number",
+              label: "Nombre d'heures",
+              min: 1,
+              default: 1,
+              required: true,
+            },
+            {
+              name: "details",
+              type: "text",
+              label: "Précisions",
+              placeholder: "Ex: Installation de Docker",
+            },
+          ],
+        },
       },
       {
-        id: 'fallback-coffee',
-        name: 'Cafétérie Premium',
+        id: "fallback-coffee",
+        name: "Cafétérie Premium",
         price: 5,
-        price_type: 'one-time',
+        price_type: "one-time",
         configuration: {
           fields: [
-            { name: 'boisson', type: 'select', label: 'Type de boisson', options: ['Café Noir', 'Cappuccino', 'Thé Menthe'], required: true },
-            { name: 'quantite', type: 'number', label: 'Nombre de boissons', min: 1, default: 1, required: true }
-          ]
-        }
-      }
+            {
+              name: "boisson",
+              type: "select",
+              label: "Type de boisson",
+              options: ["Café Noir", "Cappuccino", "Thé Menthe"],
+              required: true,
+            },
+            {
+              name: "quantite",
+              type: "number",
+              label: "Nombre de boissons",
+              min: 1,
+              default: 1,
+              required: true,
+            },
+          ],
+        },
+      },
     ];
   }
 
@@ -208,8 +274,8 @@ const BookingModal = ({
           const endTimeMs = formData.allDay
             ? new Date(`${formData.date}T23:59:59.999Z`).getTime()
             : new Date(
-              `${formData.date}T${formData.endTime}:00.000Z`,
-            ).getTime();
+                `${formData.date}T${formData.endTime}:00.000Z`,
+              ).getTime();
 
           const takenCount = resList
             .filter((r) => {
@@ -348,7 +414,7 @@ const BookingModal = ({
 
         // Pre-populate with default values
         const defaults = {};
-        fields.forEach(f => {
+        fields.forEach((f) => {
           if (f.default !== undefined) defaults[f.name] = f.default;
         });
         setCurrentEntryData(defaults);
@@ -360,7 +426,7 @@ const BookingModal = ({
       const current = prev[srvId] || 0;
       const next = Math.max(0, current + delta);
       if (next === 0) {
-        setServiceParams(p => {
+        setServiceParams((p) => {
           const { [srvId]: _, ...rest } = p;
           return rest;
         });
@@ -370,9 +436,9 @@ const BookingModal = ({
 
       // If decrementing, remove the last entry
       if (delta < 0) {
-        setServiceParams(p => ({
+        setServiceParams((p) => ({
           ...p,
-          [srvId]: (p[srvId] || []).slice(0, -1)
+          [srvId]: (p[srvId] || []).slice(0, -1),
         }));
       }
 
@@ -383,14 +449,14 @@ const BookingModal = ({
   const handleSaveServiceEntry = () => {
     const srvId = activeServiceForm.id;
 
-    setServiceParams(prev => ({
+    setServiceParams((prev) => ({
       ...prev,
-      [srvId]: [...(prev[srvId] || []), currentEntryData]
+      [srvId]: [...(prev[srvId] || []), currentEntryData],
     }));
 
-    setServiceQuantities(prev => ({
+    setServiceQuantities((prev) => ({
       ...prev,
-      [srvId]: (prev[srvId] || 0) + 1
+      [srvId]: (prev[srvId] || 0) + 1,
     }));
 
     setActiveServiceForm(null);
@@ -398,15 +464,47 @@ const BookingModal = ({
   };
 
   const handleServiceParamChange = (fieldName, value) => {
-    setCurrentEntryData(prev => ({
+    setCurrentEntryData((prev) => ({
       ...prev,
-      [fieldName]: value
+      [fieldName]: value,
     }));
+  };
+
+  const handleNavigateToPlans = () => {
+    const userString = localStorage.getItem("user");
+    const user = userString ? JSON.parse(userString) : null;
+    const rawRole = (user?.user_type || "student").toLowerCase();
+
+    // Mapping based on App.jsx routes
+    let target = "/subscription-plans"; // Fallback public page
+    if (rawRole === "etudiant" || rawRole === "student")
+      target = "/student/subscription";
+    else if (rawRole === "formateur" || rawRole === "trainer")
+      target = "/trainer/subscription";
+    else if (rawRole === "professional") target = "/professional/subscription";
+    else if (rawRole === "association") target = "/association/subscription";
+
+    navigate(target);
+  };
+
+  const handleAbandonBooking = async () => {
+    const identifier = createdReservation?.documentId || createdReservation?.id;
+    if (identifier) {
+      try {
+        console.log(
+          `[Professional Flow] Cleaning up abandoned reservation: ${identifier}`,
+        );
+        await cancelReservation(identifier);
+      } catch (err) {
+        console.error("Failed to cleanup reservation:", err);
+      }
+    }
   };
 
   const handleBooking = async () => {
     // CRITICAL: Block any double-submission immediately
     if (isSubmitting.current) return;
+
     isSubmitting.current = true;
     setBookingLoading(true);
 
@@ -420,7 +518,7 @@ const BookingModal = ({
         const availableChairs = Math.max(
           0,
           (attrs.capacity || 1) -
-          (typeof occupiedChairs === "number" ? occupiedChairs : 0),
+            (typeof occupiedChairs === "number" ? occupiedChairs : 0),
         );
 
         if (requestedChairs <= 0) {
@@ -454,15 +552,20 @@ const BookingModal = ({
         : `${datePart}T${formData.endTime}:00.000Z`;
 
       // IDs for relations in Strapi v5 should ideally use the { connect: [...] } syntax
-      const spaceTargetId = attrs._is_virtual && attrs._originalIds
-        ? attrs._originalIds[0]
-        : (space.documentId || space.id);
+      const spaceTargetId =
+        attrs._is_virtual && attrs._originalIds
+          ? attrs._originalIds[0]
+          : space.documentId || space.id;
 
-      const filteredEquipments = Object.keys(equipmentQuantities)
-        .filter((id) => !String(id).startsWith('fallback-') && equipmentQuantities[id] > 0);
+      const filteredEquipments = Object.keys(equipmentQuantities).filter(
+        (id) =>
+          !String(id).startsWith("fallback-") && equipmentQuantities[id] > 0,
+      );
 
-      const filteredServices = Object.keys(serviceQuantities)
-        .filter((id) => !String(id).startsWith('fallback-') && serviceQuantities[id] > 0);
+      const filteredServices = Object.keys(serviceQuantities).filter(
+        (id) =>
+          !String(id).startsWith("fallback-") && serviceQuantities[id] > 0,
+      );
 
       const bookingData = {
         user: { connect: [user.id] },
@@ -472,19 +575,29 @@ const BookingModal = ({
         status: "pending",
         total_price: parseFloat(calculateTotalPrice()),
         equipments: {
-          connect: filteredEquipments.map((id) => isNaN(parseInt(id)) ? id : parseInt(id))
+          connect: filteredEquipments.map((id) =>
+            isNaN(parseInt(id)) ? id : parseInt(id),
+          ),
         },
         services: {
-          connect: filteredServices.map((id) => isNaN(parseInt(id)) ? id : parseInt(id))
+          connect: filteredServices.map((id) =>
+            isNaN(parseInt(id)) ? id : parseInt(id),
+          ),
         },
         extras: {
-          spaceName: attrs.name || (attrs.mesh_name ? attrs.mesh_name.replace(/bureau_/i, 'Bureau ').replace(/_/g, ' ') : "Espace"),
+          spaceName:
+            attrs.name ||
+            (attrs.mesh_name
+              ? attrs.mesh_name
+                  .replace(/bureau_/i, "Bureau ")
+                  .replace(/_/g, " ")
+              : "Espace"),
           coworkingName: "SunSpace",
           equipmentQuantities: Object.fromEntries(
-            Object.entries(equipmentQuantities).filter(([_, q]) => q > 0)
+            Object.entries(equipmentQuantities).filter(([_, q]) => q > 0),
           ),
           serviceQuantities: Object.fromEntries(
-            Object.entries(serviceQuantities).filter(([_, q]) => q > 0)
+            Object.entries(serviceQuantities).filter(([_, q]) => q > 0),
           ),
           serviceParams: serviceParams,
           chairId: selectedChair,
@@ -502,9 +615,18 @@ const BookingModal = ({
       console.log("[Booking] Logic: Creating booking...", bookingData);
       const res = await createReservation(bookingData);
       setCreatedReservation(res.data);
+      console.log(
+        "[Booking] Created reservation - id:",
+        res.data?.id,
+        "| documentId:",
+        res.data?.documentId,
+      );
 
-      if (activeSubscription) {
-        window.alert("Réservation confirmée ! (Inclus dans votre abonnement)");
+      const createdRes = res.data?.attributes || res.data || {};
+      const actualStatus = createdRes.status;
+
+      if (actualStatus === "confirmed") {
+        window.alert("Réservation confirmée ! (Validé par votre abonnement)");
         onClose();
         const userObj = JSON.parse(localStorage.getItem("user") || "{}");
         navigate(
@@ -538,23 +660,53 @@ const BookingModal = ({
   const handlePaymentConfirm = async ({ method, file }) => {
     setBookingLoading(true);
     try {
-      const bookingId = createdReservation.id;
+      // Strapi v5: use documentId for PUT/relation, numeric id for relation FK
+      const bookingId =
+        createdReservation?.documentId || createdReservation?.id;
       const paymentData = {
         amount:
           createdReservation.attributes?.total_price ||
           createdReservation.total_price,
         method: method,
-        booking: bookingId,
+        booking: createdReservation?.id, // FK relation uses numeric id
         status: "pending",
       };
 
       console.log("[Payment] Creating payment record:", paymentData);
       const paymentRes = await createPayment(paymentData);
-      const paymentId = paymentRes.data.id;
+      const paymentDocId = paymentRes.data?.documentId || paymentRes.data?.id;
 
       if (method === "bank_transfer" && file) {
-        console.log("[Payment] Submitting proof for:", paymentId);
-        await submitPaymentProof(paymentId, file);
+        console.log("[Payment] Submitting proof for:", paymentDocId);
+        await submitPaymentProof(paymentDocId, file);
+      }
+
+      // Store the payment_method on the booking so the backend cron can check it
+      // For on_site payments: also set the payment_deadline = now + 2 minutes (testing)
+      const bookingDocId =
+        createdReservation?.documentId || createdReservation?.id;
+      if (bookingDocId) {
+        try {
+          const updateData = { payment_method: method };
+          if (method === "on_site") {
+            // 2 minutes for testing (change to 2 * 60 * 60 * 1000 for production)
+            updateData.payment_deadline = new Date(
+              Date.now() + 2 * 60 * 1000,
+            ).toISOString();
+          }
+          console.log(
+            "[Payment] Updating booking with payment_method + deadline:",
+            updateData,
+          );
+          await (
+            await import("../../services/bookingService")
+          ).updateReservation(bookingDocId, updateData);
+        } catch (updateErr) {
+          console.warn(
+            "[Payment] Could not update booking payment_method:",
+            updateErr,
+          );
+        }
       }
 
       window.alert(
@@ -611,9 +763,16 @@ const BookingModal = ({
     // EMERGENCY FALLBACK if prices are still 0 in DB
     if (pHourly === 0 && pDaily === 0) {
       const type = attrs.type || "";
-      if (type === "event-space") { pHourly = 20; pDaily = 150; }
-      else if (type === "meeting-room") { pHourly = 15; pDaily = 100; }
-      else if (type === "hot-desk") { pHourly = 5; pDaily = 40; }
+      if (type === "event-space") {
+        pHourly = 20;
+        pDaily = 150;
+      } else if (type === "meeting-room") {
+        pHourly = 15;
+        pDaily = 100;
+      } else if (type === "hot-desk") {
+        pHourly = 5;
+        pDaily = 40;
+      }
     }
 
     const participants = parseInt(formData.participants) || 1;
@@ -637,7 +796,7 @@ const BookingModal = ({
       durationDays,
       allDay: formData.allDay,
       spaceSubtotal,
-      currentTotal: total
+      currentTotal: total,
     });
 
     // Equipment Price
@@ -653,7 +812,9 @@ const BookingModal = ({
         else if (pt === "daily") subtotal = durationDays * pEq * qty;
         else subtotal = pEq * qty;
 
-        console.log(`[DEBUG] Adding Equipment: ${eqAttrs.name || eq.id}, qty=${qty}, unitPrice=${pEq}, type=${pt}, subtotal=${subtotal}`);
+        console.log(
+          `[DEBUG] Adding Equipment: ${eqAttrs.name || eq.id}, qty=${qty}, unitPrice=${pEq}, type=${pt}, subtotal=${subtotal}`,
+        );
         total += subtotal;
       }
     });
@@ -670,14 +831,18 @@ const BookingModal = ({
 
         entries.forEach((entry, idx) => {
           // Look for any field that might represent a quantity (pages, copies, etc.)
-          const entryQty = parseFloat(entry.pages || entry.copies || entry.quantite || 1);
+          const entryQty = parseFloat(
+            entry.pages || entry.copies || entry.quantite || 1,
+          );
 
           let subtotal = 0;
           if (pt === "hourly") subtotal = durationHours * pSrv * entryQty;
           else if (pt === "daily") subtotal = durationDays * pSrv * entryQty;
           else subtotal = pSrv * entryQty;
 
-          console.log(`[DEBUG] Adding Service Entry: ${srvAttrs.name || srvId} (#${idx + 1}), entryQty=${entryQty}, unitPrice=${pSrv}, type=${pt}, subtotal=${subtotal}`);
+          console.log(
+            `[DEBUG] Adding Service Entry: ${srvAttrs.name || srvId} (#${idx + 1}), entryQty=${entryQty}, unitPrice=${pSrv}, type=${pt}, subtotal=${subtotal}`,
+          );
           total += subtotal;
         });
       }
@@ -689,31 +854,31 @@ const BookingModal = ({
 
   const hasConflict = attrs.is_per_chair
     ? (parseInt(formData.participants) || 0) >
-    Math.max(
-      0,
-      (attrs.capacity || 1) -
-      (typeof occupiedChairs === "number" ? occupiedChairs : 0),
-    )
+      Math.max(
+        0,
+        (attrs.capacity || 1) -
+          (typeof occupiedChairs === "number" ? occupiedChairs : 0),
+      )
     : (!formData.allDay &&
-      existingReservations.some((res) => {
-        const resStart = new Date(
-          res.attributes?.start_time || res.start_time,
-        ).getTime();
-        const resEnd = new Date(
-          res.attributes?.end_time || res.end_time,
-        ).getTime();
+        existingReservations.some((res) => {
+          const resStart = new Date(
+            res.attributes?.start_time || res.start_time,
+          ).getTime();
+          const resEnd = new Date(
+            res.attributes?.end_time || res.end_time,
+          ).getTime();
 
-        const datePart = formData.date;
-        const reqStart = new Date(
-          `${datePart}T${formData.startTime}:00.000Z`,
-        ).getTime();
-        const reqEnd = new Date(
-          `${datePart}T${formData.endTime}:00.000Z`,
-        ).getTime();
+          const datePart = formData.date;
+          const reqStart = new Date(
+            `${datePart}T${formData.startTime}:00.000Z`,
+          ).getTime();
+          const reqEnd = new Date(
+            `${datePart}T${formData.endTime}:00.000Z`,
+          ).getTime();
 
-        return reqStart < resEnd && resStart < reqEnd;
-      })) ||
-    (formData.allDay && existingReservations.length > 0);
+          return reqStart < resEnd && resStart < reqEnd;
+        })) ||
+      (formData.allDay && existingReservations.length > 0);
 
   // Calendar Logic
   const [viewDate, setViewDate] = useState(new Date(formData.date));
@@ -786,12 +951,25 @@ const BookingModal = ({
                   {Math.max(
                     0,
                     (attrs.capacity || 0) -
-                    (typeof occupiedChairs === "number" ? occupiedChairs : 0),
+                      (typeof occupiedChairs === "number" ? occupiedChairs : 0),
                   )}
                 </span>
               )}
               <span className="flex items-center gap-1.5 text-emerald-600">
-                💰 {attrs.pricing_hourly || (attrs.type === "event-space" ? 20 : attrs.type === "meeting-room" ? 15 : 5)}DT/H · {attrs.pricing_daily || (attrs.type === "event-space" ? 150 : attrs.type === "meeting-room" ? 100 : 40)}
+                💰{" "}
+                {attrs.pricing_hourly ||
+                  (attrs.type === "event-space"
+                    ? 20
+                    : attrs.type === "meeting-room"
+                      ? 15
+                      : 5)}
+                DT/H ·{" "}
+                {attrs.pricing_daily ||
+                  (attrs.type === "event-space"
+                    ? 150
+                    : attrs.type === "meeting-room"
+                      ? 100
+                      : 40)}
                 DT/JOUR
               </span>
             </div>
@@ -824,9 +1002,9 @@ const BookingModal = ({
                     {Math.max(
                       0,
                       (attrs.capacity || 1) -
-                      (typeof occupiedChairs === "number"
-                        ? occupiedChairs
-                        : 0),
+                        (typeof occupiedChairs === "number"
+                          ? occupiedChairs
+                          : 0),
                     )}
                   </p>
                 </div>
@@ -951,19 +1129,43 @@ const BookingModal = ({
                             {attrs.name}
                             {fields.length > 0 && (
                               <div className="relative group/info">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-slate-300 cursor-help hover:text-blue-500">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="14"
+                                  height="14"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  className="text-slate-300 cursor-help hover:text-blue-500"
+                                >
                                   <circle cx="12" cy="12" r="10"></circle>
                                   <line x1="12" y1="16" x2="12" y2="12"></line>
                                   <line x1="12" y1="8" x2="12.01" y2="8"></line>
                                 </svg>
                                 {/* Tooltip on hover - Always show on group/info hover */}
                                 <div className="absolute left-6 top-1/2 -translate-y-1/2 invisible opacity-0 group-hover/info:visible group-hover/info:opacity-100 transition-all z-50 w-56 bg-white border border-slate-100 text-slate-900 p-4 rounded-2xl text-[10px] shadow-2xl pointer-events-none">
-                                  <p className="mb-3 text-blue-600 font-black uppercase tracking-widest border-b border-blue-50 pb-2">Détails du service</p>
+                                  <p className="mb-3 text-blue-600 font-black uppercase tracking-widest border-b border-blue-50 pb-2">
+                                    Détails du service
+                                  </p>
                                   <ul className="space-y-2">
                                     {fields.map((f, idx) => (
-                                      <li key={idx} className="flex flex-col gap-0.5">
-                                        <span className="text-[9px] text-slate-400 font-bold uppercase">{f.label}</span>
-                                        <span className="text-slate-600">{f.type === 'file' ? 'Document requis' : f.type === 'number' ? 'Nombre requis' : 'Paramètre sélectionnable'}</span>
+                                      <li
+                                        key={idx}
+                                        className="flex flex-col gap-0.5"
+                                      >
+                                        <span className="text-[9px] text-slate-400 font-bold uppercase">
+                                          {f.label}
+                                        </span>
+                                        <span className="text-slate-600">
+                                          {f.type === "file"
+                                            ? "Document requis"
+                                            : f.type === "number"
+                                              ? "Nombre requis"
+                                              : "Paramètre sélectionnable"}
+                                        </span>
                                       </li>
                                     ))}
                                   </ul>
@@ -1004,12 +1206,20 @@ const BookingModal = ({
                       {qty > 0 && serviceParams[id]?.length > 0 && (
                         <div className="ml-4 space-y-2">
                           {serviceParams[id].map((entry, idx) => (
-                            <div key={idx} className="p-3 bg-slate-50 border-l-4 border-emerald-400 rounded-r-xl flex items-center justify-between animate-in fade-in slide-in-from-left-2 transition-all">
+                            <div
+                              key={idx}
+                              className="p-3 bg-slate-50 border-l-4 border-emerald-400 rounded-r-xl flex items-center justify-between animate-in fade-in slide-in-from-left-2 transition-all"
+                            >
                               <div className="flex flex-col gap-1">
-                                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Entrée #{idx + 1}</span>
+                                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                                  Entrée #{idx + 1}
+                                </span>
                                 <div className="flex gap-3 text-[10px] font-bold text-slate-600">
                                   {Object.entries(entry).map(([k, v]) => (
-                                    <span key={k}>{k}: <span className="text-blue-600">{v}</span></span>
+                                    <span key={k}>
+                                      {k}:{" "}
+                                      <span className="text-blue-600">{v}</span>
+                                    </span>
                                   ))}
                                 </div>
                               </div>
@@ -1062,9 +1272,9 @@ const BookingModal = ({
                       {Math.max(
                         0,
                         (attrs.capacity || 0) -
-                        (typeof occupiedChairs === "number"
-                          ? occupiedChairs
-                          : 0),
+                          (typeof occupiedChairs === "number"
+                            ? occupiedChairs
+                            : 0),
                       )}
                     </p>
                   </div>
@@ -1072,8 +1282,6 @@ const BookingModal = ({
               </div>
             </section>
           )}
-
-
         </div>
 
         {/* Selection Column */}
@@ -1126,11 +1334,12 @@ const BookingModal = ({
                       disabled={isPast}
                       onClick={() => setFormData((p) => ({ ...p, date: dStr }))}
                       className={`h-10 rounded-xl text-[10px] font-black transition-all flex items-center justify-center
-                        ${isSelected
-                          ? "bg-blue-600 text-white shadow-lg shadow-blue-500/30"
-                          : isPast
-                            ? "text-slate-200 cursor-not-allowed opacity-40"
-                            : "text-slate-600 hover:bg-slate-100"
+                        ${
+                          isSelected
+                            ? "bg-blue-600 text-white shadow-lg shadow-blue-500/30"
+                            : isPast
+                              ? "text-slate-200 cursor-not-allowed opacity-40"
+                              : "text-slate-600 hover:bg-slate-100"
                         }
                       `}
                     >
@@ -1254,8 +1463,33 @@ const BookingModal = ({
                 ? "VALIDATION..."
                 : hasConflict
                   ? "NON DISPONIBLE"
-                  : "CONFIRMER LA RÉSERVATION"}
+                  : "VÉRIFIER & PROCÉDER AU PAIEMENT"}
           </button>
+
+          {!activeSubscription && (
+            <button
+              onClick={handleNavigateToPlans}
+              disabled={bookingLoading || isCheckingSubscription}
+              className="mt-4 w-full py-4 bg-white border-2 border-amber-200 text-amber-600 font-black text-[11px] uppercase tracking-[0.2em] rounded-[1.5rem] shadow-xl hover:bg-amber-50 transition-all flex items-center justify-center gap-2"
+            >
+              <span>💎</span> Acheter un abonnement
+            </button>
+          )}
+
+          {activeSubscription && activeSubscription.status === "pending" && (
+            <div className="mt-4 p-4 bg-amber-50 border border-amber-100 rounded-2xl">
+              <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest text-center">
+                ⏳ Un abonnement est en attente de confirmation.
+                <br />
+                <button
+                  onClick={handleNavigateToPlans}
+                  className="mt-2 underline hover:text-amber-700"
+                >
+                  Voir mon statut
+                </button>
+              </p>
+            </div>
+          )}
 
           <p className="mt-6 text-center text-[9px] text-slate-400 font-bold uppercase tracking-widest leading-relaxed">
             * En cliquant sur confirmer, vous bloquez cet espace et recevez un
@@ -1267,7 +1501,11 @@ const BookingModal = ({
         <PaymentSelector
           amount={parseFloat(calculateTotalPrice())}
           onSelect={handlePaymentConfirm}
-          onCancel={() => setShowPaymentSelector(false)}
+          onCancel={() => {
+            handleAbandonBooking();
+            setShowPaymentSelector(false);
+          }}
+          onAbandon={handleAbandonBooking}
         />
       )}
 
@@ -1276,46 +1514,70 @@ const BookingModal = ({
         <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/40 backdrop-blur-sm animate-in fade-in duration-300">
           <div className="bg-white w-full max-w-md rounded-[2.5rem] p-10 shadow-3xl animate-in zoom-in slide-in-from-bottom-5 duration-500">
             <header className="mb-8">
-              <h3 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">Configuration</h3>
-              <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest">{activeServiceForm.attributes?.name || activeServiceForm.name}</p>
+              <h3 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">
+                Configuration
+              </h3>
+              <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest">
+                {activeServiceForm.attributes?.name || activeServiceForm.name}
+              </p>
             </header>
 
             <div className="space-y-6">
-              {(activeServiceForm.attributes?.configuration?.fields || activeServiceForm.configuration?.fields || []).map(field => (
+              {(
+                activeServiceForm.attributes?.configuration?.fields ||
+                activeServiceForm.configuration?.fields ||
+                []
+              ).map((field) => (
                 <div key={field.name} className="flex flex-col gap-2">
                   <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
-                    {field.label} {field.required && <span className="text-rose-500">*</span>}
+                    {field.label}{" "}
+                    {field.required && <span className="text-rose-500">*</span>}
                   </label>
 
-                  {field.type === 'file' ? (
+                  {field.type === "file" ? (
                     <div className="relative group/file">
                       <input
                         type="file"
-                        onChange={(e) => handleServiceParamChange(field.name, e.target.files[0]?.name)}
+                        onChange={(e) =>
+                          handleServiceParamChange(
+                            field.name,
+                            e.target.files[0]?.name,
+                          )
+                        }
                         className="w-full opacity-0 absolute inset-0 z-10 cursor-pointer"
                       />
                       <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl p-6 text-center transition-all group-hover/file:border-blue-300 group-hover/file:bg-blue-50/30">
                         <span className="text-[11px] font-black text-blue-600 uppercase tracking-widest">
-                          {currentEntryData[field.name] || 'Parcourir...'}
+                          {currentEntryData[field.name] || "Parcourir..."}
                         </span>
                       </div>
                     </div>
-                  ) : field.type === 'select' ? (
+                  ) : field.type === "select" ? (
                     <select
-                      onChange={(e) => handleServiceParamChange(field.name, e.target.value)}
-                      value={currentEntryData[field.name] || field.default || ''}
+                      onChange={(e) =>
+                        handleServiceParamChange(field.name, e.target.value)
+                      }
+                      value={
+                        currentEntryData[field.name] || field.default || ""
+                      }
                       className="w-full bg-slate-50 border border-slate-100 rounded-2xl p-4 text-[11px] font-bold text-slate-700 outline-none focus:ring-2 focus:ring-blue-100"
                     >
                       <option value="">Sélectionner...</option>
-                      {field.options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                      {field.options.map((opt) => (
+                        <option key={opt} value={opt}>
+                          {opt}
+                        </option>
+                      ))}
                     </select>
                   ) : (
                     <input
                       type={field.type}
-                      placeholder={field.placeholder || ''}
+                      placeholder={field.placeholder || ""}
                       min={field.min}
-                      value={currentEntryData[field.name] || ''}
-                      onChange={(e) => handleServiceParamChange(field.name, e.target.value)}
+                      value={currentEntryData[field.name] || ""}
+                      onChange={(e) =>
+                        handleServiceParamChange(field.name, e.target.value)
+                      }
                       className="w-full bg-slate-50 border border-slate-100 rounded-2xl p-4 text-[11px] font-bold text-slate-700 placeholder:text-slate-300 outline-none focus:ring-2 focus:ring-blue-100"
                     />
                   )}

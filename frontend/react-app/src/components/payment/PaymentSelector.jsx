@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const PaymentSelector = ({ amount, onSelect, onCancel }) => {
+const PaymentSelector = ({ amount, onSelect, onCancel, onAbandon }) => {
   const [method, setMethod] = useState("");
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -51,9 +51,31 @@ const PaymentSelector = ({ amount, onSelect, onCancel }) => {
         }}
       >
         <h2 style={{ marginBottom: "10px" }}>Finaliser le paiement</h2>
-        <p style={{ color: "#666", marginBottom: "20px" }}>
+        <p style={{ color: "#666", marginBottom: "12px" }}>
           Montant total à régler : <strong>{amount} TND</strong>
         </p>
+        <div
+          style={{
+            padding: "10px 14px",
+            background: "#FFF8E1",
+            border: "1px solid #FFB300",
+            borderRadius: "8px",
+            fontSize: "12px",
+            color: "#795548",
+            marginBottom: "20px",
+            display: "flex",
+            alignItems: "flex-start",
+            gap: "8px",
+          }}
+        >
+          <span style={{ fontSize: "16px" }}>⚠️</span>
+          <span>
+            En choisissant le <strong>paiement à l'espace</strong>, vous
+            disposez de <strong>2 minutes</strong> pour vous présenter en
+            caisse. Passé ce délai, votre réservation sera{" "}
+            <strong>automatiquement annulée</strong>.
+          </span>
+        </div>
 
         <div
           className="methods"
@@ -152,7 +174,14 @@ const PaymentSelector = ({ amount, onSelect, onCancel }) => {
           </label>
         </div>
 
-        <div style={{ marginTop: "30px", display: "flex", flexDirection: "column", gap: "10px" }}>
+        <div
+          style={{
+            marginTop: "30px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+          }}
+        >
           <div style={{ display: "flex", gap: "10px" }}>
             <button
               onClick={onCancel}
@@ -185,7 +214,23 @@ const PaymentSelector = ({ amount, onSelect, onCancel }) => {
             </button>
           </div>
           <button
-            onClick={() => navigate("/subscription-plans")}
+            onClick={() => {
+              const userObj = JSON.parse(localStorage.getItem("user") || "{}");
+              const role = (userObj.user_type || "student").toLowerCase();
+
+              let target = "/subscription-plans";
+              if (role === "etudiant" || role === "student")
+                target = "/student/subscription";
+              else if (role === "formateur" || role === "trainer")
+                target = "/trainer/subscription";
+              else if (role === "professional")
+                target = "/professional/subscription";
+              else if (role === "association")
+                target = "/association/subscription";
+
+              if (onAbandon) onAbandon();
+              navigate(target);
+            }}
             style={{
               width: "100%",
               padding: "12px",

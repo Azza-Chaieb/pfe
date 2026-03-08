@@ -126,6 +126,7 @@ const PLAN_COLORS = {
 };
 
 const SubscriptionPlans = ({ isInline = false }) => {
+  console.log(`[SubscriptionPlans] Rendering. isInline:`, isInline);
   const [plans, setPlans] = useState(FALLBACK_PLANS);
   const [mySubscription, setMySubscription] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -312,7 +313,7 @@ const SubscriptionPlans = ({ isInline = false }) => {
     <div
       className={
         isInline
-          ? ""
+          ? "w-full overflow-x-hidden"
           : "min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 font-sans"
       }
     >
@@ -358,15 +359,42 @@ const SubscriptionPlans = ({ isInline = false }) => {
         </div>
       </div>
 
-      {mySubscription && !isInline && (
+      {isInline === false && mySubscription && (
         <div className="max-w-xl mx-auto px-4 mb-8">
-          <div className="p-5 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-4">
-            <span className="text-2xl">✅</span>
+          <div
+            className={`p-5 rounded-2xl flex items-center gap-4 border ${
+              (mySubscription.attributes || mySubscription).status === "active"
+                ? "bg-emerald-50 border-emerald-200"
+                : "bg-amber-50 border-amber-200"
+            }`}
+          >
+            <span className="text-2xl">
+              {(mySubscription.attributes || mySubscription).status === "active"
+                ? "✅"
+                : "⏳"}
+            </span>
             <div>
-              <p className="text-sm font-black text-emerald-800">
-                Abonnement actif
+              <p
+                className={`text-sm font-black ${
+                  (mySubscription.attributes || mySubscription).status ===
+                  "active"
+                    ? "text-emerald-800"
+                    : "text-amber-800"
+                }`}
+              >
+                {(mySubscription.attributes || mySubscription).status ===
+                "active"
+                  ? "Abonnement actif"
+                  : "Abonnement en attente de confirmation"}
               </p>
-              <p className="text-xs text-emerald-600">
+              <p
+                className={`text-xs ${
+                  (mySubscription.attributes || mySubscription).status ===
+                  "active"
+                    ? "text-emerald-600"
+                    : "text-amber-600"
+                }`}
+              >
                 Plan{" "}
                 {(mySubscription.attributes || mySubscription).plan?.data
                   ?.attributes?.name ||
@@ -379,8 +407,23 @@ const SubscriptionPlans = ({ isInline = false }) => {
               </p>
             </div>
             <button
-              onClick={() => navigate("/professional/subscription")}
-              className="ml-auto text-[10px] font-black text-emerald-700 uppercase hover:underline tracking-widest"
+              onClick={() => {
+                const userObj = JSON.parse(
+                  localStorage.getItem("user") || "{}",
+                );
+                const role = userObj.user_type || "student";
+                navigate(
+                  role === "professional"
+                    ? "/professional/subscription"
+                    : `/${role}/dashboard`,
+                );
+              }}
+              className={`ml-auto text-[10px] font-black uppercase hover:underline tracking-widest ${
+                (mySubscription.attributes || mySubscription).status ===
+                "active"
+                  ? "text-emerald-700"
+                  : "text-amber-700"
+              }`}
             >
               Gérer →
             </button>

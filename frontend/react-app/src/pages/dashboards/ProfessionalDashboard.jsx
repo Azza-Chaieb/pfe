@@ -50,7 +50,10 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
   const handleCancelSubscription = async () => {
     if (window.confirm("Êtes-vous sûr de vouloir annuler votre abonnement ?")) {
       try {
-        const subId = subscription?.id || subscription?.documentId || subscription?.data?.id;
+        const subId =
+          subscription?.id ||
+          subscription?.documentId ||
+          subscription?.data?.id;
         if (!subId) throw new Error("ID de l'abonnement introuvable.");
 
         await cancelSub(subId);
@@ -87,8 +90,8 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
           value={
             bookings.length > 0
               ? new Date(
-                bookings[0].attributes?.start_time || bookings[0].start_time,
-              ).toLocaleDateString("fr-FR")
+                  bookings[0].attributes?.start_time || bookings[0].start_time,
+                ).toLocaleDateString("fr-FR")
               : "-"
           }
           icon="📅"
@@ -133,8 +136,12 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
                     const data = item.attributes || item;
                     const spaceRaw = data.space?.data || data.space || {};
                     const space = spaceRaw?.attributes || spaceRaw || {};
-                    const cwRaw = space.coworking_space?.data || space.coworking_space ||
-                      data.coworking_space?.data || data.coworking_space || {};
+                    const cwRaw =
+                      space.coworking_space?.data ||
+                      space.coworking_space ||
+                      data.coworking_space?.data ||
+                      data.coworking_space ||
+                      {};
                     const coworking = cwRaw?.attributes || cwRaw || {};
 
                     const startDate = new Date(data.start_time);
@@ -143,44 +150,77 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
                     const getSpaceDisplayName = () => {
                       if (space.name) return space.name;
                       if (space.mesh_name) {
-                        return space.mesh_name.replace(/bureau_/i, 'Bureau ').replace(/_/g, ' ');
+                        return space.mesh_name
+                          .replace(/bureau_/i, "Bureau ")
+                          .replace(/_/g, " ");
                       }
                       if (space.type) {
                         const types = {
-                          'meeting-room': 'Salle de Réunion',
-                          'event-space': 'Espace Événementiel',
-                          'hot-desk': 'Hot Desk',
-                          'fixed-desk': 'Bureau Fixe'
+                          "meeting-room": "Salle de Réunion",
+                          "event-space": "Espace Événementiel",
+                          "hot-desk": "Hot Desk",
+                          "fixed-desk": "Bureau Fixe",
                         };
                         return types[space.type] || space.type;
                       }
                       // Redundancy Fallback
                       if (data.extras?.spaceName) return data.extras.spaceName;
-                      return coworking.name || data.extras?.coworkingName || "SunSpace";
+                      return (
+                        coworking.name ||
+                        data.extras?.coworkingName ||
+                        "SunSpace"
+                      );
                     };
 
                     const totalPrice = (() => {
-                      const storedPrice = Number(data.total_price || data.totalPrice || data.payment?.data?.attributes?.amount || data.payment?.amount);
+                      const storedPrice = Number(
+                        data.total_price ||
+                          data.totalPrice ||
+                          data.payment?.data?.attributes?.amount ||
+                          data.payment?.amount,
+                      );
                       if (storedPrice > 0) return storedPrice.toFixed(2);
 
-                      const hours = Math.ceil((endDate - startDate) / (1000 * 60 * 60));
+                      const hours = Math.ceil(
+                        (endDate - startDate) / (1000 * 60 * 60),
+                      );
                       if (hours > 0) {
                         let calcPrice = 0;
                         let pHourly = space.pricing_hourly || 0;
                         if (pHourly === 0 && space.type) {
                           if (space.type === "meeting-room") pHourly = 15;
                           else if (space.type === "event-space") pHourly = 20;
-                          else if (space.type === "hot-desk" || space.type === "fixed-desk") pHourly = 5;
+                          else if (
+                            space.type === "hot-desk" ||
+                            space.type === "fixed-desk"
+                          )
+                            pHourly = 5;
                         }
-                        if (pHourly > 0) calcPrice += hours * pHourly * (data.participants || 1);
-                        (data.equipments?.data || data.equipments || []).forEach(eq => {
+                        if (pHourly > 0)
+                          calcPrice +=
+                            hours * pHourly * (data.participants || 1);
+                        (
+                          data.equipments?.data ||
+                          data.equipments ||
+                          []
+                        ).forEach((eq) => {
                           const p = eq.attributes || eq;
-                          if (p.price) calcPrice += (p.price_type === 'hourly' ? p.price * hours : p.price);
+                          if (p.price)
+                            calcPrice +=
+                              p.price_type === "hourly"
+                                ? p.price * hours
+                                : p.price;
                         });
-                        (data.services?.data || data.services || []).forEach(sv => {
-                          const p = sv.attributes || sv;
-                          if (p.price) calcPrice += (p.price_type === 'hourly' ? p.price * hours : p.price);
-                        });
+                        (data.services?.data || data.services || []).forEach(
+                          (sv) => {
+                            const p = sv.attributes || sv;
+                            if (p.price)
+                              calcPrice +=
+                                p.price_type === "hourly"
+                                  ? p.price * hours
+                                  : p.price;
+                          },
+                        );
                         return calcPrice.toFixed(2);
                       }
                       return "0.00";
@@ -201,7 +241,11 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
                           <span
                             className={`px-3 py-1 rounded-full text-[9px] font-black uppercase ${data.status === "confirmed" ? "bg-emerald-50 text-emerald-600" : "bg-orange-50 text-orange-600"}`}
                           >
-                            {data.status === 'confirmed' ? 'Confirmé' : data.status === 'cancelled' ? 'Annulé' : 'Attente'}
+                            {data.status === "confirmed"
+                              ? "Confirmé"
+                              : data.status === "cancelled"
+                                ? "Annulé"
+                                : "Attente"}
                           </span>
                         </td>
                       </tr>
@@ -209,7 +253,10 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
                   })}
                   {bookings.length === 0 && (
                     <tr>
-                      <td colSpan="4" className="py-8 text-center text-slate-400 italic">
+                      <td
+                        colSpan="4"
+                        className="py-8 text-center text-slate-400 italic"
+                      >
                         Aucune réservation.
                       </td>
                     </tr>
@@ -229,7 +276,11 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
                 Forfait Actuel
               </p>
               <h4 className="text-lg font-black">
-                {subscription ? (subscription.attributes?.plan?.data?.attributes?.name || subscription.plan?.name || "Premium") : "Aucun forfait"}
+                {subscription
+                  ? subscription.attributes?.plan?.data?.attributes?.name ||
+                    subscription.plan?.name ||
+                    "Premium"
+                  : "Aucun forfait"}
               </h4>
             </div>
             <button
@@ -292,12 +343,24 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
             <table className="w-full text-left">
               <thead>
                 <tr className="border-b border-slate-100">
-                  <th className="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Espace</th>
-                  <th className="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Date</th>
-                  <th className="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Prix</th>
-                  <th className="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Services</th>
-                  <th className="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Statut</th>
-                  <th className="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
+                  <th className="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    Espace
+                  </th>
+                  <th className="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    Date
+                  </th>
+                  <th className="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">
+                    Prix
+                  </th>
+                  <th className="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">
+                    Services
+                  </th>
+                  <th className="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">
+                    Statut
+                  </th>
+                  <th className="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
@@ -305,8 +368,12 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
                   const data = item.attributes || item;
                   const spaceRaw = data.space?.data || data.space || {};
                   const space = spaceRaw?.attributes || spaceRaw || {};
-                  const cwRaw = space.coworking_space?.data || space.coworking_space ||
-                    data.coworking_space?.data || data.coworking_space || {};
+                  const cwRaw =
+                    space.coworking_space?.data ||
+                    space.coworking_space ||
+                    data.coworking_space?.data ||
+                    data.coworking_space ||
+                    {};
                   const coworking = cwRaw?.attributes || cwRaw || {};
 
                   const startDate = new Date(data.start_time);
@@ -316,14 +383,16 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
                     // 1. Primary: Use the actual relation if populated
                     if (space.name) return space.name;
                     if (space.mesh_name) {
-                      return space.mesh_name.replace(/bureau_/i, 'Bureau ').replace(/_/g, ' ');
+                      return space.mesh_name
+                        .replace(/bureau_/i, "Bureau ")
+                        .replace(/_/g, " ");
                     }
                     if (space.type) {
                       const types = {
-                        'meeting-room': 'Salle de Réunion',
-                        'event-space': 'Espace Événementiel',
-                        'hot-desk': 'Hot Desk',
-                        'fixed-desk': 'Bureau Fixe'
+                        "meeting-room": "Salle de Réunion",
+                        "event-space": "Espace Événementiel",
+                        "hot-desk": "Hot Desk",
+                        "fixed-desk": "Bureau Fixe",
                       };
                       return types[space.type] || space.type;
                     }
@@ -332,67 +401,145 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
                     if (data.extras?.spaceName) return data.extras.spaceName;
 
                     // 3. Last resort: Coworking name or SunSpace
-                    return coworking.name || data.extras?.coworkingName || "SunSpace";
+                    return (
+                      coworking.name || data.extras?.coworkingName || "SunSpace"
+                    );
                   };
 
                   const totalPrice = (() => {
-                    const storedPrice = Number(data.total_price || data.totalPrice || data.payment?.data?.attributes?.amount || data.payment?.amount);
+                    const storedPrice = Number(
+                      data.total_price ||
+                        data.totalPrice ||
+                        data.payment?.data?.attributes?.amount ||
+                        data.payment?.amount,
+                    );
                     if (storedPrice > 0) return storedPrice.toFixed(2);
-                    const hours = Math.ceil((endDate - startDate) / (1000 * 60 * 60));
+                    const hours = Math.ceil(
+                      (endDate - startDate) / (1000 * 60 * 60),
+                    );
                     if (hours > 0) {
                       let calcPrice = 0;
                       let pHourly = space.pricing_hourly || 0;
                       if (pHourly === 0 && space.type) {
                         if (space.type === "meeting-room") pHourly = 15;
                         else if (space.type === "event-space") pHourly = 20;
-                        else if (space.type === "hot-desk" || space.type === "fixed-desk") pHourly = 5;
+                        else if (
+                          space.type === "hot-desk" ||
+                          space.type === "fixed-desk"
+                        )
+                          pHourly = 5;
                       }
-                      if (pHourly > 0) calcPrice += hours * pHourly * (data.participants || 1);
-                      (data.equipments?.data || data.equipments || []).forEach(eq => {
-                        const p = eq.attributes || eq;
-                        if (p.price) calcPrice += (p.price_type === 'hourly' ? p.price * hours : p.price);
-                      });
-                      (data.services?.data || data.services || []).forEach(sv => {
-                        const p = sv.attributes || sv;
-                        if (p.price) calcPrice += (p.price_type === 'hourly' ? p.price * hours : p.price);
-                      });
+                      if (pHourly > 0)
+                        calcPrice += hours * pHourly * (data.participants || 1);
+                      (data.equipments?.data || data.equipments || []).forEach(
+                        (eq) => {
+                          const p = eq.attributes || eq;
+                          if (p.price)
+                            calcPrice +=
+                              p.price_type === "hourly"
+                                ? p.price * hours
+                                : p.price;
+                        },
+                      );
+                      (data.services?.data || data.services || []).forEach(
+                        (sv) => {
+                          const p = sv.attributes || sv;
+                          if (p.price)
+                            calcPrice +=
+                              p.price_type === "hourly"
+                                ? p.price * hours
+                                : p.price;
+                        },
+                      );
                       return calcPrice.toFixed(2);
                     }
                     return "0.00";
                   })();
 
-                  const extrasCount = (data.equipments?.data || data.equipments || []).length +
-                    (data.services?.data || data.services || []).length;
+                  const extrasCount =
+                    (data.equipments?.data || data.equipments || []).length +
+                    (data.services?.data || data.services || []).length +
+                    Object.keys(data.extras?.serviceQuantities || {}).filter(
+                      (id) => id.startsWith("fallback-"),
+                    ).length;
 
                   return (
-                    <tr key={item.id} className="hover:bg-white/50 transition-all">
-                      <td className="py-5 font-bold text-slate-700">{getSpaceDisplayName()}</td>
-                      <td className="py-5 text-slate-500">{startDate.toLocaleDateString()}</td>
-                      <td className="py-5 text-center font-black text-slate-900">{totalPrice} DT</td>
+                    <tr
+                      key={item.id}
+                      className="hover:bg-white/50 transition-all"
+                    >
+                      <td className="py-5 font-bold text-slate-700">
+                        {getSpaceDisplayName()}
+                      </td>
+                      <td className="py-5 text-slate-500">
+                        {startDate.toLocaleDateString()}
+                      </td>
+                      <td className="py-5 text-center font-black text-slate-900">
+                        {totalPrice} DT
+                      </td>
                       <td className="py-5 text-center">
                         <span className="text-[10px] bg-slate-100 text-slate-500 px-2 py-1 rounded">
-                          {extrasCount > 0 ? `${extrasCount} option(s)` : "Aucun extra"}
+                          {extrasCount > 0
+                            ? `${extrasCount} option(s)`
+                            : "Aucun extra"}
                         </span>
                       </td>
                       <td className="py-5 text-right">
-                        <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase ${data.status === "confirmed" ? "bg-emerald-50 text-emerald-600" : "bg-orange-50 text-orange-600"}`}>
-                          {data.status === 'confirmed' ? 'Confirmé' : data.status === 'cancelled' ? 'Annulé' : 'Attente'}
+                        <span
+                          className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase ${data.status === "confirmed" ? "bg-emerald-50 text-emerald-600" : "bg-orange-50 text-orange-600"}`}
+                        >
+                          {data.status === "confirmed"
+                            ? "Confirmé"
+                            : data.status === "cancelled"
+                              ? "Annulé"
+                              : "Attente"}
                         </span>
                       </td>
                       <td className="py-5 text-right">
                         <button
                           onClick={() => {
-                            const eqNames = (data.equipments?.data || data.equipments || []).map(eq => (eq.attributes || eq).name).join(", ");
-                            const svNames = (data.services?.data || data.services || []).map(sv => (sv.attributes || sv).name).join(", ");
+                            const eqNames = (
+                              data.equipments?.data ||
+                              data.equipments ||
+                              []
+                            )
+                              .map((eq) => eq.attributes?.name || eq.name || "")
+                              .filter(Boolean)
+                              .join(", ");
+                            const svNames = (() => {
+                              const dbServices = (
+                                data.services?.data ||
+                                data.services ||
+                                []
+                              )
+                                .map(
+                                  (sv) => sv.attributes?.name || sv.name || "",
+                                )
+                                .filter(Boolean);
+                              const fallbackMap = {
+                                "fallback-print": "Impression",
+                                "fallback-catering": "Catering / Déjeuner",
+                                "fallback-it-support": "Support Technique IT",
+                                "fallback-coffee": "Cafétérie Premium",
+                              };
+                              const fallbackServices = Object.keys(
+                                data.extras?.serviceQuantities || {},
+                              )
+                                .filter((id) => id.startsWith("fallback-"))
+                                .map((id) => fallbackMap[id] || id);
+                              return [...dbServices, ...fallbackServices].join(
+                                ", ",
+                              );
+                            })();
                             const participants = data.participants || 1;
                             const spaceName = getSpaceDisplayName();
                             alert(
                               `Détails : ${spaceName}\n` +
-                              `Date : ${startDate.toLocaleDateString()}\n` +
-                              `Heure : ${startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${endDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}\n` +
-                              `Participants : ${participants}\n` +
-                              (eqNames ? `Équipements : ${eqNames}\n` : "") +
-                              (svNames ? `Services : ${svNames}` : "")
+                                `Date : ${startDate.toLocaleDateString()}\n` +
+                                `Heure : ${startDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} - ${endDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}\n` +
+                                `Participants : ${participants}\n` +
+                                (eqNames ? `Équipements : ${eqNames}\n` : "") +
+                                (svNames ? `Services : ${svNames}` : ""),
                             );
                           }}
                           className="text-[9px] font-black uppercase text-blue-600 hover:text-blue-800 underline transition-all"

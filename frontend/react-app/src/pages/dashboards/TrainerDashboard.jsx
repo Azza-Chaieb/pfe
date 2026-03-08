@@ -318,8 +318,12 @@ const TrainerDashboard = ({ activeTab = "dashboard" }) => {
                   const space = spaceRaw?.attributes || spaceRaw || {};
 
                   // Coworking can come from space or directly from booking
-                  const cwRaw = space.coworking_space?.data || space.coworking_space ||
-                    data.coworking_space?.data || data.coworking_space || {};
+                  const cwRaw =
+                    space.coworking_space?.data ||
+                    space.coworking_space ||
+                    data.coworking_space?.data ||
+                    data.coworking_space ||
+                    {};
                   const coworking = cwRaw?.attributes || cwRaw || {};
 
                   const startDate = new Date(data.start_time || data.date);
@@ -330,15 +334,17 @@ const TrainerDashboard = ({ activeTab = "dashboard" }) => {
                     if (space.name) return space.name;
 
                     if (space.mesh_name) {
-                      return space.mesh_name.replace(/bureau_/i, 'Bureau ').replace(/_/g, ' ');
+                      return space.mesh_name
+                        .replace(/bureau_/i, "Bureau ")
+                        .replace(/_/g, " ");
                     }
 
                     if (space.type) {
                       const types = {
-                        'meeting-room': 'Salle de Réunion',
-                        'event-space': 'Espace Événementiel',
-                        'hot-desk': 'Hot Desk',
-                        'fixed-desk': 'Bureau Fixe'
+                        "meeting-room": "Salle de Réunion",
+                        "event-space": "Espace Événementiel",
+                        "hot-desk": "Hot Desk",
+                        "fixed-desk": "Bureau Fixe",
                       };
                       return types[space.type] || space.type;
                     }
@@ -347,14 +353,23 @@ const TrainerDashboard = ({ activeTab = "dashboard" }) => {
                     if (data.extras?.spaceName) return data.extras.spaceName;
 
                     // 3. Last resort: Coworking name or SunSpace
-                    return coworking.name || data.extras?.coworkingName || "SunSpace";
+                    return (
+                      coworking.name || data.extras?.coworkingName || "SunSpace"
+                    );
                   };
 
                   const totalPrice = (() => {
-                    const storedPrice = Number(data.total_price || data.totalPrice || data.payment?.data?.attributes?.amount || data.payment?.amount);
+                    const storedPrice = Number(
+                      data.total_price ||
+                        data.totalPrice ||
+                        data.payment?.data?.attributes?.amount ||
+                        data.payment?.amount,
+                    );
                     if (storedPrice > 0) return storedPrice.toFixed(2);
 
-                    const hours = Math.ceil((endDate - startDate) / (1000 * 60 * 60));
+                    const hours = Math.ceil(
+                      (endDate - startDate) / (1000 * 60 * 60),
+                    );
                     if (hours > 0) {
                       let calcPrice = 0;
                       let pHourly = space.pricing_hourly || 0;
@@ -362,20 +377,37 @@ const TrainerDashboard = ({ activeTab = "dashboard" }) => {
                       if (pHourly === 0 && space.type) {
                         if (space.type === "meeting-room") pHourly = 15;
                         else if (space.type === "event-space") pHourly = 20;
-                        else if (space.type === "hot-desk" || space.type === "fixed-desk") pHourly = 5;
+                        else if (
+                          space.type === "hot-desk" ||
+                          space.type === "fixed-desk"
+                        )
+                          pHourly = 5;
                       }
 
-                      if (pHourly > 0) calcPrice += hours * pHourly * (data.participants || 1);
+                      if (pHourly > 0)
+                        calcPrice += hours * pHourly * (data.participants || 1);
 
-                      (data.equipments?.data || data.equipments || []).forEach(eq => {
-                        const p = eq.attributes || eq;
-                        if (p.price) calcPrice += (p.price_type === 'hourly' ? p.price * hours : p.price);
-                      });
+                      (data.equipments?.data || data.equipments || []).forEach(
+                        (eq) => {
+                          const p = eq.attributes || eq;
+                          if (p.price)
+                            calcPrice +=
+                              p.price_type === "hourly"
+                                ? p.price * hours
+                                : p.price;
+                        },
+                      );
 
-                      (data.services?.data || data.services || []).forEach(sv => {
-                        const p = sv.attributes || sv;
-                        if (p.price) calcPrice += (p.price_type === 'hourly' ? p.price * hours : p.price);
-                      });
+                      (data.services?.data || data.services || []).forEach(
+                        (sv) => {
+                          const p = sv.attributes || sv;
+                          if (p.price)
+                            calcPrice +=
+                              p.price_type === "hourly"
+                                ? p.price * hours
+                                : p.price;
+                        },
+                      );
                       return calcPrice.toFixed(2);
                     }
                     return "0.00";
@@ -398,22 +430,60 @@ const TrainerDashboard = ({ activeTab = "dashboard" }) => {
                         <span
                           className={`px-3 py-1 rounded-full text-[9px] font-black uppercase ${data.status === "confirmed" ? "bg-emerald-50 text-emerald-600" : "bg-orange-50 text-orange-600"}`}
                         >
-                          {data.status === 'confirmed' ? 'Confirmé' : data.status === 'cancelled' ? 'Annulé' : 'Attente'}
+                          {data.status === "confirmed"
+                            ? "Confirmé"
+                            : data.status === "cancelled"
+                              ? "Annulé"
+                              : "Attente"}
                         </span>
                       </td>
                       <td className="py-4 text-right">
                         <button
                           onClick={() => {
-                            const eqNames = (data.equipments?.data || data.equipments || []).map(eq => (eq.attributes || eq).name).join(", ");
-                            const svNames = (data.services?.data || data.services || []).map(sv => (sv.attributes || sv).name).join(", ");
-                            const participants = data.participants || data.extras?.contact?.participants || 1;
+                            const eqNames = (
+                              data.equipments?.data ||
+                              data.equipments ||
+                              []
+                            )
+                              .map((eq) => eq.attributes?.name || eq.name || "")
+                              .filter(Boolean)
+                              .join(", ");
+                            const svNames = (() => {
+                              const dbServices = (
+                                data.services?.data ||
+                                data.services ||
+                                []
+                              )
+                                .map(
+                                  (sv) => sv.attributes?.name || sv.name || "",
+                                )
+                                .filter(Boolean);
+                              const fallbackMap = {
+                                "fallback-print": "Impression",
+                                "fallback-catering": "Catering / Déjeuner",
+                                "fallback-it-support": "Support Technique IT",
+                                "fallback-coffee": "Cafétérie Premium",
+                              };
+                              const fallbackServices = Object.keys(
+                                data.extras?.serviceQuantities || {},
+                              )
+                                .filter((id) => id.startsWith("fallback-"))
+                                .map((id) => fallbackMap[id] || id);
+                              return [...dbServices, ...fallbackServices].join(
+                                ", ",
+                              );
+                            })();
+                            const participants =
+                              data.participants ||
+                              data.extras?.contact?.participants ||
+                              1;
                             alert(
                               `Détails : ${spaceNameLabel}\n` +
-                              `Date : ${startDate.toLocaleDateString()}\n` +
-                              `Heure : ${startDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${endDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}\n` +
-                              `Participants : ${participants}\n` +
-                              (eqNames ? `Équipements : ${eqNames}\n` : "") +
-                              (svNames ? `Services : ${svNames}` : "")
+                                `Date : ${startDate.toLocaleDateString()}\n` +
+                                `Heure : ${startDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} - ${endDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}\n` +
+                                `Participants : ${participants}\n` +
+                                (eqNames ? `Équipements : ${eqNames}\n` : "") +
+                                (svNames ? `Services : ${svNames}` : ""),
                             );
                           }}
                           className="text-[9px] font-black uppercase text-blue-600 hover:text-blue-800 underline transition-all"
@@ -444,7 +514,10 @@ const TrainerDashboard = ({ activeTab = "dashboard" }) => {
   const handleCancelSubscription = async () => {
     if (window.confirm("Êtes-vous sûr de vouloir annuler votre abonnement ?")) {
       try {
-        const subId = subscription?.id || subscription?.documentId || subscription?.data?.id;
+        const subId =
+          subscription?.id ||
+          subscription?.documentId ||
+          subscription?.data?.id;
         if (subId) await cancelSub(subId);
         setSubscription(null);
         alert("Abonnement annulé avec succès.");

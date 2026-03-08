@@ -240,17 +240,17 @@ export default {
           description: "Moniteur haute résolution pour graphisme et code.",
           price: 15,
           price_type: "daily",
-          total_quantity: 5,
-          available_quantity: 5,
+          total_quantity: 3,
+          available_quantity: 3,
           status: "disponible",
         },
         {
           name: "Cafetière Nespresso",
-          description: "Accès illimité aux capsules de café premium.",
+          description: "Machine à café premium (capsules non incluses).",
           price: 5,
           price_type: "one-time",
-          total_quantity: 10,
-          available_quantity: 10,
+          total_quantity: 9,
+          available_quantity: 9,
           status: "disponible",
         },
         {
@@ -258,8 +258,8 @@ export default {
           description: "Projecteur pour présentations et réunions.",
           price: 30,
           price_type: "hourly",
-          total_quantity: 2,
-          available_quantity: 2,
+          total_quantity: 1,
+          available_quantity: 1,
           status: "disponible",
         },
         {
@@ -295,6 +295,58 @@ export default {
               data: { ...eq, publishedAt: new Date() },
             });
           equipmentDocIds.push(created.documentId);
+        }
+      }
+
+      // 2.5 Seed Services
+      console.log("⚡ Seeding Services...");
+      const servicesToSeed = [
+        {
+          name: "Impression",
+          description: "Service d'impression de documents.",
+          price: 0.2,
+          price_type: "one-time",
+          quantity: 1,
+        },
+        {
+          name: "Catering / Déjeuner",
+          description: "Assortiment repas et déjeuner complet.",
+          price: 15,
+          price_type: "one-time",
+          quantity: 1,
+        },
+        {
+          name: "Support Technique IT",
+          description: "Aide informatique personnalisée.",
+          price: 25,
+          price_type: "one-time",
+          quantity: 1,
+        },
+        {
+          name: "Caféteria Premium",
+          description: "Accès illimité aux boissons premium.",
+          price: 5,
+          price_type: "daily",
+          quantity: 1,
+        },
+      ];
+
+      for (const svc of servicesToSeed) {
+        const existing = await (strapi as any)
+          .documents("api::service.service")
+          .findMany({
+            filters: { name: svc.name },
+          });
+
+        if (existing.length > 0) {
+          await (strapi as any).documents("api::service.service").update({
+            documentId: existing[0].documentId,
+            data: svc,
+          });
+        } else {
+          await (strapi as any).documents("api::service.service").create({
+            data: { ...svc, publishedAt: new Date() },
+          });
         }
       }
 

@@ -44,7 +44,7 @@ export const getUserReservations = async (userId, page = 1, pageSize = 25) => {
   try {
     // Nested object population is more robust for deep relations in Strapi v5
     const response = await api.get(
-      `/bookings?filters[user][id][$eq]=${userId}&populate[space][populate]=*&populate[payment]=true&populate[equipments]=true&populate[services]=true&sort=start_time:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}`
+      `/bookings?filters[user][id][$eq]=${userId}&populate[space][populate]=*&populate[payment]=true&populate[equipments][populate]=*&populate[services][populate]=*&sort=start_time:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}`,
     );
     return response.data;
   } catch (error) {
@@ -60,7 +60,7 @@ export const getProfessionalBookings = async (
 ) => {
   try {
     const response = await api.get(
-      `/bookings?filters[user][id][$eq]=${userId}&populate[space][populate]=*&populate[payment]=true&populate[equipments]=true&populate[services]=true&sort=start_time:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}`
+      `/bookings?filters[user][id][$eq]=${userId}&populate[space][populate]=*&populate[payment]=true&populate[equipments][populate]=*&populate[services][populate]=*&sort=start_time:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}`,
     );
     return response.data;
   } catch (error) {
@@ -72,9 +72,8 @@ export const getProfessionalBookings = async (
 export const getAllReservations = async (page = 1, pageSize = 50) => {
   try {
     const response = await api.get(
-      `/bookings?populate[user]=true&populate[space][populate]=*&populate[payment][populate][proof_url]=true&populate[equipments]=true&populate[services]=true&sort[0]=start_time:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}`
+      `/bookings?populate[user]=true&populate[space][populate]=*&populate[payment][populate][proof_url]=true&populate[equipments][populate]=*&populate[services][populate]=*&sort[0]=start_time:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}`,
     );
-
 
     return response.data;
   } catch (error) {
@@ -167,6 +166,33 @@ export const confirmPayment = async (paymentId) => {
     return response.data;
   } catch (error) {
     console.error("Error confirming payment", error);
+    throw error;
+  }
+};
+
+/**
+ * Downloads the PDF invoice for a specific booking
+ */
+export const downloadInvoice = async (bookingId, filename = "facture.pdf") => {
+  try {
+    const response = await api.get(`/bookings/${bookingId}/invoice`, {
+      responseType: "blob", // Very important for files
+    });
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", filename);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    if (error.response && error.response.data instanceof Blob) {
+      const text = await error.response.data.text();
+      console.error("Détails de l'erreur backend (Blob JSON):", text);
+    }
+    console.error("Error downloading invoice:", error);
     throw error;
   }
 };

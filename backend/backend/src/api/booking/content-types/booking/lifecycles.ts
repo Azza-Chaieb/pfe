@@ -8,7 +8,8 @@ const { ApplicationError } = errors;
 /** Safely extracts a usable ID (number or documentId string) from any relation shape */
 const extractId = (relation: any): string | number | null => {
   if (!relation) return null;
-  if (typeof relation === "number" || typeof relation === "string") return relation;
+  if (typeof relation === "number" || typeof relation === "string")
+    return relation;
   if (typeof relation === "object") {
     if (relation.id) return relation.id;
     if (Array.isArray(relation.connect) && relation.connect.length > 0) {
@@ -25,7 +26,11 @@ const extractId = (relation: any): string | number | null => {
 };
 
 /** Find a Strapi entity by either numeric id or string documentId */
-const findEntity = async (uid: string, id: string | number, opts: any = {}): Promise<any> => {
+const findEntity = async (
+  uid: string,
+  id: string | number,
+  opts: any = {},
+): Promise<any> => {
   const es = (strapi as any).entityService;
   const isNumeric = !isNaN(Number(id)) && String(id).trim() !== "";
   if (isNumeric) {
@@ -66,10 +71,35 @@ export default {
   async afterCreate(event) {
     const { result } = event;
     // ONLY send confirmation email if status is confirmed
-    if (result.status === 'confirmed') {
+    if (result.status === "confirmed") {
       await sendConfirmationEmail(result);
     }
-    await (strapi as any).service("api::equipment.equipment").synchronizeAvailability();
+
+    // Set payment_deadline for on-site cash payments (2h window)
+    if (result.payment_method === "on_site" && result.status === "pending") {
+      try {
+        const deadline = new Date(Date.now() + 2 * 60 * 1000); // 2 minutes for testing
+        await (strapi as any).entityService.update(
+          "api::booking.booking",
+          result.id,
+          { data: { payment_deadline: deadline.toISOString() } },
+        );
+        strapi.log.info(
+          `[Booking Lifecycle] Set payment_deadline for booking ${result.id} to ${deadline.toISOString()}`,
+        );
+        // Notify user of the deadline
+        await sendPaymentDeadlineEmail(result, deadline);
+      } catch (err: any) {
+        strapi.log.error(
+          "[Booking Lifecycle] Failed to set payment_deadline:",
+          err.message,
+        );
+      }
+    }
+
+    await (strapi as any)
+      .service("api::equipment.equipment")
+      .synchronizeAvailability();
   },
 
   async afterUpdate(event) {
@@ -80,11 +110,21 @@ export default {
     if (params.data?.status === "confirmed" && result.status === "confirmed") {
       await sendConfirmationEmail(result);
     }
-    await (strapi as any).service("api::equipment.equipment").synchronizeAvailability();
+    await (strapi as any)
+      .service("api::equipment.equipment")
+      .synchronizeAvailability();
+  },
+
+  async beforeDelete(event) {
+    throw new ApplicationError(
+      "La suppression physique d'une réservation n'est pas autorisée par mesure de sécurité. Veuillez changer son statut en 'cancelled' pour l'annuler.",
+    );
   },
 
   async afterDelete(event) {
-    await (strapi as any).service("api::equipment.equipment").synchronizeAvailability();
+    await (strapi as any)
+      .service("api::equipment.equipment")
+      .synchronizeAvailability();
   },
 };
 
@@ -106,7 +146,9 @@ async function handleBookingLogic(event: any) {
 
     // 1. Validate Time Frame
     if (start >= end) {
-      throw new ApplicationError("La date de début doit être antérieure à la date de fin.");
+      throw new ApplicationError(
+        "La date de début doit être antérieure à la date de fin.",
+      );
     }
 
     const spaceId = extractId(data.space);
@@ -120,16 +162,32 @@ async function handleBookingLogic(event: any) {
         space: spaceId,
         status: { $in: ["pending", "confirmed"] },
         $or: [
-          { $and: [{ start_time: { $lte: data.start_time } }, { end_time: { $gt: data.start_time } }] },
-          { $and: [{ start_time: { $lt: data.end_time } }, { end_time: { $gte: data.end_time } }] },
-          { $and: [{ start_time: { $gte: data.start_time } }, { end_time: { $lte: data.end_time } }] },
+          {
+            $and: [
+              { start_time: { $lte: data.start_time } },
+              { end_time: { $gt: data.start_time } },
+            ],
+          },
+          {
+            $and: [
+              { start_time: { $lt: data.end_time } },
+              { end_time: { $gte: data.end_time } },
+            ],
+          },
+          {
+            $and: [
+              { start_time: { $gte: data.start_time } },
+              { end_time: { $lte: data.end_time } },
+            ],
+          },
         ],
       };
 
       if (currentId || currentDocId) {
         const exclusion: any = { $and: [] };
         if (currentId) exclusion.$and.push({ id: { $ne: currentId } });
-        if (currentDocId) exclusion.$and.push({ documentId: { $ne: currentDocId } });
+        if (currentDocId)
+          exclusion.$and.push({ documentId: { $ne: currentDocId } });
         filters.$and = filters.$and || [];
         filters.$and.push(exclusion);
       }
@@ -140,11 +198,16 @@ async function handleBookingLogic(event: any) {
           { filters },
         );
         if (existingBookings && existingBookings.length > 0) {
-          throw new ApplicationError("Cet espace est déjà réservé pour la période sélectionnée (conflit de créneau).");
+          throw new ApplicationError(
+            "Cet espace est déjà réservé pour la période sélectionnée (conflit de créneau).",
+          );
         }
       } catch (err: any) {
         if (err instanceof ApplicationError) throw err;
-        console.error("[Booking Lifecycle] Conflict check error (ignored):", err.message);
+        console.error(
+          "[Booking Lifecycle] Conflict check error (ignored):",
+          err.message,
+        );
       }
     }
 
@@ -153,11 +216,11 @@ async function handleBookingLogic(event: any) {
     if (data.equipments) {
       if (data.equipments.connect) {
         data.equipments.connect.forEach((e: any) =>
-          equipmentIds.push(typeof e === "object" ? (e.id ?? e.documentId) : e)
+          equipmentIds.push(typeof e === "object" ? (e.id ?? e.documentId) : e),
         );
       } else if (Array.isArray(data.equipments)) {
         data.equipments.forEach((e: any) =>
-          equipmentIds.push(typeof e === "object" ? (e.id ?? e.documentId) : e)
+          equipmentIds.push(typeof e === "object" ? (e.id ?? e.documentId) : e),
         );
       }
     }
@@ -168,42 +231,59 @@ async function handleBookingLogic(event: any) {
         const equipment = await findEntity("api::equipment.equipment", eqId);
         if (!equipment) continue;
 
-        const qty = (data.extras?.equipmentQuantities?.[String(eqId)]) ?? 1;
+        const qty = data.extras?.equipmentQuantities?.[String(eqId)] ?? 1;
         if (qty <= 0) continue;
 
         // 1. Confirmed Bookings
-        const conflictingBookings = await (strapi as any).entityService.findMany(
-          "api::booking.booking",
-          {
-            filters: {
-              equipments: { id: { $in: [eqId] } },
-              status: { $in: ["pending", "confirmed"] },
-              $or: [
-                { $and: [{ start_time: { $lte: data.start_time } }, { end_time: { $gt: data.start_time } }] },
-                { $and: [{ start_time: { $lt: data.end_time } }, { end_time: { $gte: data.end_time } }] },
-              ],
-              ...(bookingId ? { id: { $ne: bookingId } } : {}),
-            },
+        const conflictingBookings = await (
+          strapi as any
+        ).entityService.findMany("api::booking.booking", {
+          filters: {
+            equipments: { id: { $in: [eqId] } },
+            status: { $in: ["pending", "confirmed"] },
+            $or: [
+              {
+                $and: [
+                  { start_time: { $lte: data.start_time } },
+                  { end_time: { $gt: data.start_time } },
+                ],
+              },
+              {
+                $and: [
+                  { start_time: { $lt: data.end_time } },
+                  { end_time: { $gte: data.end_time } },
+                ],
+              },
+            ],
+            ...(bookingId ? { id: { $ne: bookingId } } : {}),
           },
-        );
+        });
 
         const bookedQty = conflictingBookings.reduce((sum: number, b: any) => {
           const qMap = b.extras?.equipmentQuantities || {};
-          const bQty = qMap[String(equipment.id)] ?? qMap[String(equipment.documentId)] ?? 1;
+          const bQty =
+            qMap[String(equipment.id)] ??
+            qMap[String(equipment.documentId)] ??
+            1;
           return sum + bQty;
         }, 0);
 
         // 2. Soft Locks (excluding current user)
-        const activeLocks = await (strapi as any).db.query("api::equipment-lock.equipment-lock").findMany({
-          where: {
-            equipment: { id: equipment.id },
-            expires_at: { $gt: new Date().toISOString() },
-            $or: [
-              { start_time: { $lt: data.end_time }, end_time: { $gt: data.start_time } },
-            ],
-            ...(userId ? { user: { id: { $ne: userId } } } : {}),
-          },
-        });
+        const activeLocks = await (strapi as any).db
+          .query("api::equipment-lock.equipment-lock")
+          .findMany({
+            where: {
+              equipment: { id: equipment.id },
+              expires_at: { $gt: new Date().toISOString() },
+              $or: [
+                {
+                  start_time: { $lt: data.end_time },
+                  end_time: { $gt: data.start_time },
+                },
+              ],
+              ...(userId ? { user: { id: { $ne: userId } } } : {}),
+            },
+          });
         const lockedQty = activeLocks.length;
 
         if (bookedQty + qty + lockedQty > (equipment.total_quantity || 1)) {
@@ -221,7 +301,9 @@ async function handleBookingLogic(event: any) {
         const user = await findEntity("plugin::users-permissions.user", userId);
 
         if (space && user) {
-          const allowedRoles: string[] = Array.isArray(space.accessible_by) ? space.accessible_by : [];
+          const allowedRoles: string[] = Array.isArray(space.accessible_by)
+            ? space.accessible_by
+            : [];
           const userType: string = (user as any).user_type;
 
           if (allowedRoles.length > 0 && !allowedRoles.includes(userType)) {
@@ -233,7 +315,10 @@ async function handleBookingLogic(event: any) {
         }
       } catch (err: any) {
         if (err instanceof ApplicationError) throw err;
-        console.error("[Booking Lifecycle] RBAC check error (ignored):", err.message);
+        console.error(
+          "[Booking Lifecycle] RBAC check error (ignored):",
+          err.message,
+        );
       }
     }
 
@@ -242,7 +327,9 @@ async function handleBookingLogic(event: any) {
       try {
         const space = await findEntity("api::space.space", spaceId);
         if (!space) {
-          console.warn(`[Booking Lifecycle] Space "${spaceId}" not found for price calculation.`);
+          console.warn(
+            `[Booking Lifecycle] Space "${spaceId}" not found for price calculation.`,
+          );
           return;
         }
 
@@ -259,12 +346,25 @@ async function handleBookingLogic(event: any) {
         // Emergency fallback
         if (pHourly === 0 && pDaily === 0) {
           const type: string = space.type || "";
-          if (type === "event-space") { pHourly = 20; pDaily = 150; }
-          else if (type === "meeting-room") { pHourly = 15; pDaily = 100; }
-          else if (type === "hot-desk" || type === "fixed-desk") { pHourly = 5; pDaily = 40; }
+          if (type === "event-space") {
+            pHourly = 20;
+            pDaily = 150;
+          } else if (type === "meeting-room") {
+            pHourly = 15;
+            pDaily = 100;
+          } else if (type === "hot-desk" || type === "fixed-desk") {
+            pHourly = 5;
+            pDaily = 40;
+          }
         }
 
-        const participants = parseInt(String(data.participants || data.extras?.contact?.participants || 1), 10) || 1;
+        const participants =
+          parseInt(
+            String(
+              data.participants || data.extras?.contact?.participants || 1,
+            ),
+            10,
+          ) || 1;
 
         if (durationHours < 8 && pHourly > 0) {
           totalPrice += durationHours * pHourly * participants;
@@ -274,7 +374,9 @@ async function handleBookingLogic(event: any) {
           totalPrice += durationHours * pHourly * participants;
         }
 
-        console.log(`[Booking Lifecycle] Space Base: ${totalPrice.toFixed(2)} (${durationHours.toFixed(1)}h, ${participants}p)`);
+        console.log(
+          `[Booking Lifecycle] Space Base: ${totalPrice.toFixed(2)} (${durationHours.toFixed(1)}h, ${participants}p)`,
+        );
 
         // --- Extras from data.extras (Source of Truth) ---
         const extras = data.extras || {};
@@ -294,11 +396,15 @@ async function handleBookingLogic(event: any) {
           const eqPrice = parseFloat(String(eq.price || 0));
           if (eqPrice > 0) {
             let subtotal = 0;
-            if (eq.price_type === "hourly") subtotal = durationHours * eqPrice * qty;
-            else if (eq.price_type === "daily") subtotal = durationDays * eqPrice * qty;
+            if (eq.price_type === "hourly")
+              subtotal = durationHours * eqPrice * qty;
+            else if (eq.price_type === "daily")
+              subtotal = durationDays * eqPrice * qty;
             else subtotal = eqPrice * qty;
 
-            console.log(`[Booking Lifecycle] Added Equipment: ${eq.name}, subtotal=${subtotal}`);
+            console.log(
+              `[Booking Lifecycle] Added Equipment: ${eq.name}, subtotal=${subtotal}`,
+            );
             totalPrice += subtotal;
           }
         }
@@ -319,13 +425,18 @@ async function handleBookingLogic(event: any) {
           const pt: string = srv.price_type || "one-time";
 
           entries.forEach((entry: any) => {
-            const entryQty = parseFloat(String(entry.pages || entry.copies || entry.quantite || 1));
+            const entryQty = parseFloat(
+              String(entry.pages || entry.copies || entry.quantite || 1),
+            );
             let subtotal = 0;
             if (pt === "hourly") subtotal = durationHours * srvPrice * entryQty;
-            else if (pt === "daily") subtotal = durationDays * srvPrice * entryQty;
+            else if (pt === "daily")
+              subtotal = durationDays * srvPrice * entryQty;
             else subtotal = srvPrice * entryQty;
 
-            console.log(`[Booking Lifecycle] Added Service (DB): ${srv.name}, subtotal=${subtotal}`);
+            console.log(
+              `[Booking Lifecycle] Added Service (DB): ${srv.name}, subtotal=${subtotal}`,
+            );
             totalPrice += subtotal;
           });
         }
@@ -343,9 +454,13 @@ async function handleBookingLogic(event: any) {
           if (qty > 0) {
             const entries = srvParams[fId] || [{ quantite: qty }];
             entries.forEach((entry: any) => {
-              const entryQty = parseFloat(String(entry.pages || entry.copies || entry.quantite || 1));
+              const entryQty = parseFloat(
+                String(entry.pages || entry.copies || entry.quantite || 1),
+              );
               const subtotal = fInfo.price * entryQty;
-              console.log(`[Booking Lifecycle] Added Fallback Service: ${fInfo.name}, subtotal=${subtotal}`);
+              console.log(
+                `[Booking Lifecycle] Added Fallback Service: ${fInfo.name}, subtotal=${subtotal}`,
+              );
               totalPrice += subtotal;
             });
           }
@@ -353,15 +468,41 @@ async function handleBookingLogic(event: any) {
 
         if (isNaN(totalPrice)) totalPrice = 0;
 
-        console.log(`[Booking Lifecycle] Final Calculated Total: ${totalPrice.toFixed(2)} (Frontend sent: ${data.total_price})`);
+        console.log(
+          `[Booking Lifecycle] Final Calculated Total: ${totalPrice.toFixed(2)} (Frontend sent: ${data.total_price})`,
+        );
         data.total_price = parseFloat(totalPrice.toFixed(2));
 
+        // 6. Active Subscription Auto-Confirmation
+        if (userId && !bookingId) {
+          // Only on creation (bookingId is null in beforeCreate)
+          const subService = (strapi as any).service(
+            "api::user-subscription.user-subscription",
+          );
+          if (subService) {
+            const activeSub = await subService.findActiveByUser(userId);
+            if (activeSub && activeSub.remaining_credits > 0) {
+              console.log(
+                `[Booking Lifecycle] Active subscription found (ID: ${activeSub.id}) for user ${userId}. Auto-confirming...`,
+              );
+              data.status = "confirmed";
+              // Actually deduct the credit now
+              await subService.deductCredit(userId);
+            } else if (activeSub) {
+              console.log(
+                `[Booking Lifecycle] Active sub found but 0 credits left for user ${userId}.`,
+              );
+            }
+          }
+        }
       } catch (err: any) {
         if (err instanceof ApplicationError) throw err;
-        console.error("[Booking Lifecycle] Price calculation error:", err.message);
+        console.error(
+          "[Booking Lifecycle] Price calculation error:",
+          err.message,
+        );
       }
     }
-
   } catch (err) {
     console.error("[Booking Lifecycle] Logic failure:", err);
     throw err;
@@ -393,8 +534,14 @@ async function sendConfirmationEmail(result: any) {
       {
         spaceName: fullBooking.space?.name || "Espace de coworking",
         date: new Date(fullBooking.start_time).toLocaleDateString("fr-FR"),
-        startTime: new Date(fullBooking.start_time).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }),
-        endTime: new Date(fullBooking.end_time).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }),
+        startTime: new Date(fullBooking.start_time).toLocaleTimeString(
+          "fr-FR",
+          { hour: "2-digit", minute: "2-digit" },
+        ),
+        endTime: new Date(fullBooking.end_time).toLocaleTimeString("fr-FR", {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
         location: "Sunspace Tunis",
         reservationId: fullBooking.id.toString(),
       },
@@ -425,14 +572,65 @@ async function sendCancellationEmail(result: any) {
       {
         spaceName: fullBooking.space?.name || "Espace de coworking",
         date: new Date(fullBooking.start_time).toLocaleDateString("fr-FR"),
-        startTime: new Date(fullBooking.start_time).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }),
-        endTime: new Date(fullBooking.end_time).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }),
+        startTime: new Date(fullBooking.start_time).toLocaleTimeString(
+          "fr-FR",
+          { hour: "2-digit", minute: "2-digit" },
+        ),
+        endTime: new Date(fullBooking.end_time).toLocaleTimeString("fr-FR", {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
         location: "Sunspace Tunis",
         reservationId: fullBooking.id.toString(),
       },
     );
-    strapi.log.info(`[Booking Lifecycle] Cancellation email sent to ${fullBooking.user.email}`);
+    strapi.log.info(
+      `[Booking Lifecycle] Cancellation email sent to ${fullBooking.user.email}`,
+    );
   } catch (error) {
     strapi.log.error("Failed to send booking cancellation email:", error);
+  }
+}
+
+/** Notify user of the on-site payment deadline for their booking */
+async function sendPaymentDeadlineEmail(result: any, deadline: Date) {
+  try {
+    const fullBooking: any = await (strapi as any).entityService.findOne(
+      "api::booking.booking",
+      result.id,
+      { populate: ["user", "space"] },
+    );
+    if (!fullBooking?.user?.email) return;
+
+    const userName = fullBooking.user.fullname || fullBooking.user.username;
+    const spaceName = fullBooking.space?.name || "Espace de coworking";
+    const deadlineStr = deadline.toLocaleTimeString("fr-FR", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    await (strapi as any)
+      .plugin("email")
+      .service("email")
+      .send({
+        to: fullBooking.user.email,
+        from: process.env.SMTP_FROM || "contact@sunspace.com",
+        subject:
+          "⏳ Confirmez votre réservation – Délai de paiement en espèces",
+        html: `
+          <h2>Bonjour ${userName},</h2>
+          <p>Votre réservation pour <strong>${spaceName}</strong> a bien été enregistrée.</p>
+          <p>Vous avez choisi le <strong>paiement en espèces à l'accueil</strong>.</p>
+          <p>⚠️ <strong>Vous avez jusqu'à ${deadlineStr} pour vous présenter en caisse.</strong><br/>
+          Passé ce délai, votre réservation sera <strong>automatiquement annulée</strong>.</p>
+          <br/>
+          <p>Merci et à bientôt,<br/>L'équipe SunSpace</p>
+        `,
+      });
+    strapi.log.info(
+      `[Booking Lifecycle] Payment deadline email sent to ${fullBooking.user.email}`,
+    );
+  } catch (error) {
+    strapi.log.error("Failed to send payment deadline email:", error);
   }
 }
