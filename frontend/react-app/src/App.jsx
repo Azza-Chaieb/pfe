@@ -19,6 +19,8 @@ import Login from "./admin/components/layout/pages/Login";
 import ReservationManagement from "./admin/components/layout/pages/ReservationManagement";
 import SubscriptionManagement from "./admin/components/layout/pages/SubscriptionManagement";
 import EquipmentServiceManagement from "./admin/components/layout/pages/EquipmentServiceManagement";
+import Subscriptions from "./admin/components/layout/pages/Subscriptions";
+import UserSubscriptionsManagement from "./admin/components/layout/pages/UserSubscriptionsManagement";
 import UserDashboard from "./pages/dashboards/UserDashboard";
 import RegisterPage from "./pages/auth/RegisterPage";
 import StudentDashboard from "./pages/dashboards/StudentDashboard";
@@ -290,7 +292,11 @@ function App() {
                 />
                 <Route
                   path="subscriptions"
-                  element={<SubscriptionManagement />}
+                  element={<Subscriptions />}
+                />
+                <Route
+                  path="user-subscriptions"
+                  element={<UserSubscriptionsManagement />}
                 />
                 <Route path="content" element={<Content />} />
                 <Route path="spaces" element={<SpaceManagement />} />

@@ -10,6 +10,7 @@ import subscriptionRequestEmail from "../templates/subscription-request";
 import subscriptionConfirmedEmail from "../templates/subscription-confirmed";
 import subscriptionRejectedEmail from "../templates/subscription-rejected";
 import reservationRequestEmail from "../templates/reservation-request";
+import reservationCompletedEmail from "../templates/reservation-completed";
 
 export default ({ strapi }) => {
   const getEmailService = () => {
@@ -315,6 +316,37 @@ export default ({ strapi }) => {
         );
       } catch (error) {
         strapi.log.error("Failed to send reservation request email:", error);
+      }
+    },
+
+    /**
+     * Send reservation completed "Thank You" email
+     */
+    async sendReservationCompleted(
+      userEmail: string,
+      userName: string,
+      reservationDetails: any,
+    ) {
+      try {
+        strapi.log.debug(
+          `[EmailService] Attempting to send Reservation Completed email to ${userEmail} for space ${reservationDetails.spaceName}`,
+        );
+        const htmlContent = reservationCompletedEmail(
+          userName,
+          reservationDetails,
+          FRONTEND_URL,
+        );
+        await getEmailService().send({
+          to: userEmail,
+          from: DEFAULT_FROM,
+          subject: `✨ Merci de votre visite - ${reservationDetails.spaceName}`,
+          html: htmlContent,
+        });
+        strapi.log.info(
+          `[EmailService] Reservation completed email sent to ${userEmail}`,
+        );
+      } catch (error) {
+        strapi.log.error("Failed to send reservation completed email:", error);
       }
     },
   };

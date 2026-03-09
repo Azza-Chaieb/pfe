@@ -1,6 +1,14 @@
 export default {
   routes: [
     {
+      method: "GET",
+      path: "/subscriptions/admin-all",
+      handler: "user-subscription.getAdminAll",
+      config: {
+        auth: false, // Strapi permission bypass; JWT verified manually in handler
+      },
+    },
+    {
       method: "POST",
       path: "/subscriptions/run-cron",
       handler: "user-subscription.runCron",

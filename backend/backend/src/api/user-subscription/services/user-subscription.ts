@@ -161,6 +161,24 @@ export default factories.createCoreService(
         .fillColor("#1F2937")
         .text(periodText, 150, 195);
 
+      const paymentMethodTranslations: Record<string, string> = {
+        cash: "Espèces / À l'accueil",
+        card: "Carte Bancaire",
+        transfer: "Virement Bancaire",
+        online: "Paiement en ligne",
+      };
+      const paymentMethodText =
+        subscriptionInfo.payment_method
+          ? paymentMethodTranslations[subscriptionInfo.payment_method] ||
+          subscriptionInfo.payment_method
+          : "Non spécifié";
+
+      doc
+        .fillColor("#6B7280")
+        .text(`Paiement: `, 50, 210)
+        .fillColor("#1F2937")
+        .text(paymentMethodText, 150, 210);
+
       doc
         .strokeColor("#E5E7EB")
         .lineWidth(2)
@@ -218,7 +236,7 @@ export default factories.createCoreService(
       };
       const cycleText = subscriptionInfo.billing_cycle
         ? cycleTranslations[subscriptionInfo.billing_cycle] ||
-          subscriptionInfo.billing_cycle
+        subscriptionInfo.billing_cycle
         : "N/A";
 
       const rowTop = tableTop + 30;
@@ -302,17 +320,35 @@ export default factories.createCoreService(
      * Find latest subscription (active or pending) for a given user
      */
     async findLatestByUser(userId: number) {
-      const results = await strapi.entityService.findMany(
+      // First, try to find the latest active or pending subscription
+      let results = await strapi.entityService.findMany(
         "api::user-subscription.user-subscription" as any,
         {
           filters: {
             user: userId,
+            status: { $in: ["active", "pending"] }
           },
           populate: ["plan", "user"],
           sort: { createdAt: "desc" },
           limit: 1,
         } as any,
       );
+
+      // If no active/pending found, get the absolute latest one (e.g. cancelled)
+      if (!results || (results as any[]).length === 0) {
+        results = await strapi.entityService.findMany(
+          "api::user-subscription.user-subscription" as any,
+          {
+            filters: {
+              user: userId,
+            },
+            populate: ["plan", "user"],
+            sort: { createdAt: "desc" },
+            limit: 1,
+          } as any,
+        );
+      }
+
       return (results as any[])[0] || null;
     },
 
@@ -550,8 +586,8 @@ export default factories.createCoreService(
             payment_deadline:
               paymentMethod === "cash"
                 ? new Date(
-                    Date.now() + (plan.deadline_hours || 2) * 60 * 60 * 1000,
-                  ).toISOString()
+                  Date.now() + (plan.deadline_hours || 2) * 60 * 60 * 1000,
+                ).toISOString()
                 : null,
           },
           populate: ["plan", "user"],

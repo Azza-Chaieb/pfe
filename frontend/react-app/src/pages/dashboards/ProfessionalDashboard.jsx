@@ -10,6 +10,8 @@ import {
 import BookingCalendar from "../../components/calendar/BookingCalendar";
 import SubscriptionSection from "../../components/dashboard/SubscriptionSection";
 import SubscriptionStatCard from "../../components/dashboard/SubscriptionStatCard";
+import MyBookingsWidget from "../../components/dashboard/MyBookingsWidget";
+import PendingPaymentBanner from "../../components/dashboard/PendingPaymentBanner";
 
 const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
   const [user, setUser] = useState(null);
@@ -35,7 +37,112 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
         ]);
 
         const rawBookings = bookingsData.data || [];
-        setBookings(rawBookings);
+        setBookings(
+          rawBookings.map((item) => {
+            const data = item.attributes || item;
+            const spaceRaw = data.space?.data || data.space || {};
+            const space = spaceRaw?.attributes || spaceRaw || {};
+            const cwRaw =
+              space.coworking_space?.data ||
+              space.coworking_space ||
+              data.coworking_space?.data ||
+              data.coworking_space ||
+              {};
+            const coworking = cwRaw?.attributes || cwRaw || {};
+
+            const startDate = new Date(data.start_time);
+            const endDate = new Date(data.end_time);
+
+            const getSpaceDisplayName = () => {
+              if (space.name) return space.name;
+              if (space.mesh_name) {
+                return space.mesh_name
+                  .replace(/bureau_/i, "Bureau ")
+                  .replace(/_/g, " ");
+              }
+              if (space.type) {
+                const types = {
+                  "meeting-room": "Salle de Réunion",
+                  "event-space": "Espace Événementiel",
+                  "hot-desk": "Hot Desk",
+                  "fixed-desk": "Bureau Fixe",
+                };
+                return types[space.type] || space.type;
+              }
+              if (data.extras?.spaceName) return data.extras.spaceName;
+              return coworking.name || data.extras?.coworkingName || "SunSpace";
+            };
+
+            const totalPrice = (() => {
+              const storedPrice = Number(
+                data.total_price ||
+                data.totalPrice ||
+                data.payment?.data?.attributes?.amount ||
+                data.payment?.amount,
+              );
+              if (storedPrice > 0) return storedPrice;
+
+              const hours = Math.ceil((endDate - startDate) / (1000 * 60 * 60));
+              if (hours > 0) {
+                let calcPrice = 0;
+                let pHourly = space.pricing_hourly || 0;
+                if (pHourly === 0 && space.type) {
+                  if (space.type === "meeting-room") pHourly = 15;
+                  else if (space.type === "event-space") pHourly = 20;
+                  else if (space.type === "hot-desk" || space.type === "fixed-desk") pHourly = 5;
+                }
+                if (pHourly > 0) calcPrice += hours * pHourly * (data.participants || 1);
+                (data.equipments?.data || data.equipments || []).forEach((eq) => {
+                  const p = eq.attributes || eq;
+                  if (p.price) calcPrice += p.price_type === "hourly" ? p.price * hours : p.price;
+                });
+                (data.services?.data || data.services || []).forEach((sv) => {
+                  const p = sv.attributes || sv;
+                  if (p.price) calcPrice += p.price_type === "hourly" ? p.price * hours : p.price;
+                });
+                return calcPrice;
+              }
+              return 0;
+            })();
+
+            return {
+              id: item.id,
+              spaceName: getSpaceDisplayName(),
+              date: startDate.toLocaleDateString("fr-FR", {
+                weekday: "long",
+                day: "numeric",
+                month: "short",
+              }),
+              status: data.status,
+              totalPrice: totalPrice,
+              time: `${startDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })} - ${endDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`,
+              equipmentNames: (data.equipments?.data || data.equipments || [])
+                .map((eq) => eq.attributes?.name || eq.name || "")
+                .filter(Boolean)
+                .join(", "),
+              serviceNames: (() => {
+                const dbServices = (data.services?.data || data.services || [])
+                  .map((sv) => sv.attributes?.name || sv.name || "")
+                  .filter(Boolean);
+                const fallbackMap = {
+                  "fallback-print": "Impression",
+                  "fallback-catering": "Catering / Déjeuner",
+                  "fallback-it-support": "Support Technique IT",
+                  "fallback-coffee": "Cafétérie Premium",
+                };
+                const fallbackServices = Object.keys(data.extras?.serviceQuantities || {})
+                  .filter((id) => id.startsWith("fallback-"))
+                  .map((id) => fallbackMap[id] || id);
+                return [...dbServices, ...fallbackServices].join(", ");
+              })(),
+              participants: data.participants || data.extras?.contact?.participants || 1,
+              rawEndDate: data.end_time || endDate.toISOString(),
+              startTime: data.start_time || startDate.toISOString(),
+              payment_method: data.payment_method,
+              payment_deadline: data.payment_deadline,
+            };
+          })
+        );
         setSubscription(subData);
       } catch (error) {
         console.error("Error loading professional dashboard:", error);
@@ -90,8 +197,8 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
           value={
             bookings.length > 0
               ? new Date(
-                  bookings[0].attributes?.start_time || bookings[0].start_time,
-                ).toLocaleDateString("fr-FR")
+                bookings[0].attributes?.start_time || bookings[0].start_time,
+              ).toLocaleDateString("fr-FR")
               : "-"
           }
           icon="📅"
@@ -132,125 +239,30 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
-                  {bookings.slice(0, 3).map((item) => {
-                    const data = item.attributes || item;
-                    const spaceRaw = data.space?.data || data.space || {};
-                    const space = spaceRaw?.attributes || spaceRaw || {};
-                    const cwRaw =
-                      space.coworking_space?.data ||
-                      space.coworking_space ||
-                      data.coworking_space?.data ||
-                      data.coworking_space ||
-                      {};
-                    const coworking = cwRaw?.attributes || cwRaw || {};
-
-                    const startDate = new Date(data.start_time);
-                    const endDate = new Date(data.end_time);
-
-                    const getSpaceDisplayName = () => {
-                      if (space.name) return space.name;
-                      if (space.mesh_name) {
-                        return space.mesh_name
-                          .replace(/bureau_/i, "Bureau ")
-                          .replace(/_/g, " ");
-                      }
-                      if (space.type) {
-                        const types = {
-                          "meeting-room": "Salle de Réunion",
-                          "event-space": "Espace Événementiel",
-                          "hot-desk": "Hot Desk",
-                          "fixed-desk": "Bureau Fixe",
-                        };
-                        return types[space.type] || space.type;
-                      }
-                      // Redundancy Fallback
-                      if (data.extras?.spaceName) return data.extras.spaceName;
-                      return (
-                        coworking.name ||
-                        data.extras?.coworkingName ||
-                        "SunSpace"
-                      );
-                    };
-
-                    const totalPrice = (() => {
-                      const storedPrice = Number(
-                        data.total_price ||
-                          data.totalPrice ||
-                          data.payment?.data?.attributes?.amount ||
-                          data.payment?.amount,
-                      );
-                      if (storedPrice > 0) return storedPrice.toFixed(2);
-
-                      const hours = Math.ceil(
-                        (endDate - startDate) / (1000 * 60 * 60),
-                      );
-                      if (hours > 0) {
-                        let calcPrice = 0;
-                        let pHourly = space.pricing_hourly || 0;
-                        if (pHourly === 0 && space.type) {
-                          if (space.type === "meeting-room") pHourly = 15;
-                          else if (space.type === "event-space") pHourly = 20;
-                          else if (
-                            space.type === "hot-desk" ||
-                            space.type === "fixed-desk"
-                          )
-                            pHourly = 5;
-                        }
-                        if (pHourly > 0)
-                          calcPrice +=
-                            hours * pHourly * (data.participants || 1);
-                        (
-                          data.equipments?.data ||
-                          data.equipments ||
-                          []
-                        ).forEach((eq) => {
-                          const p = eq.attributes || eq;
-                          if (p.price)
-                            calcPrice +=
-                              p.price_type === "hourly"
-                                ? p.price * hours
-                                : p.price;
-                        });
-                        (data.services?.data || data.services || []).forEach(
-                          (sv) => {
-                            const p = sv.attributes || sv;
-                            if (p.price)
-                              calcPrice +=
-                                p.price_type === "hourly"
-                                  ? p.price * hours
-                                  : p.price;
-                          },
-                        );
-                        return calcPrice.toFixed(2);
-                      }
-                      return "0.00";
-                    })();
-
-                    return (
-                      <tr key={item.id}>
-                        <td className="py-4 font-bold text-slate-700">
-                          {getSpaceDisplayName()}
-                        </td>
-                        <td className="py-4 text-center text-slate-500">
-                          {startDate.toLocaleDateString()}
-                        </td>
-                        <td className="py-4 text-center font-black text-slate-900">
-                          {totalPrice} DT
-                        </td>
-                        <td className="py-4 text-right">
-                          <span
-                            className={`px-3 py-1 rounded-full text-[9px] font-black uppercase ${data.status === "confirmed" ? "bg-emerald-50 text-emerald-600" : "bg-orange-50 text-orange-600"}`}
-                          >
-                            {data.status === "confirmed"
-                              ? "Confirmé"
-                              : data.status === "cancelled"
-                                ? "Annulé"
-                                : "Attente"}
-                          </span>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                  {bookings.slice(0, 3).map((booking) => (
+                    <tr key={booking.id}>
+                      <td className="py-4 font-bold text-slate-700">
+                        {booking.spaceName}
+                      </td>
+                      <td className="py-4 text-center text-slate-500">
+                        {booking.date}
+                      </td>
+                      <td className="py-4 text-center font-black text-slate-900">
+                        {Number(booking.totalPrice || 0).toFixed(2)} DT
+                      </td>
+                      <td className="py-4 text-right">
+                        <span
+                          className={`px-3 py-1 rounded-full text-[9px] font-black uppercase ${booking.status === "confirmed" ? "bg-emerald-50 text-emerald-600" : "bg-orange-50 text-orange-600"}`}
+                        >
+                          {booking.status === "confirmed"
+                            ? "Confirmé"
+                            : booking.status === "cancelled"
+                              ? "Annulé"
+                              : "Attente"}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
                   {bookings.length === 0 && (
                     <tr>
                       <td
@@ -278,8 +290,8 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
               <h4 className="text-lg font-black">
                 {subscription
                   ? subscription.attributes?.plan?.data?.attributes?.name ||
-                    subscription.plan?.name ||
-                    "Premium"
+                  subscription.plan?.name ||
+                  "Premium"
                   : "Aucun forfait"}
               </h4>
             </div>
@@ -338,221 +350,8 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
       {bookingView === "calendar" ? (
         <BookingCalendar userId={user?.id} />
       ) : (
-        <div className="bg-white/40 backdrop-blur-md p-8 rounded-[32px] border border-white/60 shadow-xl shadow-slate-200/50">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="border-b border-slate-100">
-                  <th className="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                    Espace
-                  </th>
-                  <th className="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                    Date
-                  </th>
-                  <th className="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">
-                    Prix
-                  </th>
-                  <th className="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">
-                    Services
-                  </th>
-                  <th className="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">
-                    Statut
-                  </th>
-                  <th className="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-50">
-                {bookings.map((item) => {
-                  const data = item.attributes || item;
-                  const spaceRaw = data.space?.data || data.space || {};
-                  const space = spaceRaw?.attributes || spaceRaw || {};
-                  const cwRaw =
-                    space.coworking_space?.data ||
-                    space.coworking_space ||
-                    data.coworking_space?.data ||
-                    data.coworking_space ||
-                    {};
-                  const coworking = cwRaw?.attributes || cwRaw || {};
-
-                  const startDate = new Date(data.start_time);
-                  const endDate = new Date(data.end_time);
-
-                  const getSpaceDisplayName = () => {
-                    // 1. Primary: Use the actual relation if populated
-                    if (space.name) return space.name;
-                    if (space.mesh_name) {
-                      return space.mesh_name
-                        .replace(/bureau_/i, "Bureau ")
-                        .replace(/_/g, " ");
-                    }
-                    if (space.type) {
-                      const types = {
-                        "meeting-room": "Salle de Réunion",
-                        "event-space": "Espace Événementiel",
-                        "hot-desk": "Hot Desk",
-                        "fixed-desk": "Bureau Fixe",
-                      };
-                      return types[space.type] || space.type;
-                    }
-
-                    // 2. Redundancy Fallback: Use data stored in extras (if we started saving it)
-                    if (data.extras?.spaceName) return data.extras.spaceName;
-
-                    // 3. Last resort: Coworking name or SunSpace
-                    return (
-                      coworking.name || data.extras?.coworkingName || "SunSpace"
-                    );
-                  };
-
-                  const totalPrice = (() => {
-                    const storedPrice = Number(
-                      data.total_price ||
-                        data.totalPrice ||
-                        data.payment?.data?.attributes?.amount ||
-                        data.payment?.amount,
-                    );
-                    if (storedPrice > 0) return storedPrice.toFixed(2);
-                    const hours = Math.ceil(
-                      (endDate - startDate) / (1000 * 60 * 60),
-                    );
-                    if (hours > 0) {
-                      let calcPrice = 0;
-                      let pHourly = space.pricing_hourly || 0;
-                      if (pHourly === 0 && space.type) {
-                        if (space.type === "meeting-room") pHourly = 15;
-                        else if (space.type === "event-space") pHourly = 20;
-                        else if (
-                          space.type === "hot-desk" ||
-                          space.type === "fixed-desk"
-                        )
-                          pHourly = 5;
-                      }
-                      if (pHourly > 0)
-                        calcPrice += hours * pHourly * (data.participants || 1);
-                      (data.equipments?.data || data.equipments || []).forEach(
-                        (eq) => {
-                          const p = eq.attributes || eq;
-                          if (p.price)
-                            calcPrice +=
-                              p.price_type === "hourly"
-                                ? p.price * hours
-                                : p.price;
-                        },
-                      );
-                      (data.services?.data || data.services || []).forEach(
-                        (sv) => {
-                          const p = sv.attributes || sv;
-                          if (p.price)
-                            calcPrice +=
-                              p.price_type === "hourly"
-                                ? p.price * hours
-                                : p.price;
-                        },
-                      );
-                      return calcPrice.toFixed(2);
-                    }
-                    return "0.00";
-                  })();
-
-                  const extrasCount =
-                    (data.equipments?.data || data.equipments || []).length +
-                    (data.services?.data || data.services || []).length +
-                    Object.keys(data.extras?.serviceQuantities || {}).filter(
-                      (id) => id.startsWith("fallback-"),
-                    ).length;
-
-                  return (
-                    <tr
-                      key={item.id}
-                      className="hover:bg-white/50 transition-all"
-                    >
-                      <td className="py-5 font-bold text-slate-700">
-                        {getSpaceDisplayName()}
-                      </td>
-                      <td className="py-5 text-slate-500">
-                        {startDate.toLocaleDateString()}
-                      </td>
-                      <td className="py-5 text-center font-black text-slate-900">
-                        {totalPrice} DT
-                      </td>
-                      <td className="py-5 text-center">
-                        <span className="text-[10px] bg-slate-100 text-slate-500 px-2 py-1 rounded">
-                          {extrasCount > 0
-                            ? `${extrasCount} option(s)`
-                            : "Aucun extra"}
-                        </span>
-                      </td>
-                      <td className="py-5 text-right">
-                        <span
-                          className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase ${data.status === "confirmed" ? "bg-emerald-50 text-emerald-600" : "bg-orange-50 text-orange-600"}`}
-                        >
-                          {data.status === "confirmed"
-                            ? "Confirmé"
-                            : data.status === "cancelled"
-                              ? "Annulé"
-                              : "Attente"}
-                        </span>
-                      </td>
-                      <td className="py-5 text-right">
-                        <button
-                          onClick={() => {
-                            const eqNames = (
-                              data.equipments?.data ||
-                              data.equipments ||
-                              []
-                            )
-                              .map((eq) => eq.attributes?.name || eq.name || "")
-                              .filter(Boolean)
-                              .join(", ");
-                            const svNames = (() => {
-                              const dbServices = (
-                                data.services?.data ||
-                                data.services ||
-                                []
-                              )
-                                .map(
-                                  (sv) => sv.attributes?.name || sv.name || "",
-                                )
-                                .filter(Boolean);
-                              const fallbackMap = {
-                                "fallback-print": "Impression",
-                                "fallback-catering": "Catering / Déjeuner",
-                                "fallback-it-support": "Support Technique IT",
-                                "fallback-coffee": "Cafétérie Premium",
-                              };
-                              const fallbackServices = Object.keys(
-                                data.extras?.serviceQuantities || {},
-                              )
-                                .filter((id) => id.startsWith("fallback-"))
-                                .map((id) => fallbackMap[id] || id);
-                              return [...dbServices, ...fallbackServices].join(
-                                ", ",
-                              );
-                            })();
-                            const participants = data.participants || 1;
-                            const spaceName = getSpaceDisplayName();
-                            alert(
-                              `Détails : ${spaceName}\n` +
-                                `Date : ${startDate.toLocaleDateString()}\n` +
-                                `Heure : ${startDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} - ${endDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}\n` +
-                                `Participants : ${participants}\n` +
-                                (eqNames ? `Équipements : ${eqNames}\n` : "") +
-                                (svNames ? `Services : ${svNames}` : ""),
-                            );
-                          }}
-                          className="text-[9px] font-black uppercase text-blue-600 hover:text-blue-800 underline transition-all"
-                        >
-                          Détails
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+        <div className="bg-white/40 backdrop-blur-md p-6 rounded-[32px] border border-white/60 shadow-xl shadow-slate-200/50">
+          <MyBookingsWidget bookings={bookings} fullPage />
         </div>
       )}
     </div>
@@ -568,6 +367,7 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
 
   return (
     <DashboardLayout role="professional" user={user} loading={loading}>
+      <PendingPaymentBanner bookings={bookings} />
       {activeTab === "dashboard" && renderDashboard()}
       {activeTab === "bookings" && renderBookings()}
       {activeTab === "subscription" && renderSubscription()}

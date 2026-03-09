@@ -9,6 +9,8 @@ import Users from './admin/components/layout/pages/Users.jsx';
 import Settings from './admin/components/layout/pages/Settings.jsx';
 import Login from './admin/components/layout/pages/Login.jsx';
 import SpaceManagement from './admin/components/layout/pages/SpaceManagement.jsx';
+import Subscriptions from './admin/components/layout/pages/Subscriptions.jsx';
+import UserSubscriptionsManagement from './admin/components/layout/pages/UserSubscriptionsManagement.jsx';
 
 // Importe les styles admin
 import './admin/styles/admin.css';
@@ -41,6 +43,8 @@ const AdminApp = () => {
           <Route index element={<Dashboard />} />
           <Route path="users" element={<Users />} />
           <Route path="spaces" element={<SpaceManagement />} />
+          <Route path="subscriptions" element={<Subscriptions />} />
+          <Route path="user-subscriptions" element={<UserSubscriptionsManagement />} />
           <Route path="settings" element={<Settings />} />
         </Route>
 

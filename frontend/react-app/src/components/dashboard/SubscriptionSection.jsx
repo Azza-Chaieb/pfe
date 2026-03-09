@@ -14,10 +14,10 @@ const SubscriptionSection = ({ subscription, onCancel, onNavigateToPlans }) => {
   const planType = planAttrs?.type || "basic";
   const endDate = subAttrs?.end_date
     ? new Date(subAttrs.end_date).toLocaleDateString("fr-FR", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      })
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    })
     : null;
   const credits = subAttrs?.remaining_credits ?? 0;
   const isActive = subAttrs?.status === "active";
@@ -451,29 +451,32 @@ const SubscriptionSection = ({ subscription, onCancel, onNavigateToPlans }) => {
 
                   <div className="flex items-center gap-4">
                     <span
-                      className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${
-                        hStatus === "active"
+                      className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${hStatus === "active" || hStatus === "expired"
                           ? "bg-emerald-50 text-emerald-600 border-emerald-100"
                           : hStatus === "cancelled"
                             ? "bg-rose-50 text-rose-600 border-rose-100"
                             : "bg-slate-100 text-slate-500 border-slate-200"
-                      }`}
+                        }`}
                     >
                       {hStatus === "active"
                         ? "Actif / Payé"
-                        : hStatus === "cancelled"
-                          ? "Annulé/Refusé"
-                          : hStatus}
+                        : hStatus === "expired"
+                          ? "Expiré / Payé"
+                          : hStatus === "cancelled"
+                            ? "Annulé/Refusé"
+                            : hStatus}
                     </span>
-                    <button
-                      onClick={() =>
-                        handleDownloadInvoice(h.id, hData.createdAt)
-                      }
-                      disabled={!!downloading}
-                      className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 hover:text-blue-800 transition-colors disabled:opacity-50"
-                    >
-                      {downloading === h.id ? "..." : "Facture PDF"}
-                    </button>
+                    {(hStatus === "active" || hStatus === "expired") && (
+                      <button
+                        onClick={() =>
+                          handleDownloadInvoice(h.id, hData.createdAt)
+                        }
+                        disabled={!!downloading}
+                        className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 hover:text-blue-800 transition-colors disabled:opacity-50"
+                      >
+                        {downloading === h.id ? "..." : "Facture PDF"}
+                      </button>
+                    )}
                   </div>
                 </div>
               );

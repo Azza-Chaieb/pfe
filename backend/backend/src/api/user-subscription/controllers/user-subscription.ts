@@ -24,6 +24,44 @@ export default factories.createCoreController(
     },
 
     /**
+     * GET /api/subscriptions/admin-all
+     * Returns ALL user-subscriptions with user & plan populated (admin only)
+     */
+    async getAdminAll(ctx) {
+      try {
+        let userId = ctx.state.user?.id;
+
+        if (!userId && ctx.request.header.authorization) {
+          try {
+            const token = ctx.request.header.authorization.replace("Bearer ", "");
+            const decoded = await strapi
+              .plugin("users-permissions")
+              .service("jwt")
+              .verify(token);
+            userId = decoded.id;
+          } catch (err) {
+            strapi.log.debug("Manual JWT verification failed in getAdminAll");
+          }
+        }
+
+        if (!userId) return ctx.unauthorized("Authentification requise.");
+
+        const results = await strapi.entityService.findMany(
+          "api::user-subscription.user-subscription" as any,
+          {
+            populate: ["plan", "user"],
+            sort: { createdAt: "desc" },
+          } as any,
+        );
+
+        ctx.body = { data: results };
+      } catch (err) {
+        strapi.log.error("getAdminAll error:", err);
+        ctx.internalServerError("Erreur lors du chargement des abonnements.");
+      }
+    },
+
+    /**
      * GET /api/subscriptions/me
      * Returns the authenticated user's active subscription
      */

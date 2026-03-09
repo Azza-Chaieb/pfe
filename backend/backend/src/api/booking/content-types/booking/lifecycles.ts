@@ -78,7 +78,7 @@ export default {
     // Set payment_deadline for on-site cash payments (2h window)
     if (result.payment_method === "on_site" && result.status === "pending") {
       try {
-        const deadline = new Date(Date.now() + 2 * 60 * 1000); // 2 minutes for testing
+        const deadline = new Date(Date.now() + 2 * 60 * 60 * 1000); // 2 hours window
         await (strapi as any).entityService.update(
           "api::booking.booking",
           result.id,
@@ -116,9 +116,7 @@ export default {
   },
 
   async beforeDelete(event) {
-    throw new ApplicationError(
-      "La suppression physique d'une réservation n'est pas autorisée par mesure de sécurité. Veuillez changer son statut en 'cancelled' pour l'annuler.",
-    );
+    // Suppression autorisée pour le nettoyage par l'admin
   },
 
   async afterDelete(event) {
@@ -140,6 +138,11 @@ async function handleBookingLogic(event: any) {
     console.log("[Booking Lifecycle] RAW DATA received:", JSON.stringify(data));
 
     if (!data.start_time || !data.end_time) return;
+
+    // Default status if not provided by Strapi Admin UI
+    if (!data.status) {
+      data.status = "pending";
+    }
 
     const start = new Date(data.start_time);
     const end = new Date(data.end_time);

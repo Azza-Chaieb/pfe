@@ -274,8 +274,8 @@ const BookingModal = ({
           const endTimeMs = formData.allDay
             ? new Date(`${formData.date}T23:59:59.999Z`).getTime()
             : new Date(
-                `${formData.date}T${formData.endTime}:00.000Z`,
-              ).getTime();
+              `${formData.date}T${formData.endTime}:00.000Z`,
+            ).getTime();
 
           const takenCount = resList
             .filter((r) => {
@@ -518,7 +518,7 @@ const BookingModal = ({
         const availableChairs = Math.max(
           0,
           (attrs.capacity || 1) -
-            (typeof occupiedChairs === "number" ? occupiedChairs : 0),
+          (typeof occupiedChairs === "number" ? occupiedChairs : 0),
         );
 
         if (requestedChairs <= 0) {
@@ -589,8 +589,8 @@ const BookingModal = ({
             attrs.name ||
             (attrs.mesh_name
               ? attrs.mesh_name
-                  .replace(/bureau_/i, "Bureau ")
-                  .replace(/_/g, " ")
+                .replace(/bureau_/i, "Bureau ")
+                .replace(/_/g, " ")
               : "Espace"),
           coworkingName: "SunSpace",
           equipmentQuantities: Object.fromEntries(
@@ -689,9 +689,9 @@ const BookingModal = ({
         try {
           const updateData = { payment_method: method };
           if (method === "on_site") {
-            // 2 minutes for testing (change to 2 * 60 * 60 * 1000 for production)
+            // 2 hours for production
             updateData.payment_deadline = new Date(
-              Date.now() + 2 * 60 * 1000,
+              Date.now() + 2 * 60 * 60 * 1000,
             ).toISOString();
           }
           console.log(
@@ -854,31 +854,31 @@ const BookingModal = ({
 
   const hasConflict = attrs.is_per_chair
     ? (parseInt(formData.participants) || 0) >
-      Math.max(
-        0,
-        (attrs.capacity || 1) -
-          (typeof occupiedChairs === "number" ? occupiedChairs : 0),
-      )
+    Math.max(
+      0,
+      (attrs.capacity || 1) -
+      (typeof occupiedChairs === "number" ? occupiedChairs : 0),
+    )
     : (!formData.allDay &&
-        existingReservations.some((res) => {
-          const resStart = new Date(
-            res.attributes?.start_time || res.start_time,
-          ).getTime();
-          const resEnd = new Date(
-            res.attributes?.end_time || res.end_time,
-          ).getTime();
+      existingReservations.some((res) => {
+        const resStart = new Date(
+          res.attributes?.start_time || res.start_time,
+        ).getTime();
+        const resEnd = new Date(
+          res.attributes?.end_time || res.end_time,
+        ).getTime();
 
-          const datePart = formData.date;
-          const reqStart = new Date(
-            `${datePart}T${formData.startTime}:00.000Z`,
-          ).getTime();
-          const reqEnd = new Date(
-            `${datePart}T${formData.endTime}:00.000Z`,
-          ).getTime();
+        const datePart = formData.date;
+        const reqStart = new Date(
+          `${datePart}T${formData.startTime}:00.000Z`,
+        ).getTime();
+        const reqEnd = new Date(
+          `${datePart}T${formData.endTime}:00.000Z`,
+        ).getTime();
 
-          return reqStart < resEnd && resStart < reqEnd;
-        })) ||
-      (formData.allDay && existingReservations.length > 0);
+        return reqStart < resEnd && resStart < reqEnd;
+      })) ||
+    (formData.allDay && existingReservations.length > 0);
 
   // Calendar Logic
   const [viewDate, setViewDate] = useState(new Date(formData.date));
@@ -951,7 +951,7 @@ const BookingModal = ({
                   {Math.max(
                     0,
                     (attrs.capacity || 0) -
-                      (typeof occupiedChairs === "number" ? occupiedChairs : 0),
+                    (typeof occupiedChairs === "number" ? occupiedChairs : 0),
                   )}
                 </span>
               )}
@@ -1002,9 +1002,9 @@ const BookingModal = ({
                     {Math.max(
                       0,
                       (attrs.capacity || 1) -
-                        (typeof occupiedChairs === "number"
-                          ? occupiedChairs
-                          : 0),
+                      (typeof occupiedChairs === "number"
+                        ? occupiedChairs
+                        : 0),
                     )}
                   </p>
                 </div>
@@ -1272,9 +1272,9 @@ const BookingModal = ({
                       {Math.max(
                         0,
                         (attrs.capacity || 0) -
-                          (typeof occupiedChairs === "number"
-                            ? occupiedChairs
-                            : 0),
+                        (typeof occupiedChairs === "number"
+                          ? occupiedChairs
+                          : 0),
                       )}
                     </p>
                   </div>
@@ -1334,12 +1334,11 @@ const BookingModal = ({
                       disabled={isPast}
                       onClick={() => setFormData((p) => ({ ...p, date: dStr }))}
                       className={`h-10 rounded-xl text-[10px] font-black transition-all flex items-center justify-center
-                        ${
-                          isSelected
-                            ? "bg-blue-600 text-white shadow-lg shadow-blue-500/30"
-                            : isPast
-                              ? "text-slate-200 cursor-not-allowed opacity-40"
-                              : "text-slate-600 hover:bg-slate-100"
+                        ${isSelected
+                          ? "bg-blue-600 text-white shadow-lg shadow-blue-500/30"
+                          : isPast
+                            ? "text-slate-200 cursor-not-allowed opacity-40"
+                            : "text-slate-600 hover:bg-slate-100"
                         }
                       `}
                     >

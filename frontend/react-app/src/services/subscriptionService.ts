@@ -37,7 +37,20 @@ export const getSubscriptionPlan = async (id: string) => {
 export const getMySubscription = async (_userId?: number | string) => {
   try {
     const response = await api.get("/subscriptions/me");
-    return response.data?.data || null;
+    const sub = response.data?.data;
+
+    // Safety check: if backend returned a non-active/pending sub (e.g. cancelled),
+    // but the user might have an active one, let's force a direct check.
+    if (sub && !["active", "pending"].includes(sub.status) && _userId) {
+      const fallbackResponse = await api.get(
+        `/user-subscriptions?filters[user][id][$eq]=${_userId}&filters[status][$in][0]=active&filters[status][$in][1]=pending&populate=plan&sort=createdAt:desc&pagination[limit]=1`,
+      );
+      if (fallbackResponse.data?.data?.length > 0) {
+        return fallbackResponse.data.data[0];
+      }
+    }
+
+    return sub || null;
   } catch {
     // Fallback: query by user ID if custom endpoint fails
     if (!_userId) return null;
@@ -141,6 +154,76 @@ export const downloadInvoice = async (
   // Clean up
   link.parentNode?.removeChild(link);
   window.URL.revokeObjectURL(url);
-
   return true;
+};
+
+// ===== ADMIN FULL CRUD FOR SUBSCRIPTION PLANS =====
+
+/**
+ * Get all subscription plans for admin, including drafts/unpublished
+ */
+export const getAdminSubscriptionPlans = async () => {
+  const response = await api.get("/subscription-plans?populate=*");
+  return response.data;
+};
+
+/**
+ * Create a new subscription plan
+ */
+export const createSubscriptionPlan = async (data: any) => {
+  const response = await api.post("/subscription-plans", { data });
+  return response.data;
+};
+
+/**
+ * Update an existing subscription plan
+ */
+export const updateSubscriptionPlan = async (documentId: string, data: any) => {
+  const response = await api.put(`/subscription-plans/${documentId}`, { data });
+  return response.data;
+};
+
+/**
+ * Delete a subscription plan
+ */
+export const deleteSubscriptionPlan = async (documentId: string) => {
+  const response = await api.delete(`/subscription-plans/${documentId}`);
+  return response.data;
+};
+
+// ===== ADMIN FULL CRUD FOR USER SUBSCRIPTIONS =====
+
+/**
+ * Get all user-subscriptions for admin
+ */
+export const getAllUserSubscriptionsAdmin = async () => {
+  const response = await api.get("/subscriptions/admin-all");
+  return response.data;
+};
+
+/**
+ * Create a new user-subscription manually
+ */
+export const createUserSubscriptionAdmin = async (data: any) => {
+  const response = await api.post("/user-subscriptions", { data });
+  return response.data;
+};
+
+/**
+ * Update a user-subscription manually
+ */
+export const updateUserSubscriptionAdmin = async (
+  documentId: string,
+  data: any,
+) => {
+  const response = await api.put(`/user-subscriptions/${documentId}`, { data });
+  return response.data;
+};
+
+/**
+ * Delete a user-subscription manually
+ */
+export const deleteUserSubscriptionAdmin = async (documentId: string) => {
+  const response = await api.delete(`/user-subscriptions/${documentId}`);
+  return response.data;
 };

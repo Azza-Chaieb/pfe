@@ -233,6 +233,109 @@ export default {
           `${logPrefix} [BOOKING CRON ERROR] ${bookingCronErr.message}`,
         );
       }
+
+      // --- NEW: Auto-complete bookings (end_time passed) and send "Thank You" email ---
+      try {
+        console.log(`${logPrefix} [DEBUG] Checking for bookings where status=confirmed and end_time < ${now.toISOString()}`);
+        const finishedBookings = await strapi
+          .documents("api::booking.booking")
+          .findMany({
+            filters: {
+              status: "confirmed",
+              end_time: { $lt: now.toISOString() },
+            },
+            populate: ["user", "space"],
+          });
+
+        console.log(`${logPrefix} [DEBUG] findMany returned ${finishedBookings?.length || 0} bookings.`);
+
+        if (finishedBookings && finishedBookings.length > 0) {
+          for (const booking of finishedBookings) {
+            console.log(`${logPrefix} [DEBUG] Processing booking ${booking.documentId} (User: ${(booking as any).user?.email}, End: ${booking.end_time})`);
+            try {
+              // 1. Update status to "completed" first to avoid race conditions/double emails
+              await strapi.documents("api::booking.booking").update({
+                documentId: booking.documentId,
+                data: { status: "completed" },
+              });
+
+              console.log(
+                `${logPrefix} [BOOKING] Marked session ${booking.documentId} as completed.`,
+              );
+
+              // 2. Send thank you email
+              const userEmail = (booking as any).user?.email;
+              const userName =
+                (booking as any).user?.fullname ||
+                (booking as any).user?.username ||
+                "Client";
+              const spaceName =
+                (booking as any).space?.name || "Espace SunSpace";
+
+              const startTimeRaw = (booking as any).start_time;
+              const endTimeRaw = (booking as any).end_time;
+
+              console.log(`${logPrefix} [DEBUG] Booking Details - Email: ${userEmail}, Space: ${spaceName}, Start: ${startTimeRaw}, End: ${endTimeRaw}`);
+
+              if (userEmail) {
+                const emailService = strapi.service("api::email.email-service");
+
+                const reservationDetails = {
+                  spaceName: spaceName,
+                  date: startTimeRaw ? new Date(startTimeRaw).toLocaleDateString("fr-FR") : "Date inconnue",
+                  startTime: startTimeRaw ? new Date(startTimeRaw).toLocaleTimeString("fr-FR", { hour: '2-digit', minute: '2-digit' }) : "--:--",
+                  endTime: endTimeRaw ? new Date(endTimeRaw).toLocaleTimeString("fr-FR", { hour: '2-digit', minute: '2-digit' }) : "--:--",
+                  reservationId: booking.documentId,
+                };
+
+                console.log(`${logPrefix} [DEBUG] Formatted Details:`, JSON.stringify(reservationDetails));
+
+                if (emailService && (emailService as any).sendReservationCompleted) {
+                  await (emailService as any).sendReservationCompleted(
+                    userEmail,
+                    userName,
+                    reservationDetails
+                  );
+                } else {
+                  // Fallback if service method is not found
+                  await strapi.plugin("email").service("email").send({
+                    to: userEmail,
+                    from: process.env.SMTP_FROM || "contact@sunspace.com",
+                    subject: `✨ Merci de votre visite - ${spaceName}`,
+                    html: `<h3>Bonjour ${userName},</h3><p>Merci d'avoir choisi SunSpace ! Votre séance à ${spaceName} est terminée. À bientôt !</p>`,
+                  });
+                }
+              }
+            } catch (err: any) {
+              console.error(
+                `${logPrefix} [BOOKING] Failed to process completed booking ${booking.documentId}: ${err.message}`,
+              );
+            }
+          }
+        }
+      } catch (err: any) {
+        console.error(
+          `${logPrefix} [COMPLETION CRON ERROR] ${err.message}`,
+        );
+      }
+
+      // DIAGNOSTIC CORE for bookings:
+      try {
+        const allPendingConfirmed = await strapi
+          .documents("api::booking.booking")
+          .findMany({
+            filters: { status: { $in: ["confirmed", "pending"] } },
+            limit: 5,
+            sort: "end_time:asc"
+          });
+
+        if (allPendingConfirmed.length > 0) {
+          console.log(`${logPrefix} [DIAGNOSTIC] Top 5 pending/confirmed bookings:`);
+          allPendingConfirmed.forEach(b => {
+            console.log(`  - ID: ${b.documentId}, Status: ${b.status}, End: ${b.end_time}, Now: ${now.toISOString()}`);
+          });
+        }
+      } catch (diagErr) { }
     } catch (globalErr: any) {
       console.error(`[CRON][ERROR] Global failure:`, globalErr.message);
     }

@@ -47,7 +47,7 @@ export default factories.createCoreController(
           {
             data: {
               status: "confirmed",
-            },
+            } as any,
           },
         );
         strapi.log.info(

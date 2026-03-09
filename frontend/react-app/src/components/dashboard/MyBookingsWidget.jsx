@@ -18,7 +18,7 @@ const MyBookingsWidget = ({ bookings = [], onSeeAll, fullPage = false }) => {
           const first = res.data?.data?.[0];
           if (first) setFirstSpaceDocId(first.documentId || first.id);
         })
-        .catch(() => {});
+        .catch(() => { });
     }
   }, [fullPage]);
 
@@ -34,8 +34,8 @@ const MyBookingsWidget = ({ bookings = [], onSeeAll, fullPage = false }) => {
   const now = new Date();
 
   const currentBookings = bookings.filter((b) => {
-    // Si c'est annulé, ça part direct dans l'historique
-    if (b.status === "cancelled" || b.status === "history") return false;
+    // Si c'est annulé ou terminé, ça part direct dans l'historique
+    if (b.status === "cancelled" || b.status === "history" || b.status === "completed") return false;
 
     // Si on a la date de fin exacte (rawEndDate), on l'utilise pour savoir si c'est fini
     if (b.rawEndDate) {
@@ -45,8 +45,8 @@ const MyBookingsWidget = ({ bookings = [], onSeeAll, fullPage = false }) => {
   });
 
   const historyBookings = bookings.filter((b) => {
-    // Si annulé ou forcé en historique, c'est dans l'historique
-    if (b.status === "cancelled" || b.status === "history") return true;
+    // Si annulé, terminé ou forcé en historique, c'est dans l'historique
+    if (b.status === "cancelled" || b.status === "history" || b.status === "completed") return true;
 
     // Si on a la date exacte de fin, c'est de l'historique si la date est dépassée
     if (b.rawEndDate) {
@@ -96,21 +96,19 @@ const MyBookingsWidget = ({ bookings = [], onSeeAll, fullPage = false }) => {
         <div className="flex items-center gap-2 bg-slate-100 p-1.5 rounded-xl w-max mb-6">
           <button
             onClick={() => setActiveTab("current")}
-            className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${
-              activeTab === "current"
-                ? "bg-white text-blue-600 shadow-sm"
-                : "text-slate-500 hover:text-slate-700"
-            }`}
+            className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${activeTab === "current"
+              ? "bg-white text-blue-600 shadow-sm"
+              : "text-slate-500 hover:text-slate-700"
+              }`}
           >
             En cours ({currentBookings.length})
           </button>
           <button
             onClick={() => setActiveTab("history")}
-            className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${
-              activeTab === "history"
-                ? "bg-white text-blue-600 shadow-sm"
-                : "text-slate-500 hover:text-slate-700"
-            }`}
+            className={`px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${activeTab === "history"
+              ? "bg-white text-blue-600 shadow-sm"
+              : "text-slate-500 hover:text-slate-700"
+              }`}
           >
             Archives ({historyBookings.length})
           </button>
@@ -124,11 +122,10 @@ const MyBookingsWidget = ({ bookings = [], onSeeAll, fullPage = false }) => {
           displayBookings.map((booking) => (
             <div
               key={booking.id}
-              className={`p-4 rounded-xl border transition-all ${
-                booking.status === "cancelled"
-                  ? "bg-slate-50 border-slate-200 grayscale-[0.5] opacity-80"
-                  : "bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-100 shadow-sm hover:shadow-md"
-              }`}
+              className={`p-4 rounded-xl border transition-all ${booking.status === "cancelled"
+                ? "bg-slate-50 border-slate-200 grayscale-[0.5] opacity-80"
+                : "bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-100 shadow-sm hover:shadow-md"
+                }`}
             >
               <div className="flex justify-between items-start mb-1">
                 <div className="font-bold text-blue-800 flex-1">
@@ -143,22 +140,21 @@ const MyBookingsWidget = ({ bookings = [], onSeeAll, fullPage = false }) => {
                   <span className="opacity-60">📅</span> {booking.date}
                 </div>
                 <span
-                  className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-full ${
-                    booking.status === "confirmed"
-                      ? "bg-emerald-100 text-emerald-600"
-                      : booking.status === "cancelled" ||
-                          booking.status === "history" ||
-                          booking.status === "past"
-                        ? "bg-slate-200 text-slate-600"
-                        : "bg-orange-100 text-orange-600"
-                  }`}
+                  className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-full ${booking.status === "confirmed"
+                    ? "bg-emerald-100 text-emerald-600"
+                    : booking.status === "cancelled" ||
+                      booking.status === "history" ||
+                      booking.status === "past"
+                      ? "bg-slate-200 text-slate-600"
+                      : "bg-orange-100 text-orange-600"
+                    }`}
                 >
                   {booking.status === "confirmed"
                     ? "Confirmé"
                     : booking.status === "cancelled"
                       ? "Annulé"
                       : booking.status === "history" ||
-                          booking.status === "past"
+                        booking.status === "past"
                         ? "Terminé"
                         : "Attente"}
                 </span>
@@ -169,7 +165,7 @@ const MyBookingsWidget = ({ bookings = [], onSeeAll, fullPage = false }) => {
                 </span>
 
                 <div className="flex items-center gap-2">
-                  {booking.status === "confirmed" && (
+                  {(booking.status === "confirmed" || booking.status === "completed") && (
                     <button
                       onClick={() =>
                         handleDownloadInvoice(booking.id, booking.date)
@@ -184,15 +180,14 @@ const MyBookingsWidget = ({ bookings = [], onSeeAll, fullPage = false }) => {
                     onClick={() =>
                       alert(
                         `Détails de la réservation pour : ${booking.spaceName}\n` +
-                          `Date : ${booking.date}\n` +
-                          `Heure : ${booking.time}\n` +
-                          `Participants : ${booking.participants || 1}\n` +
-                          (booking.equipmentNames
-                            ? `Équipements : ${booking.equipmentNames}\n`
-                            : "") +
-                          (booking.serviceNames
-                            ? `Services : ${booking.serviceNames}`
-                            : ""),
+                        `Date : ${booking.date}\n` +
+                        `Heure : ${booking.time}\n` +
+                        (booking.equipmentNames
+                          ? `Équipements : ${booking.equipmentNames}\n`
+                          : "") +
+                        (booking.serviceNames
+                          ? `Services : ${booking.serviceNames}`
+                          : ""),
                       )
                     }
                     className="text-[9px] font-black uppercase text-blue-600 hover:text-blue-800 tracking-widest underline decoration-2 underline-offset-4 decoration-blue-200 ml-1"

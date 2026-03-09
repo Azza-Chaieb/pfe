@@ -22,8 +22,13 @@
     },
     "status": {
       "type": "enumeration",
-      "enum": ["pending", "confirmed", "cancelled", "completed"],
-      "default": "pending"
+      "default": "pending",
+      "enum": [
+        "pending",
+        "confirmed",
+        "cancelled",
+        "completed"
+      ]
     },
     "total_price": {
       "type": "decimal"
@@ -34,7 +39,11 @@
     },
     "frequency": {
       "type": "enumeration",
-      "enum": ["daily", "weekly", "monthly"]
+      "enum": [
+        "daily",
+        "weekly",
+        "monthly"
+      ]
     },
     "repeat_until": {
       "type": "date"
@@ -72,7 +81,11 @@
     },
     "payment_method": {
       "type": "enumeration",
-      "enum": ["on_site", "bank_transfer", "subscription"]
+      "enum": [
+        "on_site",
+        "bank_transfer",
+        "subscription"
+      ]
     },
     "payment_deadline": {
       "type": "datetime"

@@ -71,7 +71,7 @@ const PaymentSelector = ({ amount, onSelect, onCancel, onAbandon }) => {
           <span style={{ fontSize: "16px" }}>⚠️</span>
           <span>
             En choisissant le <strong>paiement à l'espace</strong>, vous
-            disposez de <strong>2 minutes</strong> pour vous présenter en
+            disposez de <strong>2 heures</strong> pour vous présenter en
             caisse. Passé ce délai, votre réservation sera{" "}
             <strong>automatiquement annulée</strong>.
           </span>

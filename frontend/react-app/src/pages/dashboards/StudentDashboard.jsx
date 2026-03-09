@@ -17,6 +17,7 @@ import {
 import BookingCalendar from "../../components/calendar/BookingCalendar";
 import SubscriptionSection from "../../components/dashboard/SubscriptionSection";
 import SubscriptionStatCard from "../../components/dashboard/SubscriptionStatCard";
+import PendingPaymentBanner from "../../components/dashboard/PendingPaymentBanner";
 
 const StudentDashboard = ({ activeTab = "dashboard" }) => {
   const [user, setUser] = useState(null);
@@ -79,9 +80,9 @@ const StudentDashboard = ({ activeTab = "dashboard" }) => {
               const totalPrice = (() => {
                 const storedPrice = Number(
                   data.total_price ||
-                    data.totalPrice ||
-                    data.payment?.data?.attributes?.amount ||
-                    data.payment?.amount,
+                  data.totalPrice ||
+                  data.payment?.data?.attributes?.amount ||
+                  data.payment?.amount,
                 );
                 if (storedPrice > 0) return storedPrice;
 
@@ -193,6 +194,8 @@ const StudentDashboard = ({ activeTab = "dashboard" }) => {
                 })(),
                 participants:
                   data.participants || data.extras?.contact?.participants || 1,
+                payment_method: data.payment_method,
+                payment_deadline: data.payment_deadline,
               };
             }),
           );
@@ -404,6 +407,7 @@ const StudentDashboard = ({ activeTab = "dashboard" }) => {
 
   return (
     <DashboardLayout role="student" user={user} loading={loading}>
+      <PendingPaymentBanner bookings={bookings} />
       {activeTab === "dashboard" && renderDashboard()}
       {activeTab === "courses" && renderCourses()}
       {activeTab === "bookings" && renderBookings()}

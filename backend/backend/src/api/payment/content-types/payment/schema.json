@@ -19,11 +19,20 @@
     },
     "method": {
       "type": "enumeration",
-      "enum": ["bank_transfer", "on_site"]
+      "enum": [
+        "bank_transfer",
+        "on_site"
+      ]
     },
     "status": {
       "type": "enumeration",
-      "enum": ["pending", "submitted", "confirmed", "rejected", "cancelled"],
+      "enum": [
+        "pending",
+        "submitted",
+        "confirmed",
+        "rejected",
+        "cancelled"
+      ],
       "default": "pending"
     },
     "transaction_ref": {
@@ -34,7 +43,10 @@
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["images", "files"]
+      "allowedTypes": [
+        "images",
+        "files"
+      ]
     },
     "booking": {
       "type": "relation",
