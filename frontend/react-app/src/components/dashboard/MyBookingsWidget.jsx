@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api";
-import { downloadInvoice } from "../../services/bookingService";
+import { downloadInvoice, getBookingById } from "../../services/bookingService";
+import { getSpaceById } from "../../services/spaceService";
+import BookingModal from "../2d/BookingModal";
 
 const MyBookingsWidget = ({ bookings = [], onSeeAll, fullPage = false }) => {
   const navigate = useNavigate();
   const [firstSpaceDocId, setFirstSpaceDocId] = useState(null);
   const [activeTab, setActiveTab] = useState("current"); // "current" | "history"
   const [downloading, setDownloading] = useState(null);
+  const [editingBooking, setEditingBooking] = useState(null);
+  const [spaceForBooking, setSpaceForBooking] = useState(null);
+  const [loadingEdit, setLoadingEdit] = useState(false);
 
   useEffect(() => {
     if (fullPage) {
@@ -34,21 +39,35 @@ const MyBookingsWidget = ({ bookings = [], onSeeAll, fullPage = false }) => {
   const now = new Date();
 
   const currentBookings = bookings.filter((b) => {
-    // Si c'est annulé ou terminé, ça part direct dans l'historique
     if (b.status === "cancelled" || b.status === "history" || b.status === "completed") return false;
 
-    // Si on a la date de fin exacte (rawEndDate), on l'utilise pour savoir si c'est fini
+    // Pour les réservations en attente, on regarde le délai de paiement
+    const isConfirmed = b.status === "confirmed" || b.status === "past" || b.status === "history" || b.status === "completed";
+    if (!isConfirmed) {
+      if (b.payment_deadline) {
+        if (new Date(b.payment_deadline) > now) return true;
+        return false; // Délai expiré
+      }
+    }
+
+    // Sinon, on regarde l'heure de fin de la réservation
     if (b.rawEndDate) {
       if (new Date(b.rawEndDate) < now) return false;
     }
-    return true; // En cours par défaut
+    return true;
   });
 
   const historyBookings = bookings.filter((b) => {
-    // Si annulé, terminé ou forcé en historique, c'est dans l'historique
     if (b.status === "cancelled" || b.status === "history" || b.status === "completed") return true;
 
-    // Si on a la date exacte de fin, c'est de l'historique si la date est dépassée
+    const isConfirmed = b.status === "confirmed" || b.status === "past" || b.status === "history" || b.status === "completed";
+    if (!isConfirmed) {
+      if (b.payment_deadline) {
+        if (new Date(b.payment_deadline) < now) return true;
+        return false; // Pas encore expiré
+      }
+    }
+
     if (b.rawEndDate) {
       if (new Date(b.rawEndDate) < now) return true;
     }
@@ -73,6 +92,87 @@ const MyBookingsWidget = ({ bookings = [], onSeeAll, fullPage = false }) => {
       setDownloading(null);
     }
   };
+
+  const handleModify = async (booking) => {
+    try {
+      setLoadingEdit(true);
+      // Fetch full booking details to ensure we have all extras/equipments/services
+      // CRITICAL: Strapi v5 requires documentId for lookups
+      const lookupId = booking.documentId || booking.id;
+      const fullBooking = await getBookingById(lookupId);
+      const bData = fullBooking.data || fullBooking;
+
+      // Extract space ID from the booking
+      const attrs = bData.attributes || bData;
+      const spaceObj = attrs.space?.data || attrs.space || booking.space?.data || booking.space;
+      const sId = spaceObj?.documentId || spaceObj?.id || attrs.extras?.spaceId || booking.extras?.spaceId || booking.spaceId;
+
+      console.log("[MyBookingsWidget] handleModify - bData:", bData, "sId found:", sId);
+
+      // Defensive Fix: If getBookingById Stage 4/5 worked, we might ALREADY have the hydrated space
+      const fullSpaceFromBooking = attrs.space?.data || attrs.space;
+      const hasDeepData = fullSpaceFromBooking?.attributes?.pricing_hourly || fullSpaceFromBooking?.pricing_hourly;
+
+      if (!sId && !hasDeepData) {
+        console.error("No space ID found for booking details:", bData, "Original booking:", booking);
+        // Fallback: try to find space name in extras if documentId is missing
+        if (attrs.extras?.spaceName || booking.spaceName) {
+          setSpaceForBooking({ attributes: { name: attrs.extras?.spaceName || booking.spaceName } });
+        } else {
+          alert("Impossible de charger les détails de l'espace (ID manquant).");
+          setLoadingEdit(false);
+          return;
+        }
+      } else {
+        try {
+          // Attempt to fetch fresh/full space details
+          let fullSpace;
+          if (sId) {
+            try {
+              const spaceRes = await getSpaceById(sId);
+              fullSpace = spaceRes?.data || spaceRes;
+            } catch (innerErr) {
+              console.warn("[MyBookingsWidget] Space API fetch failed, will attempt fallback.", innerErr);
+            }
+          }
+
+          // FINAL RESILIENT FALLBACK: 
+          // 1. If API gave us good data, use it.
+          // 2. If API failed or gave shallow data, and we have deep data in booking, use booking data.
+          // 3. If everything is shallow, use the booking data anyway (better than nothing).
+
+          const apiHasPricing = fullSpace?.attributes?.pricing_hourly || fullSpace?.pricing_hourly;
+
+          if (apiHasPricing) {
+            console.log("[MyBookingsWidget] Using fresh space data from API.");
+            setSpaceForBooking(fullSpace);
+          } else if (hasDeepData) {
+            console.log("[MyBookingsWidget] Using deep space data from booking record.");
+            setSpaceForBooking(fullSpaceFromBooking);
+          } else if (fullSpace || fullSpaceFromBooking) {
+            console.warn("[MyBookingsWidget] Using shallow space data (last resort).");
+            setSpaceForBooking(fullSpace || fullSpaceFromBooking);
+          } else {
+            // Fallback to name only if we have it
+            setSpaceForBooking({ attributes: { name: attrs.extras?.spaceName || booking.spaceName || "Espace inconnu" } });
+          }
+        } catch (spaceErr) {
+          console.error("Critical error in handleModify logic:", spaceErr);
+          // Last last resort
+          setSpaceForBooking(fullSpaceFromBooking || { attributes: { name: "Espace" } });
+        }
+      }
+
+      setEditingBooking(bData);
+    } catch (err) {
+      console.error("Error preparing edit mode:", err);
+      alert("Erreur lors de la préparation de la modification.");
+    } finally {
+      setLoadingEdit(false);
+    }
+  };
+
+
 
   return (
     <div
@@ -140,23 +240,37 @@ const MyBookingsWidget = ({ bookings = [], onSeeAll, fullPage = false }) => {
                   <span className="opacity-60">📅</span> {booking.date}
                 </div>
                 <span
-                  className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-full ${booking.status === "confirmed"
-                    ? "bg-emerald-100 text-emerald-600"
-                    : booking.status === "cancelled" ||
-                      booking.status === "history" ||
-                      booking.status === "past"
-                      ? "bg-slate-200 text-slate-600"
-                      : "bg-orange-100 text-orange-600"
-                    }`}
+                  className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-full ${(() => {
+                    if (booking.status === "cancelled") return "bg-slate-200 text-slate-600";
+
+                    const isConfirmed = booking.status === "confirmed" || booking.status === "completed" || booking.status === "past" || booking.status === "history";
+                    const isPending = !isConfirmed;
+
+                    if (isPending) {
+                      const deadlinePassed = booking.payment_deadline && new Date(booking.payment_deadline) < now;
+                      if (deadlinePassed) return "bg-slate-200 text-slate-600";
+                      return "bg-orange-100 text-orange-600";
+                    } else {
+                      const timePassed = booking.rawEndDate && new Date(booking.rawEndDate) < now;
+                      if (timePassed) return "bg-slate-200 text-slate-600";
+                      return "bg-emerald-100 text-emerald-600";
+                    }
+                  })()}`}
                 >
-                  {booking.status === "confirmed"
-                    ? "Confirmé"
-                    : booking.status === "cancelled"
-                      ? "Annulé"
-                      : booking.status === "history" ||
-                        booking.status === "past"
-                        ? "Terminé"
-                        : "Attente"}
+                  {(() => {
+                    if (booking.status === "cancelled") return "Annulé";
+
+                    const isConfirmed = booking.status === "confirmed" || booking.status === "completed" || booking.status === "past" || booking.status === "history";
+                    const isPending = !isConfirmed;
+
+                    if (isPending) {
+                      const deadlinePassed = booking.payment_deadline && new Date(booking.payment_deadline) < now;
+                      return deadlinePassed ? "Date expirée" : "Attente";
+                    } else {
+                      const timePassed = booking.rawEndDate && new Date(booking.rawEndDate) < now;
+                      return timePassed ? "Terminé" : "Confirmé";
+                    }
+                  })()}
                 </span>
               </div>
               <div className="flex justify-between items-center mt-3">
@@ -176,6 +290,30 @@ const MyBookingsWidget = ({ bookings = [], onSeeAll, fullPage = false }) => {
                       {downloading === booking.id ? "⏳..." : "📄 Facture"}
                     </button>
                   )}
+                  {(() => {
+                    const isConfirmed =
+                      booking.status === "confirmed" ||
+                      booking.status === "completed" ||
+                      booking.status === "past" ||
+                      booking.status === "history";
+                    const isPending = !isConfirmed && booking.status !== "cancelled";
+                    const deadlinePassed =
+                      booking.payment_deadline &&
+                      new Date(booking.payment_deadline) < now;
+
+                    if (isPending && !deadlinePassed) {
+                      return (
+                        <button
+                          onClick={() => handleModify(booking)}
+                          disabled={loadingEdit}
+                          className="text-[10px] font-black uppercase text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100 hover:bg-emerald-100 transition-colors shadow-sm"
+                        >
+                          {loadingEdit ? "..." : "Modifier"}
+                        </button>
+                      );
+                    }
+                    return null;
+                  })()}
                   <button
                     onClick={() =>
                       alert(
@@ -217,6 +355,18 @@ const MyBookingsWidget = ({ bookings = [], onSeeAll, fullPage = false }) => {
             🧊 Explorer le catalogue 3D
           </button>
         </div>
+      )}
+
+
+      {editingBooking && spaceForBooking && (
+        <BookingModal
+          space={spaceForBooking}
+          editingBooking={editingBooking}
+          onClose={() => {
+            setEditingBooking(null);
+            setSpaceForBooking(null);
+          }}
+        />
       )}
     </div>
   );

@@ -17,6 +17,9 @@ import {
   unlockEquipment
 } from "../../services/equipmentService";
 import { getServicesList } from "../../services/serviceService";
+import { getBookingById } from "../../services/bookingService";
+import { getSpaceById } from "../../services/spaceService";
+import BookingModal from "../2d/BookingModal";
 
 const BookingCalendar = ({ userId }) => {
   const [events, setEvents] = useState([]);
@@ -27,6 +30,9 @@ const BookingCalendar = ({ userId }) => {
   const [equipmentQuantities, setEquipmentQuantities] = useState({});
   const [serviceQuantities, setServiceQuantities] = useState({});
   const [actionLoading, setActionLoading] = useState(false);
+  const [editingBooking, setEditingBooking] = useState(null);
+  const [spaceForBooking, setSpaceForBooking] = useState(null);
+  const [loadingEdit, setLoadingEdit] = useState(false);
   const navigate = useNavigate();
 
   const fetchReservations = async () => {
@@ -130,8 +136,8 @@ const BookingCalendar = ({ userId }) => {
             coworkingName: coworking.name || "SunSpace",
             timeSlot: timeSlot,
             totalPrice: totalPrice,
-            equipment: attrs.equipments?.data || attrs.equipments || [],
-            services: attrs.services?.data || attrs.services || [],
+            equipment: (Array.isArray(attrs.equipments?.data) ? attrs.equipments.data : (Array.isArray(attrs.equipments) ? attrs.equipments : [])),
+            services: (Array.isArray(attrs.services?.data) ? attrs.services.data : (Array.isArray(attrs.services) ? attrs.services : [])),
             extras: attrs.extras || {},
             space: spaceAttrs, // Keep normalized space attributes for price calculation
           },
@@ -150,7 +156,7 @@ const BookingCalendar = ({ userId }) => {
 
   const handleDateClick = (arg) => {
     if (window.confirm(`Voulez-vous créer une réservation pour le ${arg.dateStr} ?`)) {
-      navigate("/explore/5");
+      navigate("/spaces");
     }
   };
 
@@ -172,8 +178,6 @@ const BookingCalendar = ({ userId }) => {
       fetchReservations();
     }
   }, [userId]);
-
-
   const handleCancel = async () => {
     if (!window.confirm("Êtes-vous sûr de vouloir annuler cette réservation ?")) return;
     try {
@@ -190,6 +194,82 @@ const BookingCalendar = ({ userId }) => {
       setActionLoading(false);
     }
   };
+
+  const handleModify = async () => {
+    if (!selectedEvent) return;
+    try {
+      setLoadingEdit(true);
+      const bId = selectedEvent.extendedProps.documentId;
+
+      // Fetch full booking details (resilient way)
+      // CRITICAL: Strapi v5 requires documentId for lookups
+      const lookupId = selectedEvent.extendedProps.documentId || selectedEvent.id;
+      const fullBooking = await getBookingById(lookupId);
+      const bData = fullBooking.data || fullBooking;
+
+      // Extract space ID (consistent with MyBookingsWidget)
+      const attrs = bData.attributes || bData;
+      const spaceObj = attrs.space?.data || attrs.space || selectedEvent.extendedProps.space;
+      const sId = spaceObj?.documentId || spaceObj?.id || attrs.extras?.spaceId || selectedEvent.extendedProps.spaceId;
+
+      console.log("[BookingCalendar] handleModify - bData:", bData, "sId found:", sId);
+
+      // Defensive Fix: Use hydrated space from booking if available
+      const fullSpaceFromBooking = attrs.space?.data || attrs.space;
+      const hasDeepData = fullSpaceFromBooking?.attributes?.pricing_hourly || fullSpaceFromBooking?.pricing_hourly;
+
+      if (!sId && !hasDeepData) {
+        console.error("No space ID found for booking details:", bData, "Event space:", selectedEvent.extendedProps.space);
+        if (attrs.extras?.spaceName || selectedEvent.extendedProps.spaceName) {
+          setSpaceForBooking({ attributes: { name: attrs.extras?.spaceName || selectedEvent.extendedProps.spaceName } });
+        } else {
+          alert("Impossible de charger les détails de l'espace (ID manquant).");
+          setLoadingEdit(false);
+          return;
+        }
+      } else {
+        try {
+          // Attempt fresh fetch
+          let fullSpace;
+          if (sId) {
+            try {
+              const spaceRes = await getSpaceById(sId);
+              fullSpace = spaceRes?.data || spaceRes;
+            } catch (innerErr) {
+              console.warn("[BookingCalendar] Space API fetch failed, will attempt fallback.", innerErr);
+            }
+          }
+
+          // Resilient Fallback
+          const apiHasPricing = fullSpace?.attributes?.pricing_hourly || fullSpace?.pricing_hourly;
+
+          if (apiHasPricing) {
+            setSpaceForBooking(fullSpace);
+          } else if (hasDeepData) {
+            console.log("[BookingCalendar] Using deep space data from booking record.");
+            setSpaceForBooking(fullSpaceFromBooking);
+          } else if (fullSpace || fullSpaceFromBooking) {
+            setSpaceForBooking(fullSpace || fullSpaceFromBooking);
+          } else {
+            setSpaceForBooking({ attributes: { name: attrs.extras?.spaceName || selectedEvent.extendedProps.spaceName || "Espace" } });
+          }
+        } catch (spaceErr) {
+          console.error("Critical error in BookingCalendar handleModify logic:", spaceErr);
+          setSpaceForBooking(fullSpaceFromBooking || { attributes: { name: "Espace" } });
+        }
+      }
+
+      setEditingBooking(bData);
+      setSelectedEvent(null); // Close the detail popup
+    } catch (err) {
+      console.error("Error preparing edit mode:", err);
+      alert("Erreur lors de la préparation de la modification.");
+    } finally {
+      setLoadingEdit(false);
+    }
+  };
+
+
 
 
   if (loading) {
@@ -227,6 +307,8 @@ const BookingCalendar = ({ userId }) => {
         slotMaxTime="20:00:00"
         nowIndicator={true}
       />
+
+
 
       {selectedEvent && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[10000] flex items-center justify-center p-4 animate-fade-in"
@@ -296,48 +378,97 @@ const BookingCalendar = ({ userId }) => {
                 </div>
 
                 {/* Chosen Equipments/Services section */}
-                {(selectedEvent.extendedProps.equipment?.length > 0 || selectedEvent.extendedProps.services?.length > 0) && (
-                  <div className="p-4 bg-slate-50 rounded-2xl space-y-2">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
-                      Options choisies
-                    </p>
-                    {selectedEvent.extendedProps.equipment.map(eq => {
-                      const name = eq.attributes?.name || eq.name;
-                      const qty = selectedEvent.extendedProps.extras?.equipmentQuantities?.[eq.documentId || eq.id] || 1;
-                      return (
-                        <div key={eq.id} className="flex justify-between items-center text-xs font-bold text-slate-600">
-                          <span>🛠️ {name}</span>
-                          <span className="bg-white px-2 py-0.5 rounded-lg border border-slate-200">x{qty}</span>
-                        </div>
-                      );
-                    })}
-                    {selectedEvent.extendedProps.services.map(srv => {
-                      const name = srv.attributes?.name || srv.name;
-                      const qty = selectedEvent.extendedProps.extras?.serviceQuantities?.[srv.documentId || srv.id] || 1;
-                      return (
-                        <div key={srv.id} className="flex justify-between items-center text-xs font-bold text-slate-600">
-                          <span>✨ {name}</span>
-                          <span className="bg-white px-2 py-0.5 rounded-lg border border-slate-200">x{qty}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
+                {(() => {
+                  const eqList = selectedEvent.extendedProps.equipment || [];
+                  const srvList = selectedEvent.extendedProps.services || [];
+                  const extrasSrv = selectedEvent.extendedProps.extras?.serviceQuantities || {};
+                  const fallbackSrvIds = Object.keys(extrasSrv).filter(id => String(id).startsWith("fallback-"));
+
+                  if (eqList.length === 0 && srvList.length === 0 && fallbackSrvIds.length === 0) return null;
+
+                  const fallbackNames = {
+                    "fallback-print": "Impression",
+                    "fallback-catering": "Catering / Déjeuner",
+                    "fallback-it-support": "Support Technique IT",
+                    "fallback-coffee": "Cafétérie Premium"
+                  };
+
+                  return (
+                    <div className="p-4 bg-slate-50 rounded-2xl space-y-2">
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
+                        Options choisies
+                      </p>
+                      {(selectedEvent.extendedProps.equipment || []).map((eq, idx) => {
+                        const eAttrs = eq.attributes || eq;
+                        const name = eAttrs.name || "Équipement";
+                        const id = eq.documentId || eq.id || `eq-${idx}`;
+                        const qtyLookup = selectedEvent.extendedProps.extras?.equipmentQuantities || {};
+                        const qty = qtyLookup[id] || qtyLookup[eq.id] || 1;
+                        return (
+                          <div key={id} className="flex justify-between items-center text-xs font-bold text-slate-600">
+                            <span className="flex items-center gap-2">🛠️ Équipement: {name}</span>
+                            <span className="bg-slate-50 text-slate-500 px-2 py-0.5 rounded-lg border border-slate-100 font-black text-[10px]">x{qty}</span>
+                          </div>
+                        );
+                      })}
+                      {(selectedEvent.extendedProps.services || []).map((srv, idx) => {
+                        const sAttrs = srv.attributes || srv;
+                        const name = sAttrs.name || "Service";
+                        const id = srv.documentId || srv.id || `srv-${idx}`;
+                        const qtyLookup = selectedEvent.extendedProps.extras?.serviceQuantities || {};
+                        const qty = qtyLookup[id] || qtyLookup[srv.id] || 1;
+                        return (
+                          <div key={id} className="flex justify-between items-center text-xs font-bold text-slate-600">
+                            <span className="flex items-center gap-2">✨ Service: {name}</span>
+                            <span className="bg-slate-50 text-slate-500 px-2 py-0.5 rounded-lg border border-slate-100 font-black text-[10px]">x{qty}</span>
+                          </div>
+                        );
+                      })}
+                      {fallbackSrvIds.map((id) => {
+                        const name = fallbackNames[id] || "Service supplémentaire";
+                        const qty = extrasSrv[id];
+                        return (
+                          <div key={id} className="flex justify-between items-center text-xs font-bold text-slate-600">
+                            <span className="flex items-center gap-2">✨ Service: {name}</span>
+                            <span className="bg-slate-50 text-slate-500 px-2 py-0.5 rounded-lg border border-slate-100 font-black text-[10px]">x{qty}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })()}
               </div>
 
               <div className="space-y-3">
+                <div className="flex flex-col gap-3">
+                  {selectedEvent.extendedProps.status === "pending" && (
+                    <button
+                      onClick={handleModify}
+                      disabled={loadingEdit || actionLoading}
+                      className="w-full py-4 bg-emerald-500 text-white rounded-2xl font-black uppercase tracking-widest hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-200 flex items-center justify-center gap-2 group disabled:opacity-50"
+                    >
+                      {loadingEdit ? (
+                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      ) : (
+                        "Modifier la réservation"
+                      )}
+                    </button>
+                  )}
+                  {selectedEvent.extendedProps.status === "pending" && (
+                    <button
+                      onClick={handleCancel}
+                      disabled={actionLoading || loadingEdit}
+                      className="w-full py-4 bg-red-50 text-red-600 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-red-100 transition-all disabled:opacity-50"
+                    >
+                      {actionLoading ? "..." : "Annuler la réservation"}
+                    </button>
+                  )}
+                </div>
                 {selectedEvent.extendedProps.status === "pending" && (
-                  <button
-                    onClick={handleCancel}
-                    disabled={actionLoading}
-                    className="w-full py-4 bg-red-50 text-red-600 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-red-100 transition-all"
-                  >
-                    {actionLoading ? "..." : "Annuler la réservation"}
-                  </button>
+                  <p className="text-[9px] text-slate-400 font-medium text-center px-4 italic leading-tight">
+                    * L'annulation est immédiate. Une fois annulée, la disponibilité de l'espace sera libérée.
+                  </p>
                 )}
-                <p className="text-[9px] text-slate-400 font-medium text-center px-4 italic leading-tight">
-                  * L'annulation est immédiate. Une fois annulée, la disponibilité de l'espace sera libérée.
-                </p>
                 <button
                   onClick={() => setSelectedEvent(null)}
                   className="w-full py-4 mt-2 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-lg hover:bg-black transition-all"
@@ -347,7 +478,19 @@ const BookingCalendar = ({ userId }) => {
               </div>
             </div>
           </div>
-        </div >
+        </div>
+      )}
+
+      {editingBooking && spaceForBooking && (
+        <BookingModal
+          space={spaceForBooking}
+          editingBooking={editingBooking}
+          onClose={() => {
+            setEditingBooking(null);
+            setSpaceForBooking(null);
+            fetchReservations();
+          }}
+        />
       )}
 
       <style>{`

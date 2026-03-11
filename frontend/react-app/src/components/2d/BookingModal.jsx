@@ -8,11 +8,14 @@ import {
   cancelReservation,
 } from "../../services/bookingService";
 import { getMySubscription } from "../../services/subscriptionService";
+import { getSpaceById } from "../../services/spaceService";
 import {
   getEquipmentAvailability,
   lockEquipment,
   unlockEquipment,
+  getEquipments
 } from "../../services/equipmentService";
+import { getServicesList } from "../../services/serviceService";
 import PaymentSelector from "../payment/PaymentSelector";
 
 /**
@@ -25,8 +28,43 @@ const BookingModal = ({
   initialDate,
   initialChairId,
   onClose,
+  editingBooking = null, // New prop for edit mode
 }) => {
   const [bookingLoading, setBookingLoading] = useState(false);
+
+  // Helper for quantity lookups (robust against Numeric ID, String documentId, and Names)
+  const getQty = (map, item) => {
+    if (!map || !item) return 0;
+    const nameKey = String(item.name || "").toLowerCase().trim().replace(/\s+/g, '-');
+    const ids = [
+      String(item.documentId || ""),
+      String(item.id || ""),
+      String(item.attributes?.documentId || ""),
+      String(item.attributes?.id || ""),
+      nameKey
+    ].filter(id => id && id !== "undefined" && id !== "null");
+
+    for (const val of ids) {
+      if (map[val] !== undefined) return map[val];
+    }
+    return 0;
+  };
+  const getParams = (map, item) => {
+    if (!map || !item) return [];
+    const nameKey = String(item.name || "").toLowerCase().trim().replace(/\s+/g, '-');
+    const ids = [
+      String(item.documentId || ""),
+      String(item.id || ""),
+      String(item.attributes?.documentId || ""),
+      String(item.attributes?.id || ""),
+      nameKey
+    ].filter(id => id && id !== "undefined" && id !== "null");
+
+    for (const val of ids) {
+      if (map[val]) return map[val];
+    }
+    return [];
+  };
   const [showPaymentSelector, setShowPaymentSelector] = useState(false);
   const [createdReservation, setCreatedReservation] = useState(null);
   const [existingReservations, setExistingReservations] = useState([]);
@@ -39,6 +77,7 @@ const BookingModal = ({
   const [occupiedChairs, setOccupiedChairs] = useState([]);
   const [checkingAvailability, setCheckingAvailability] = useState(false);
   const [equipmentQuantities, setEquipmentQuantities] = useState({});
+  const [originalQuantities, setOriginalQuantities] = useState({}); // Track what was already booked
   const [serviceQuantities, setServiceQuantities] = useState({});
   const [serviceParams, setServiceParams] = useState({}); // { serviceId: [ { fieldName: value } ] }
   const [activeServiceForm, setActiveServiceForm] = useState(null); // { id, name, fields }
@@ -52,14 +91,213 @@ const BookingModal = ({
   });
   const [dynamicAvailability, setDynamicAvailability] = useState({});
   const [isSyncingEquipments, setIsSyncingEquipments] = useState(false);
+  const [masterEquipments, setMasterEquipments] = useState([]);
+  const [masterServices, setMasterServices] = useState([]);
 
   const navigate = useNavigate();
   const isSubmitting = useRef(false);
 
-  if (!space) return null;
-  const attrs = space.attributes || space;
-  const equipmentsList = attrs.equipments?.data || attrs.equipments || [];
+  // --- Calendar & View Logic ---
+  const [viewDate, setViewDate] = useState(new Date(formData.date));
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const currentYear = viewDate.getFullYear();
+  const currentMonth = viewDate.getMonth();
+
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
+  // Adjust for Monday start (0=Sunday in JS, let's make it 0=Monday or just keep it simple)
+  const paddingDays = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
+
+  const monthNames = [
+    "Janvier",
+    "Février",
+    "Mars",
+    "Avril",
+    "Mai",
+    "Juin",
+    "Juillet",
+    "Août",
+    "Septembre",
+    "Octobre",
+    "Novembre",
+    "Décembre",
+  ];
+
+  const handleMonthChange = (offset) => {
+    setViewDate(new Date(currentYear, currentMonth + offset, 1));
+  };
+
+  // --- NEW: Initialization for Edit Mode ---
+  useEffect(() => {
+    if (editingBooking) {
+      const attrs = editingBooking.attributes || editingBooking;
+      console.log("[BookingModal] Edit Mode Init - Extras:", attrs.extras);
+
+      // Initialize main form data
+      const start = attrs.start_time ? new Date(attrs.start_time) : new Date();
+      const end = attrs.end_time ? new Date(attrs.end_time) : new Date(start.getTime() + 3600000);
+
+      const isValidDate = (d) => d instanceof Date && !isNaN(d.getTime());
+      const safeISO = (d) => isValidDate(d) ? d.toISOString() : new Date().toISOString();
+
+      setFormData({
+        participants: attrs.extras?.contact?.participants || attrs.participants || 1,
+        date: safeISO(start).split("T")[0],
+        startTime: isValidDate(start) ? start.getUTCHours().toString().padStart(2, "0") + ":" + start.getUTCMinutes().toString().padStart(2, "0") : "09:00",
+        endTime: isValidDate(end) ? end.getUTCHours().toString().padStart(2, "0") + ":" + end.getUTCMinutes().toString().padStart(2, "0") : "10:00",
+        allDay: attrs.all_day || attrs.is_all_day || false,
+      });
+
+      // Initialize normalized quantities
+      const normalizeMap = (rawMap) => {
+        if (!rawMap) return {};
+        const normalized = {};
+        Object.keys(rawMap).forEach(key => {
+          normalized[String(key)] = rawMap[key];
+        });
+        return normalized;
+      };
+
+      if (attrs.extras?.equipmentQuantities) {
+        const normQtys = normalizeMap(attrs.extras.equipmentQuantities);
+        setEquipmentQuantities(normQtys);
+        setOriginalQuantities(normQtys);
+      } else {
+        const eqData = attrs.equipments?.data || attrs.equipments || [];
+        const eqQtys = {};
+        eqData.forEach(eq => {
+          const id = String(eq.documentId || eq.id);
+          eqQtys[id] = 1;
+        });
+        setEquipmentQuantities(eqQtys);
+        setOriginalQuantities(eqQtys);
+      }
+
+      if (attrs.extras?.serviceQuantities) {
+        setServiceQuantities(normalizeMap(attrs.extras.serviceQuantities));
+      } else if (attrs.extras?.serviceParams) {
+        // Recovery: If we have params but no quantities, the services in params MUST be selected
+        const srvQtys = {};
+        Object.keys(attrs.extras.serviceParams).forEach(key => {
+          srvQtys[String(key)] = 1;
+        });
+        setServiceQuantities(srvQtys);
+      } else {
+        const srvData = attrs.services?.data || attrs.services || [];
+        const srvQtys = {};
+        srvData.forEach(s => {
+          const id = String(s.documentId || s.id);
+          srvQtys[id] = 1;
+        });
+        setServiceQuantities(srvQtys);
+      }
+
+      if (attrs.extras?.serviceParams) {
+        setServiceParams(normalizeMap(attrs.extras.serviceParams));
+      }
+    }
+  }, [editingBooking]);
+
+  const [monthBookings, setMonthBookings] = useState([]);
+  const [loadingMonth, setLoadingMonth] = useState(false);
+
+  // --- NEW: Dynamic Hydration for Incomplete Space Data ---
+  const [hydratedSpace, setHydratedSpace] = useState(null);
+  const [isHydrating, setIsHydrating] = useState(false);
+
+  useEffect(() => {
+    const checkAndHydrate = async () => {
+      // 1. Get raw attributes
+      const currentAttrs = space?.attributes || space;
+
+      // 2. Determine if it's incomplete
+      // It's incomplete if it's an ID, or if it lacks pricing, or if it's an empty object
+      const hasPrice = currentAttrs?.pricing_hourly || currentAttrs?.pricing_daily;
+      const isPrimitive = typeof space === "string" || typeof space === "number";
+      const isEmpty = !currentAttrs || Object.keys(currentAttrs).length === 0;
+
+      const isIncomplete = isPrimitive || isEmpty || !hasPrice;
+
+      // 3. Find the best ID to fetch
+      const sId =
+        isPrimitive ? space :
+          (space?.documentId || space?.id) ||
+          (editingBooking?.attributes?.space?.data?.documentId || editingBooking?.attributes?.space?.data?.id) ||
+          (editingBooking?.attributes?.space?.documentId || editingBooking?.attributes?.space?.id) ||
+          (editingBooking?.space?.documentId || editingBooking?.space?.id);
+
+      if (isIncomplete && sId && !hydratedSpace) {
+        console.log(`[Diagnostic] Hydration triggered for space ID: ${sId}`);
+        setIsHydrating(true);
+        try {
+          const fullRes = await getSpaceById(sId);
+          console.log(`[Diagnostic] Hydration SUCCESS for ${sId}:`, fullRes);
+          const fullSpace = fullRes.data || fullRes;
+          setHydratedSpace(fullSpace);
+        } catch (err) {
+          console.error("[Diagnostic] Hydration FAILED", err);
+        } finally {
+          setIsHydrating(false);
+        }
+      }
+    };
+    checkAndHydrate();
+  }, [space, editingBooking, hydratedSpace]);
+
+  const activeSpace = hydratedSpace || space;
+  if (!activeSpace || (typeof activeSpace === 'object' && Object.keys(activeSpace).length === 0 && !isHydrating)) {
+    // If we have nothing and we're not waiting for hydration, we can't render
+    return null;
+  }
+
+  const attrs = activeSpace.attributes || activeSpace;
+  useEffect(() => {
+    const loadMasterData = async () => {
+      try {
+        const [eqRes, srvRes] = await Promise.all([getEquipments(), getServicesList()]);
+        setMasterEquipments(eqRes.data || []);
+        setMasterServices(srvRes.data || []);
+      } catch (err) {
+        console.error("[BookingModal] Failed to load master lists:", err);
+      }
+    };
+    loadMasterData();
+  }, []);
+
+  let equipmentsList = attrs.equipments?.data || attrs.equipments || [];
   let servicesList = attrs.services?.data || attrs.services || [];
+
+  // --- NEW: Resilient Data Merging for Edit & View Mode ---
+  // Ensure that ALL master equipments and services are available for selection,
+  // especially helpful if the space-specific relations are broken or shallow.
+  if (masterEquipments.length > 0) {
+    const existingIds = new Set(equipmentsList.map(e => String(e.documentId || e.id)));
+    const additionalEquipments = masterEquipments.filter(me => !existingIds.has(String(me.documentId || me.id)));
+    if (additionalEquipments.length > 0) {
+      console.log("[BookingModal] Merging additional equipments from Master List:", additionalEquipments.length);
+      equipmentsList = [...equipmentsList, ...additionalEquipments];
+    }
+  }
+
+  if (masterServices.length > 0) {
+    const existingSrvIds = new Set(servicesList.map(s => String(s.documentId || s.id)));
+    const additionalServices = masterServices.filter(ms => !existingSrvIds.has(String(ms.documentId || ms.id)));
+    if (additionalServices.length > 0) {
+      console.log("[BookingModal] Merging additional services from Master List:", additionalServices.length);
+      servicesList = [...servicesList, ...additionalServices];
+    }
+  }
+
+  // FORCE FALLBACK for Equipments if list is STILL empty and NOT editing
+  if (equipmentsList.length === 0 && !isHydrating && !editingBooking) {
+    equipmentsList = [
+      { id: "fallback-screen", name: "Écran 4K", price: 10, price_type: "one-time" },
+      { id: "fallback-projector", name: "Vidéoprojecteur", price: 20, price_type: "one-time" },
+      { id: "fallback-whiteboard", name: "Tableau Blanc", price: 5, price_type: "one-time" }
+    ];
+  }
 
   // FORCE FALLBACK for Services if list is empty (for testing/CORS issues)
   if (servicesList.length === 0) {
@@ -182,12 +420,14 @@ const BookingModal = ({
     ];
   }
 
-  console.log("[DEBUG] BookingModal - space object:", space);
+  console.log("[DEBUG] BookingModal - activeSpace object:", activeSpace);
+  console.log("[DEBUG] BookingModal - equipmentsList:", equipmentsList);
   console.log("[DEBUG] BookingModal - servicesList:", servicesList);
 
   // Sync Equipment Availability helper function
   const syncEquipmentAvailability = async () => {
-    if (!space?.id || !formData.date) return;
+    const spaceRef = activeSpace?.id || space?.id;
+    if (!spaceRef || !formData.date) return;
     setIsSyncingEquipments(true);
     try {
       const startISO = `${formData.date}T${formData.startTime}:00.000Z`;
@@ -195,10 +435,18 @@ const BookingModal = ({
         ? `${formData.date}T23:59:59.999Z`
         : `${formData.date}T${formData.endTime}:00.000Z`;
 
+      // When editing, exclude the current booking so its equipment doesn't appear unavailable
+      // Prefer documentId for Strapi v5 consistency
+      const excludeId = editingBooking?.documentId || editingBooking?.id;
+
       const availabilityMap = {};
       for (const eq of equipmentsList) {
-        const id = eq.id;
-        const available = await getEquipmentAvailability(id, startISO, endISO);
+        const id = eq.id || eq.documentId;
+        if (String(id).startsWith("fallback-")) {
+          availabilityMap[id] = Infinity; // Infinity avoids "Rupture" and 0 checks
+          continue;
+        }
+        const available = await getEquipmentAvailability(id, startISO, endISO, excludeId);
         availabilityMap[id] = available;
       }
       setDynamicAvailability(availabilityMap);
@@ -310,6 +558,37 @@ const BookingModal = ({
     attrs.is_per_chair,
   ]);
 
+  // Sync viewDate when formData.date changes
+  useEffect(() => {
+    setViewDate(new Date(formData.date));
+  }, [formData.date]);
+
+  // --- NEW: Fetch all bookings for the month to show busy days ---
+  useEffect(() => {
+    if (!space?.id) return;
+
+    const fetchMonthAvailability = async () => {
+      setLoadingMonth(true);
+      try {
+        const currentYear = viewDate.getFullYear();
+        const currentMonth = viewDate.getMonth();
+        const startOfMonth = new Date(currentYear, currentMonth, 1).toISOString();
+        const endOfMonth = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59).toISOString();
+
+        const response = await api.get(
+          `/bookings?filters[space][id][$eq]=${space.id}&filters[start_time][$gte]=${startOfMonth}&filters[end_time][$lte]=${endOfMonth}&filters[status][$ne]=cancelled`
+        );
+        setMonthBookings(response.data?.data || []);
+      } catch (err) {
+        console.error("Failed to fetch month availability:", err);
+      } finally {
+        setLoadingMonth(false);
+      }
+    };
+
+    fetchMonthAvailability();
+  }, [space?.id, viewDate.getMonth(), viewDate.getFullYear()]);
+
   // Keep a ref to always have latest quantities for the cleanup on unmount
   const equipmentQuantitiesRef = useRef(equipmentQuantities);
   useEffect(() => {
@@ -402,7 +681,7 @@ const BookingModal = ({
   };
 
   const updateServiceQuantity = (srv, delta) => {
-    const srvId = srv.id;
+    const srvId = String(srv.documentId || srv.id);
     if (delta > 0) {
       // Open the form overlay to add a new entry
       const sAttrs = srv.attributes || srv;
@@ -447,7 +726,7 @@ const BookingModal = ({
   };
 
   const handleSaveServiceEntry = () => {
-    const srvId = activeServiceForm.id;
+    const srvId = String(activeServiceForm.documentId || activeServiceForm.id);
 
     setServiceParams((prev) => ({
       ...prev,
@@ -592,6 +871,7 @@ const BookingModal = ({
                 .replace(/bureau_/i, "Bureau ")
                 .replace(/_/g, " ")
               : "Espace"),
+          spaceId: spaceTargetId,
           coworkingName: "SunSpace",
           equipmentQuantities: Object.fromEntries(
             Object.entries(equipmentQuantities).filter(([_, q]) => q > 0),
@@ -606,6 +886,25 @@ const BookingModal = ({
           },
         },
       };
+
+      if (editingBooking) {
+        const docId = editingBooking.documentId || editingBooking.id;
+        console.log("[Booking] Updating reservation:", docId, bookingData);
+        await (await import("../../services/bookingService")).updateReservation(docId, bookingData);
+        window.alert("Réservation modifiée avec succès !");
+        onClose();
+        if (typeof fetchData === "function") fetchData(); // Refresh if prop exists
+        
+        // Dynamic redirection based on user type to prevent "student" fallback for associations/trainers
+        const role = (user.user_type || "student").toLowerCase();
+        let targetPath = "/student/bookings";
+        if (role === "professional") targetPath = "/professional/bookings";
+        else if (role === "association") targetPath = "/association/bookings";
+        else if (role === "trainer" || role === "formateur") targetPath = "/trainer/bookings";
+        
+        navigate(targetPath);
+        return;
+      }
 
       console.log(
         "[Booking] Final Submission Data (v5 Connect Syntax):",
@@ -629,11 +928,13 @@ const BookingModal = ({
         window.alert("Réservation confirmée ! (Validé par votre abonnement)");
         onClose();
         const userObj = JSON.parse(localStorage.getItem("user") || "{}");
-        navigate(
-          userObj.user_type === "professional"
-            ? "/professional/bookings"
-            : "/student/bookings",
-        );
+        const role = (userObj.user_type || "student").toLowerCase();
+        let targetPath = "/student/bookings";
+        if (role === "professional") targetPath = "/professional/bookings";
+        else if (role === "association") targetPath = "/association/bookings";
+        else if (role === "trainer" || role === "formateur") targetPath = "/trainer/bookings";
+        
+        navigate(targetPath);
       } else {
         setShowPaymentSelector(true);
       }
@@ -760,7 +1061,7 @@ const BookingModal = ({
     let pHourly = parseFloat(attrs.pricing_hourly || 0);
     let pDaily = parseFloat(attrs.pricing_daily || 0);
 
-    // EMERGENCY FALLBACK if prices are still 0 in DB
+    // EMERGENCY FALLBACK if prices are 0 in DB (Consistent with header UI)
     if (pHourly === 0 && pDaily === 0) {
       const type = attrs.type || "";
       if (type === "event-space") {
@@ -769,7 +1070,8 @@ const BookingModal = ({
       } else if (type === "meeting-room") {
         pHourly = 15;
         pDaily = 100;
-      } else if (type === "hot-desk") {
+      } else {
+        // hot-desk or other
         pHourly = 5;
         pDaily = 40;
       }
@@ -802,7 +1104,7 @@ const BookingModal = ({
     // Equipment Price
     equipmentsList.forEach((eq) => {
       const eqAttrs = eq.attributes || eq;
-      const qty = equipmentQuantities[eq.id] || 0;
+      const qty = getQty(equipmentQuantities, eq);
       const pEq = parseFloat(eqAttrs.price || 0);
 
       if (qty > 0 && pEq > 0) {
@@ -821,10 +1123,9 @@ const BookingModal = ({
 
     // Service Price
     servicesList.forEach((srv) => {
-      const srvId = srv.id;
       const srvAttrs = srv.attributes || srv;
       const pSrv = parseFloat(srvAttrs.price || 0);
-      const entries = serviceParams[srvId] || [];
+      const entries = getParams(serviceParams, srv);
 
       if (pSrv > 0 && entries.length > 0) {
         const pt = srvAttrs.price_type || "one-time";
@@ -840,15 +1141,32 @@ const BookingModal = ({
           else if (pt === "daily") subtotal = durationDays * pSrv * entryQty;
           else subtotal = pSrv * entryQty;
 
-          console.log(
-            `[DEBUG] Adding Service Entry: ${srvAttrs.name || srvId} (#${idx + 1}), entryQty=${entryQty}, unitPrice=${pSrv}, type=${pt}, subtotal=${subtotal}`,
-          );
           total += subtotal;
         });
       }
     });
 
-    console.log(`[Booking] Final total calculated: ${total.toFixed(2)}`);
+    // Handle extra fee from service base quantity if any
+    servicesList.forEach((srv) => {
+      const qty = getQty(serviceQuantities, srv);
+      const params = getParams(serviceParams, srv);
+      if (qty > 0 && params.length === 0) {
+        // If service selected but no entries, at least add base price if it's meant to be unit-based
+        const sAttrs = srv.attributes || srv;
+        if (sAttrs.price_type === "one-time") {
+          total += parseFloat(sAttrs.price || 0) * qty;
+        }
+      }
+    });
+
+    console.log("[Pricing] Breakdown:", {
+      space: spaceSubtotal,
+      total,
+      participants,
+      durationHours,
+      serviceQtys: serviceQuantities,
+      serviceParams: serviceParams
+    });
     return total.toFixed(2);
   };
 
@@ -861,6 +1179,9 @@ const BookingModal = ({
     )
     : (!formData.allDay &&
       existingReservations.some((res) => {
+        if (editingBooking && (res.documentId === editingBooking.documentId || res.id === editingBooking.id)) {
+          return false; // Ignore current booking being edited
+        }
         const resStart = new Date(
           res.attributes?.start_time || res.start_time,
         ).getTime();
@@ -878,39 +1199,7 @@ const BookingModal = ({
 
         return reqStart < resEnd && resStart < reqEnd;
       })) ||
-    (formData.allDay && existingReservations.length > 0);
-
-  // Calendar Logic
-  const [viewDate, setViewDate] = useState(new Date(formData.date));
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const currentYear = viewDate.getFullYear();
-  const currentMonth = viewDate.getMonth();
-
-  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
-  // Adjust for Monday start (0=Sunday in JS, let's make it 0=Monday or just keep it simple)
-  const paddingDays = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
-
-  const monthNames = [
-    "Janvier",
-    "Février",
-    "Mars",
-    "Avril",
-    "Mai",
-    "Juin",
-    "Juillet",
-    "Août",
-    "Septembre",
-    "Octobre",
-    "Novembre",
-    "Décembre",
-  ];
-
-  const handleMonthChange = (offset) => {
-    setViewDate(new Date(currentYear, currentMonth + offset, 1));
-  };
+    (formData.allDay && existingReservations.length > 0 && !(editingBooking && existingReservations.length === 1 && (existingReservations[0].documentId === editingBooking.documentId || existingReservations[0].id === editingBooking.id)));
 
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-md p-4 scroll-smooth">
@@ -1019,45 +1308,78 @@ const BookingModal = ({
             <div className="grid grid-cols-1 gap-2">
               {equipmentsList.length > 0 ? (
                 equipmentsList.map((eq) => {
-                  const id = eq.id;
+                  const id = eq.documentId || eq.id;
                   const attrs = eq.attributes || eq;
-                  const qty = equipmentQuantities[id] || 0;
+                  const qty = getQty(equipmentQuantities, eq);
                   const eqName = attrs.name || eq.name;
                   const eqPrice = attrs.price || eq.price;
                   const eqPriceType = attrs.price_type;
-                  // Server-reported availability already accounts for all locks (including user's own)
-                  const availableNow =
+                  // Track what we originally had so we can "add it back" to the static DB availability (which already subtracted it)
+                  const isInitiallyReserved = editingBooking ? (originalQuantities[id] || 0) : 0;
+
+                  // The "pool" is the total quantity available to this specific booking session (Total minus OTHER bookings)
+                  const pool =
                     dynamicAvailability[id] ??
-                    attrs.available_quantity ??
-                    attrs.total_quantity ??
-                    0;
-                  // No need to subtract qty — server already deducts user's locks
-                  const remainingAvailable = Math.max(0, availableNow);
+                    ((attrs.available_quantity !== undefined ? attrs.available_quantity : attrs.total_quantity) + isInitiallyReserved) ??
+                    (String(id).startsWith("fallback-") ? Infinity : 0);
+
+                  // remainingAvailable is how many more/less we can take from our pool
+                  const remainingAvailable = Math.max(0, pool - qty);
+
                   const isMaintenance = attrs.status === "en_maintenance";
                   const isRupture =
-                    attrs.status === "en_rupture" || availableNow <= 0;
+                    attrs.status === "en_rupture" || remainingAvailable <= 0;
 
                   return (
                     <div
                       key={id}
-                      className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${qty > 0 ? "bg-emerald-50 border-emerald-200" : isMaintenance || availableNow <= 0 ? "bg-slate-50 border-slate-100 opacity-60 grayscale" : "bg-white border-slate-100"}`}
+                      className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${qty > 0 ? "bg-emerald-50 border-emerald-200" : isMaintenance || pool <= 0 ? "bg-slate-50 border-slate-100 opacity-60 grayscale" : "bg-white border-slate-100"}`}
                     >
                       <div className="flex flex-col">
                         <span className="text-xs font-bold text-slate-700 flex items-center gap-2">
                           {eqName}
+                          {attrs.description && (
+                            <div className="relative group/info">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="14"
+                                height="14"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className="text-slate-300 cursor-help hover:text-blue-500"
+                              >
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                              </svg>
+                              <div className="absolute left-6 top-1/2 -translate-y-1/2 invisible opacity-0 group-hover/info:visible group-hover/info:opacity-100 transition-all z-50 w-56 bg-white border border-slate-100 text-slate-900 p-4 rounded-2xl text-[10px] shadow-2xl pointer-events-none normal-case">
+                                <p className="mb-2 text-blue-600 font-black uppercase tracking-widest border-b border-blue-50 pb-2">
+                                  Détails de l'équipement
+                                </p>
+                                <p className="text-slate-600 leading-relaxed">
+                                  {attrs.description}
+                                </p>
+                                <div className="absolute left-[-6px] top-1/2 -translate-y-1/2 w-3 h-3 bg-white border-l border-b border-slate-100 rotate-45"></div>
+                              </div>
+                            </div>
+                          )}
                           {isMaintenance && (
-                            <span className="text-[9px] bg-amber-100 text-amber-700 px-1.5 rounded-sm">
+                            <span className="text-[9px] bg-amber-100 text-amber-700 px-1.5 rounded-sm uppercase font-black">
                               En maintenance
                             </span>
                           )}
-                          {availableNow <= 0 && !isMaintenance && (
-                            <span className="text-[9px] bg-rose-100 text-rose-700 px-1.5 rounded-sm">
-                              Rupture de stock
+                          {pool <= 0 && !isMaintenance && (
+                            <span className="text-[9px] bg-rose-100 text-rose-700 px-1.5 rounded-sm uppercase font-black">
+                              Rupture
                             </span>
                           )}
                         </span>
                         <div className="flex items-center gap-2 mt-0.5">
-                          <span className="text-[10px] text-emerald-600 font-black uppercase">
+                          <span className="text-[10px] text-blue-600 font-black uppercase">
                             {eqPrice}DT
                             {eqPriceType === "hourly"
                               ? "/H"
@@ -1066,28 +1388,28 @@ const BookingModal = ({
                                 : ""}
                           </span>
                           <span
-                            className={`text-[9px] font-bold px-1.5 rounded-sm ${remainingAvailable > 0 ? "bg-emerald-100 text-emerald-700" : "bg-rose-100 text-rose-700"}`}
+                            className={`text-[9px] font-black px-1.5 rounded-sm uppercase ${remainingAvailable > 0 ? "bg-blue-100 text-blue-700" : "bg-rose-100 text-rose-700"}`}
                           >
-                            DISPONIBLE: {remainingAvailable}
+                            Dispo: {remainingAvailable}
                           </span>
                         </div>
                       </div>
                       <div className="flex items-center gap-4">
                         <button
                           onClick={() =>
-                            updateEquipmentQuantity(id, -1, availableNow)
+                            updateEquipmentQuantity(id, -1, remainingAvailable)
                           }
                           disabled={isMaintenance || qty <= 0}
                           className="w-8 h-8 rounded-lg bg-white border border-slate-200 font-black disabled:opacity-50"
                         >
                           -
                         </button>
-                        <span className="text-sm font-black text-emerald-600">
+                        <span className="text-sm font-black text-blue-600">
                           {qty}
                         </span>
                         <button
                           onClick={() =>
-                            updateEquipmentQuantity(id, 1, availableNow)
+                            updateEquipmentQuantity(id, 1, remainingAvailable)
                           }
                           disabled={isMaintenance || isRupture}
                           className="w-8 h-8 rounded-lg bg-white border border-slate-200 font-black disabled:opacity-50"
@@ -1113,8 +1435,8 @@ const BookingModal = ({
             <div className="grid grid-cols-1 gap-4">
               {servicesList.length > 0 ? (
                 servicesList.map((srv) => {
-                  const id = srv.id;
-                  const qty = serviceQuantities[id] || 0;
+                  const id = srv.documentId || srv.id;
+                  const qty = getQty(serviceQuantities, srv);
                   const attrs = srv.attributes || srv;
                   const config = attrs.configuration;
                   const fields = config?.fields || [];
@@ -1203,9 +1525,9 @@ const BookingModal = ({
                       </div>
 
                       {/* List of already added entries for this service */}
-                      {qty > 0 && serviceParams[id]?.length > 0 && (
+                      {qty > 0 && getParams(serviceParams, srv).length > 0 && (
                         <div className="ml-4 space-y-2">
-                          {serviceParams[id].map((entry, idx) => (
+                          {getParams(serviceParams, srv).map((entry, idx) => (
                             <div
                               key={idx}
                               className="p-3 bg-slate-50 border-l-4 border-emerald-400 rounded-r-xl flex items-center justify-between animate-in fade-in slide-in-from-left-2 transition-all"
@@ -1328,21 +1650,35 @@ const BookingModal = ({
                   const isPast = dateObj < today;
                   const isSelected = formData.date === dStr;
 
+                  // NEW: Check if this day is full
+                  const isFull = !attrs.is_per_chair && monthBookings.some(b => {
+                    const bStart = new Date(b.attributes?.start_time || b.start_time).toISOString().split('T')[0];
+                    // Simple logic: if there is any booking that covers this entire day or a portion of it.
+                    // For simplicity, we mark it as "reserved" if there's any non-cancelled booking on that day.
+                    // More complex logic could check if ALL time slots are taken.
+                    return bStart === dStr && !(editingBooking && (b.documentId === editingBooking.documentId || b.id === editingBooking.id));
+                  });
+
                   return (
                     <button
                       key={day}
-                      disabled={isPast}
+                      disabled={isPast || isFull}
                       onClick={() => setFormData((p) => ({ ...p, date: dStr }))}
-                      className={`h-10 rounded-xl text-[10px] font-black transition-all flex items-center justify-center
+                      className={`h-10 rounded-xl text-[10px] font-black transition-all flex items-center justify-center relative
                         ${isSelected
                           ? "bg-blue-600 text-white shadow-lg shadow-blue-500/30"
                           : isPast
                             ? "text-slate-200 cursor-not-allowed opacity-40"
-                            : "text-slate-600 hover:bg-slate-100"
+                            : isFull
+                              ? "text-rose-400 bg-rose-50 cursor-not-allowed"
+                              : "text-slate-600 hover:bg-slate-100"
                         }
                       `}
                     >
                       {day}
+                      {isFull && (
+                        <div className="absolute top-1 right-1 w-1.5 h-1.5 bg-rose-500 rounded-full"></div>
+                      )}
                     </button>
                   );
                 })}
@@ -1462,7 +1798,9 @@ const BookingModal = ({
                 ? "VALIDATION..."
                 : hasConflict
                   ? "NON DISPONIBLE"
-                  : "VÉRIFIER & PROCÉDER AU PAIEMENT"}
+                  : editingBooking
+                    ? "METTRE À JOUR LA RÉSERVATION"
+                    : "VÉRIFIER & PROCÉDER AU PAIEMENT"}
           </button>
 
           {!activeSubscription && (
