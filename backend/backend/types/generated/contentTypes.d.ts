@@ -518,6 +518,38 @@ export interface ApiBookingBooking extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiCourseCategoryCourseCategory
+  extends Struct.CollectionTypeSchema {
+  collectionName: "course_categories";
+  info: {
+    displayName: "Course Category";
+    pluralName: "course-categories";
+    singularName: "course-category";
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    courses: Schema.Attribute.Relation<"oneToMany", "api::course.course">;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::course-category.course-category"
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiCourseCourse extends Struct.CollectionTypeSchema {
   collectionName: "courses";
   info: {
@@ -530,10 +562,20 @@ export interface ApiCourseCourse extends Struct.CollectionTypeSchema {
   };
   attributes: {
     category: Schema.Attribute.Text;
+    category_rel: Schema.Attribute.Relation<
+      "manyToOne",
+      "api::course-category.course-category"
+    >;
     course_id: Schema.Attribute.UID;
+    cover: Schema.Attribute.Media<"images">;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
+    description: Schema.Attribute.RichText;
+    documents: Schema.Attribute.Media<
+      "images" | "files" | "videos" | "audios",
+      true
+    >;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       "oneToMany",
@@ -584,6 +626,51 @@ export interface ApiCoworkingSpaceCoworkingSpace
     space_cowrking_id: Schema.Attribute.UID;
     spaces: Schema.Attribute.Relation<"oneToMany", "api::space.space">;
     type: Schema.Attribute.Text;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiEnrollmentEnrollment extends Struct.CollectionTypeSchema {
+  collectionName: "enrollments";
+  info: {
+    description: "Tracks student registrations for courses";
+    displayName: "Enrollment";
+    pluralName: "enrollments";
+    singularName: "enrollment";
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    course: Schema.Attribute.Relation<"manyToOne", "api::course.course">;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+    enrolled_at: Schema.Attribute.DateTime;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::enrollment.enrollment"
+    > &
+      Schema.Attribute.Private;
+    progress: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 100;
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    publishedAt: Schema.Attribute.DateTime;
+    status: Schema.Attribute.Enumeration<["active", "completed", "dropped"]> &
+      Schema.Attribute.DefaultTo<"active">;
+    student: Schema.Attribute.Relation<
+      "manyToOne",
+      "plugin::users-permissions.user"
+    >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
@@ -1718,8 +1805,10 @@ declare module "@strapi/strapi" {
       "admin::user": AdminUser;
       "api::association-profil.association-profil": ApiAssociationProfilAssociationProfil;
       "api::booking.booking": ApiBookingBooking;
+      "api::course-category.course-category": ApiCourseCategoryCourseCategory;
       "api::course.course": ApiCourseCourse;
       "api::coworking-space.coworking-space": ApiCoworkingSpaceCoworkingSpace;
+      "api::enrollment.enrollment": ApiEnrollmentEnrollment;
       "api::equipment-lock.equipment-lock": ApiEquipmentLockEquipmentLock;
       "api::equipment.equipment": ApiEquipmentEquipment;
       "api::etudiant-profil.etudiant-profil": ApiEtudiantProfilEtudiantProfil;

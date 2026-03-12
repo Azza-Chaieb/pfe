@@ -1,6 +1,12 @@
 import React from "react";
 
-const MyCoursesWidget = ({ courses = [], onSeeAll, fullPage = false }) => {
+const MyCoursesWidget = ({
+  courses = [],
+  onSeeAll,
+  onManage,
+  onDelete,
+  fullPage = false,
+}) => {
   return (
     <div className={`p-4 ${fullPage ? "" : ""}`}>
       <div className="flex justify-between items-center mb-6">
@@ -28,7 +34,15 @@ const MyCoursesWidget = ({ courses = [], onSeeAll, fullPage = false }) => {
             >
               <div className="flex justify-between items-start mb-4">
                 <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-lg">
-                  📚
+                  {course.coverUrl ? (
+                    <img
+                      src={`http://localhost:1337${course.coverUrl}`}
+                      alt="cover"
+                      className="w-full h-full object-cover rounded-xl"
+                    />
+                  ) : (
+                    "📚"
+                  )}
                 </div>
                 <span className="px-2 py-1 bg-slate-50 text-slate-400 rounded-lg text-[9px] font-black uppercase tracking-tighter">
                   {course.studentCount} inscrits
@@ -38,10 +52,24 @@ const MyCoursesWidget = ({ courses = [], onSeeAll, fullPage = false }) => {
                 {course.title}
               </h4>
               <div className="flex justify-between items-center pt-4 border-t border-slate-50">
-                <button className="text-[9px] font-black uppercase text-slate-400 hover:text-blue-600 transition-colors tracking-widest">
-                  Modifier
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (onManage) onManage(course);
+                  }}
+                  className="text-[9px] font-black uppercase text-slate-400 hover:text-blue-600 transition-colors tracking-widest"
+                >
+                  Gérer contenu
                 </button>
-                <button className="text-[9px] font-black uppercase text-slate-400 hover:text-rose-500 transition-colors tracking-widest">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (window.confirm("Voulez-vous vraiment supprimer ce cours ?")) {
+                      onDelete(course.documentId || course.id);
+                    }
+                  }}
+                  className="text-[9px] font-black uppercase text-slate-400 hover:text-rose-500 transition-colors tracking-widest"
+                >
                   Supprimer
                 </button>
               </div>

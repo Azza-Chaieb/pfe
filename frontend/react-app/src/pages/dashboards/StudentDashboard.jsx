@@ -80,9 +80,9 @@ const StudentDashboard = ({ activeTab = "dashboard" }) => {
               const totalPrice = (() => {
                 const storedPrice = Number(
                   data.total_price ||
-                  data.totalPrice ||
-                  data.payment?.data?.attributes?.amount ||
-                  data.payment?.amount,
+                    data.totalPrice ||
+                    data.payment?.data?.attributes?.amount ||
+                    data.payment?.amount,
                 );
                 if (storedPrice > 0) return storedPrice;
 
@@ -156,6 +156,7 @@ const StudentDashboard = ({ activeTab = "dashboard" }) => {
 
               return {
                 id: item.id,
+                documentId: item.documentId,
                 spaceName: getSpaceDisplayName(),
                 rawEndDate: endDate.toISOString(),
                 date: startDate.toLocaleDateString("fr-FR", {
@@ -202,11 +203,18 @@ const StudentDashboard = ({ activeTab = "dashboard" }) => {
 
           setCourses(
             (resCourses.data || []).map((item) => {
-              const data = item.attributes || item;
+              const enrollment = item.attributes || item;
+              const courseData =
+                enrollment.course?.data || enrollment.course || {};
+              const courseAttr = courseData.attributes || courseData;
+
               return {
-                id: item.id,
-                title: data.title,
-                progress: data.progress || 0,
+                id: courseData.id,
+                documentId: courseData.documentId,
+                title: courseAttr.title || "Cours sans titre",
+                progress: enrollment.progress || 0,
+                enrollmentId: item.id,
+                status: enrollment.status,
               };
             }),
           );
@@ -313,12 +321,20 @@ const StudentDashboard = ({ activeTab = "dashboard" }) => {
             Suivez votre progression et accédez à vos ressources.
           </p>
         </div>
-        <button
-          onClick={() => navigate("/dashboard")}
-          className="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-[10px] font-black uppercase hover:bg-slate-200 transition-all"
-        >
-          ← Retour
-        </button>
+        <div className="flex gap-3">
+          <button
+            onClick={() => navigate("/courses")}
+            className="px-4 py-2 bg-blue-600 text-white rounded-xl text-[10px] font-black uppercase hover:bg-blue-700 transition-all shadow-md shadow-blue-200"
+          >
+            🔍 Parcourir le catalogue
+          </button>
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-[10px] font-black uppercase hover:bg-slate-200 transition-all"
+          >
+            ← Retour
+          </button>
+        </div>
       </div>
       <div className="bg-white/40 backdrop-blur-md p-6 rounded-[32px] border border-white/60 shadow-xl shadow-slate-200/50">
         <EnrolledCoursesWidget courses={courses} fullPage />

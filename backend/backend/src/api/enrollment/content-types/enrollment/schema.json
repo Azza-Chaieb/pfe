@@ -1,0 +1,40 @@
+{
+  "kind": "collectionType",
+  "collectionName": "enrollments",
+  "info": {
+    "singularName": "enrollment",
+    "pluralName": "enrollments",
+    "displayName": "Enrollment",
+    "description": "Tracks student registrations for courses"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "student": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "course": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::course.course"
+    },
+    "enrolled_at": {
+      "type": "datetime"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["active", "completed", "dropped"],
+      "default": "active"
+    },
+    "progress": {
+      "type": "integer",
+      "min": 0,
+      "max": 100,
+      "default": 0
+    }
+  }
+}

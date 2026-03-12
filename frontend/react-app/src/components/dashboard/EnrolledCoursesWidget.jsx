@@ -1,10 +1,13 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const EnrolledCoursesWidget = ({
   courses = [],
   onSeeAll,
   fullPage = false,
 }) => {
+  const navigate = useNavigate();
+
   return (
     <div
       className={`bg-white/80 backdrop-blur-md p-6 rounded-2xl ${fullPage ? "" : "shadow-xl border border-white/20"}`}
@@ -31,9 +34,7 @@ const EnrolledCoursesWidget = ({
             <div
               key={course.id}
               onClick={() =>
-                alert(
-                  `Accès au cours : ${course.title}\nProgression : ${course.progress}%`,
-                )
+                navigate(`/courses/${course.documentId || course.id}`)
               }
               className="p-4 bg-white/50 rounded-xl border border-gray-100 transition-all hover:scale-[1.02] cursor-pointer hover:bg-white hover:shadow-md group"
             >

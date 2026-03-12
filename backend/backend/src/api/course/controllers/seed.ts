@@ -1,0 +1,105 @@
+export default {
+  async seed(ctx) {
+    console.log("--- DÉBUT DU SEEDING VIA CONTROLLER ---");
+    try {
+      const coursesToSeed = [
+        {
+          course_id: "react-101",
+          title: "Introduction à React.js",
+          category: "Développement Web",
+          description:
+            "Apprenez les bases de React, les hooks et le virtual DOM.",
+        },
+        {
+          course_id: "node-mastery",
+          title: "Maîtriser Node.js et Express",
+          category: "Backend",
+          description:
+            "Développez des APIs robustes et scalables avec Node.js.",
+        },
+        {
+          course_id: "figma-ux",
+          title: "Design UI/UX avec Figma",
+          category: "Design",
+          description:
+            "Créez des interfaces magnifiques et centrées sur l'utilisateur.",
+        },
+        {
+          course_id: "ai-python",
+          title: "Intelligence Artificielle et Python",
+          category: "Data Science",
+          description: "Plongez dans le monde du Machine Learning avec Python.",
+        },
+        {
+          course_id: "agile-mgmt",
+          title: "Gestion de Projet Agile",
+          category: "Agile",
+          description:
+            "Apprenez Scrum, Kanban et comment gérer une équipe efficacement.",
+        },
+        {
+          course_id: "cyber-intro",
+          title: "Introduction à la Cybersécurité",
+          category: "Sécurité",
+          description:
+            "Protégez vos applications et réseaux contre les cyber-attaques modernes.",
+        },
+        {
+          course_id: "rn-mobile",
+          title: "Mobile App avec React Native",
+          category: "Développement Mobile",
+          description:
+            "Créez des applications iOS et Android performantes avec React Native.",
+        },
+        {
+          course_id: "web3-blockchain",
+          title: "Blockchain et Web3",
+          category: "Nouvelles Technologies",
+          description:
+            "Découvrez les contrats intelligents et l'écosystème décentralisé.",
+        },
+      ];
+
+      const trainerId = 33; // nawresbfraj@gmail.com
+      const results = [];
+
+      for (const course of coursesToSeed) {
+        const existing = await strapi.db.query("api::course.course").findOne({
+          where: { title: course.title },
+        });
+
+        if (!existing) {
+          await strapi.db.query("api::course.course").create({
+            data: {
+              ...course,
+              trainer: trainerId,
+              publishedAt: new Date(),
+            },
+          });
+          results.push(`✅ Créé: ${course.title}`);
+        } else {
+          await strapi.db.query("api::course.course").update({
+            where: { id: existing.id },
+            data: {
+              course_id: course.course_id, // Ensure course_id is set
+              trainer: trainerId,
+            },
+          });
+          results.push(`⏩ Mis à jour: ${course.title}`);
+        }
+      }
+
+      ctx.body = {
+        success: true,
+        message: "Seeding completed via controller",
+        results,
+      };
+    } catch (error) {
+      console.error("❌ Error during seeding:", error);
+      ctx.body = {
+        success: false,
+        error: error.message,
+      };
+    }
+  },
+};

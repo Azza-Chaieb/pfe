@@ -1,7 +1,3 @@
-/**
- * space controller
- */
+import { factories } from "@strapi/strapi";
 
-import { factories } from '@strapi/strapi'
-
-export default factories.createCoreController('api::space.space');
+export default factories.createCoreController("api::space.space");

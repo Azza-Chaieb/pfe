@@ -21,6 +21,12 @@
     "category": {
       "type": "text"
     },
+    "category_rel": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::course-category.course-category",
+      "inversedBy": "courses"
+    },
     "trainer": {
       "type": "relation",
       "relation": "manyToOne",
@@ -30,6 +36,21 @@
       "type": "relation",
       "relation": "manyToMany",
       "target": "plugin::users-permissions.user"
+    },
+    "description": {
+      "type": "richtext"
+    },
+    "cover": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "documents": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": ["images", "files", "videos", "audios"]
     }
   }
 }

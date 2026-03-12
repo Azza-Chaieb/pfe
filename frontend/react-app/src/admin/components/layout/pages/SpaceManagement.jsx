@@ -149,15 +149,41 @@ const SpaceManagement = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Clean up the payload
+      const payload = {
+        ...formData,
+        capacity: formData.capacity ? parseInt(formData.capacity, 10) : null,
+        floor: formData.floor !== "" ? parseInt(formData.floor, 10) : 0,
+        pricing_hourly:
+          formData.pricing_hourly !== ""
+            ? parseFloat(formData.pricing_hourly)
+            : null,
+        pricing_daily:
+          formData.pricing_daily !== ""
+            ? parseFloat(formData.pricing_daily)
+            : null,
+        pricing_weekly:
+          formData.pricing_weekly !== ""
+            ? parseFloat(formData.pricing_weekly)
+            : null,
+        pricing_monthly:
+          formData.pricing_monthly !== ""
+            ? parseFloat(formData.pricing_monthly)
+            : null,
+        coworking_space:
+          formData.coworking_space !== "" ? formData.coworking_space : null,
+      };
+
       if (editiingSpace) {
         const targetId = editiingSpace.documentId || editiingSpace.id;
-        await updateSpace(targetId, formData);
+        await updateSpace(targetId, payload);
       } else {
-        await createSpace(formData);
+        await createSpace(payload);
       }
       handleCloseModal();
       fetchData();
     } catch (error) {
+      console.error("Submit error:", error);
       alert("Erreur lors de l'enregistrement de l'espace");
     }
   };

@@ -6,11 +6,14 @@ import MyCoursesWidget from "../../components/dashboard/MyCoursesWidget";
 import MyStudentsWidget from "../../components/dashboard/MyStudentsWidget";
 import UpcomingSessionsWidget from "../../components/dashboard/UpcomingSessionsWidget";
 import CreateCourseModal from "../../components/dashboard/CreateCourseModal";
+import CourseManagementModal from "../../components/dashboard/CourseManagementModal";
 import {
   getTrainerCourses,
   getUpcomingSessions,
   getTrainerStudents,
   createCourse,
+  deleteCourse,
+  getCourseEnrollmentCount,
 } from "../../services/courseService";
 import { getUserReservations } from "../../services/bookingService";
 import {
@@ -32,6 +35,8 @@ const TrainerDashboard = ({ activeTab = "dashboard" }) => {
   const [subscription, setSubscription] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isManageModalOpen, setIsManageModalOpen] = useState(false);
+  const [selectedCourseForManage, setSelectedCourseForManage] = useState(null);
   const [bookingView, setBookingView] = useState("list");
   const navigate = useNavigate();
 
@@ -52,13 +57,30 @@ const TrainerDashboard = ({ activeTab = "dashboard" }) => {
           ]);
 
         if (resCourses.status === "fulfilled") {
-          setCourses(
-            (resCourses.value.data || []).map((item) => ({
-              id: item.id,
-              title: item.attributes?.title || item.title,
-              studentCount: item.attributes?.students?.data?.length || 0,
-            })),
+          const coursesData = resCourses.value.data || [];
+          
+          // Fetch real enrollment counts for each course
+          const coursesWithCounts = await Promise.all(
+            coursesData.map(async (item) => {
+              const attrs = item.attributes || {};
+              const coverRaw = attrs.cover?.data || attrs.cover || item.cover;
+              
+              // New: fetch real count from enrollment collection
+              const realCount = await getCourseEnrollmentCount(item.documentId || item.id);
+              
+              return {
+                id: item.id,
+                documentId: item.documentId,
+                title: attrs.title || item.title,
+                category: attrs.category_rel?.name || attrs.category || "Général",
+                studentCount: realCount,
+                documents: attrs.documents?.data || attrs.documents || [],
+                coverUrl: coverRaw?.attributes?.url || coverRaw?.url || null,
+              };
+            })
           );
+          
+          setCourses(coursesWithCounts);
         }
 
         if (resSessions.status === "fulfilled") {
@@ -81,15 +103,14 @@ const TrainerDashboard = ({ activeTab = "dashboard" }) => {
         }
 
         if (resStudents.status === "fulfilled") {
+          const studentList = resStudents.value.data || [];
           setStudents(
-            (resStudents.value || []).map((s) => ({
+            studentList.map((s) => ({
               id: s.id,
               name: s.fullname || s.username,
               email: s.email,
               courseTitle: s.courseTitle || "Aucun",
-              lastActive: s.updatedAt
-                ? new Date(s.updatedAt).toLocaleDateString()
-                : "-",
+              lastActive: "-", // Enrollment doesn't track this yet
             })),
           );
         }
@@ -138,9 +159,9 @@ const TrainerDashboard = ({ activeTab = "dashboard" }) => {
             const totalPrice = (() => {
               const storedPrice = Number(
                 data.total_price ||
-                data.totalPrice ||
-                data.payment?.data?.attributes?.amount ||
-                data.payment?.amount,
+                  data.totalPrice ||
+                  data.payment?.data?.attributes?.amount ||
+                  data.payment?.amount,
               );
               if (storedPrice > 0) return storedPrice;
 
@@ -151,16 +172,27 @@ const TrainerDashboard = ({ activeTab = "dashboard" }) => {
                 if (pHourly === 0 && space.type) {
                   if (space.type === "meeting-room") pHourly = 15;
                   else if (space.type === "event-space") pHourly = 20;
-                  else if (space.type === "hot-desk" || space.type === "fixed-desk") pHourly = 5;
+                  else if (
+                    space.type === "hot-desk" ||
+                    space.type === "fixed-desk"
+                  )
+                    pHourly = 5;
                 }
-                if (pHourly > 0) calcPrice += hours * pHourly * (data.participants || 1);
-                (data.equipments?.data || data.equipments || []).forEach((eq) => {
-                  const p = eq.attributes || eq;
-                  if (p.price) calcPrice += p.price_type === "hourly" ? p.price * hours : p.price;
-                });
+                if (pHourly > 0)
+                  calcPrice += hours * pHourly * (data.participants || 1);
+                (data.equipments?.data || data.equipments || []).forEach(
+                  (eq) => {
+                    const p = eq.attributes || eq;
+                    if (p.price)
+                      calcPrice +=
+                        p.price_type === "hourly" ? p.price * hours : p.price;
+                  },
+                );
                 (data.services?.data || data.services || []).forEach((sv) => {
                   const p = sv.attributes || sv;
-                  if (p.price) calcPrice += p.price_type === "hourly" ? p.price * hours : p.price;
+                  if (p.price)
+                    calcPrice +=
+                      p.price_type === "hourly" ? p.price * hours : p.price;
                 });
                 return calcPrice;
               }
@@ -169,6 +201,7 @@ const TrainerDashboard = ({ activeTab = "dashboard" }) => {
 
             return {
               id: item.id,
+              documentId: item.documentId,
               spaceName: getSpaceDisplayName(),
               date: startDate.toLocaleDateString("fr-FR", {
                 weekday: "long",
@@ -192,18 +225,21 @@ const TrainerDashboard = ({ activeTab = "dashboard" }) => {
                   "fallback-it-support": "Support Technique IT",
                   "fallback-coffee": "Cafétérie Premium",
                 };
-                const fallbackServices = Object.keys(data.extras?.serviceQuantities || {})
+                const fallbackServices = Object.keys(
+                  data.extras?.serviceQuantities || {},
+                )
                   .filter((id) => id.startsWith("fallback-"))
                   .map((id) => fallbackMap[id] || id);
                 return [...dbServices, ...fallbackServices].join(", ");
               })(),
-              participants: data.participants || data.extras?.contact?.participants || 1,
+              participants:
+                data.participants || data.extras?.contact?.participants || 1,
               rawEndDate: data.end_time || endDate.toISOString(),
               startTime: data.start_time || startDate.toISOString(),
               payment_method: data.payment_method,
               payment_deadline: data.payment_deadline,
             };
-          })
+          }),
         );
       } catch (error) {
         console.error("Trainer Dashboard Error:", error);
@@ -218,6 +254,25 @@ const TrainerDashboard = ({ activeTab = "dashboard" }) => {
   useEffect(() => {
     fetchData();
   }, [navigate]);
+
+  const handleOpenManageModal = (course) => {
+    setSelectedCourseForManage(course);
+    setIsManageModalOpen(true);
+  };
+
+  const handleDeleteCourse = async (id) => {
+    try {
+      setLoading(true);
+      await deleteCourse(id);
+      await fetchData();
+      alert("Cours supprimé avec succès.");
+    } catch (error) {
+      console.error("Error deleting course:", error);
+      alert("Erreur lors de la suppression du cours.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const renderDashboard = () => (
     <>
@@ -278,6 +333,8 @@ const TrainerDashboard = ({ activeTab = "dashboard" }) => {
             <MyCoursesWidget
               courses={courses}
               onSeeAll={() => navigate("/trainer/manage")}
+              onManage={handleOpenManageModal}
+              onDelete={handleDeleteCourse}
             />
           </div>
           <div className="bg-white/40 backdrop-blur-md p-6 rounded-[28px] border border-white/60">
@@ -323,7 +380,12 @@ const TrainerDashboard = ({ activeTab = "dashboard" }) => {
         </div>
       </div>
       <div className="bg-white/40 backdrop-blur-md p-6 rounded-[32px] border border-white/60 shadow-xl shadow-slate-200/50">
-        <MyCoursesWidget courses={courses} fullPage />
+        <MyCoursesWidget
+          courses={courses}
+          fullPage
+          onManage={handleOpenManageModal}
+          onDelete={handleDeleteCourse}
+        />
       </div>
     </div>
   );
@@ -434,11 +496,23 @@ const TrainerDashboard = ({ activeTab = "dashboard" }) => {
       {activeTab === "students" && renderStudents()}
       {activeTab === "bookings" && renderBookings()}
       {activeTab === "subscription" && renderSubscription()}
+      {/* Create Course Modal */}
       <CreateCourseModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onCreate={fetchData}
+        onCreate={async (courseData) => {
+          await createCourse(courseData);
+          await fetchData();
+        }}
         trainerId={user?.id}
+      />
+
+      {/* Manage Course Documents Modal */}
+      <CourseManagementModal
+        isOpen={isManageModalOpen}
+        onClose={() => setIsManageModalOpen(false)}
+        course={selectedCourseForManage}
+        onUpdate={fetchData}
       />
     </DashboardLayout>
   );

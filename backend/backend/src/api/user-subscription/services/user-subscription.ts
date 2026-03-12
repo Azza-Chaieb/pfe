@@ -8,15 +8,17 @@ export default factories.createCoreService(
      * Find active subscription for a given user
      */
     async findActiveByUser(userId: number) {
-      const results = await strapi.entityService.findMany(
-        "api::user-subscription.user-subscription" as any,
-        {
-          filters: { user: userId, status: "active" },
-          populate: ["plan", "user"],
-          sort: { createdAt: "desc" },
+      console.log(`[Subscription] Looking for active sub for user ${userId}`);
+      const results = await (strapi as any)
+        .documents("api::user-subscription.user-subscription")
+        .findMany({
+          filters: {
+            user: { id: userId },
+            status: "active",
+          },
+          populate: ["plan"],
           limit: 1,
-        } as any,
-      );
+        });
       return (results as any[])[0] || null;
     },
 
@@ -167,11 +169,10 @@ export default factories.createCoreService(
         transfer: "Virement Bancaire",
         online: "Paiement en ligne",
       };
-      const paymentMethodText =
-        subscriptionInfo.payment_method
-          ? paymentMethodTranslations[subscriptionInfo.payment_method] ||
+      const paymentMethodText = subscriptionInfo.payment_method
+        ? paymentMethodTranslations[subscriptionInfo.payment_method] ||
           subscriptionInfo.payment_method
-          : "Non spécifié";
+        : "Non spécifié";
 
       doc
         .fillColor("#6B7280")
@@ -236,7 +237,7 @@ export default factories.createCoreService(
       };
       const cycleText = subscriptionInfo.billing_cycle
         ? cycleTranslations[subscriptionInfo.billing_cycle] ||
-        subscriptionInfo.billing_cycle
+          subscriptionInfo.billing_cycle
         : "N/A";
 
       const rowTop = tableTop + 30;
@@ -320,33 +321,32 @@ export default factories.createCoreService(
      * Find latest subscription (active or pending) for a given user
      */
     async findLatestByUser(userId: number) {
+      console.log(`[Subscription] Looking for latest sub for user ${userId}`);
       // First, try to find the latest active or pending subscription
-      let results = await strapi.entityService.findMany(
-        "api::user-subscription.user-subscription" as any,
-        {
+      let results = await (strapi as any)
+        .documents("api::user-subscription.user-subscription")
+        .findMany({
           filters: {
-            user: userId,
-            status: { $in: ["active", "pending"] }
+            user: { id: userId },
+            status: { $in: ["active", "pending"] },
           },
-          populate: ["plan", "user"],
-          sort: { createdAt: "desc" },
+          populate: ["plan"],
+          sort: "createdAt:desc",
           limit: 1,
-        } as any,
-      );
+        });
 
       // If no active/pending found, get the absolute latest one (e.g. cancelled)
       if (!results || (results as any[]).length === 0) {
-        results = await strapi.entityService.findMany(
-          "api::user-subscription.user-subscription" as any,
-          {
+        results = await (strapi as any)
+          .documents("api::user-subscription.user-subscription")
+          .findMany({
             filters: {
-              user: userId,
+              user: { id: userId },
             },
-            populate: ["plan", "user"],
-            sort: { createdAt: "desc" },
+            populate: ["plan"],
+            sort: "createdAt:desc",
             limit: 1,
-          } as any,
-        );
+          });
       }
 
       return (results as any[])[0] || null;
@@ -586,8 +586,8 @@ export default factories.createCoreService(
             payment_deadline:
               paymentMethod === "cash"
                 ? new Date(
-                  Date.now() + (plan.deadline_hours || 2) * 60 * 60 * 1000,
-                ).toISOString()
+                    Date.now() + (plan.deadline_hours || 2) * 60 * 60 * 1000,
+                  ).toISOString()
                 : null,
           },
           populate: ["plan", "user"],

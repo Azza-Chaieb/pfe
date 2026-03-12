@@ -118,9 +118,9 @@ const AssociationDashboard = ({ activeTab = "dashboard" }) => {
               const totalPrice = (() => {
                 const storedPrice = Number(
                   data.total_price ||
-                  data.totalPrice ||
-                  data.payment?.data?.attributes?.amount ||
-                  data.payment?.amount,
+                    data.totalPrice ||
+                    data.payment?.data?.attributes?.amount ||
+                    data.payment?.amount,
                 );
                 if (storedPrice > 0) return storedPrice;
 
@@ -164,6 +164,7 @@ const AssociationDashboard = ({ activeTab = "dashboard" }) => {
 
               return {
                 id: item.id,
+                documentId: item.documentId,
                 spaceName: getSpaceDisplayName(),
                 date: startDate.toLocaleDateString("fr-FR", {
                   weekday: "long",

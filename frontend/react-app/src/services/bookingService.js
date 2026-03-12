@@ -121,6 +121,35 @@ export const cancelReservation = async (id) => {
 };
 
 // Payment Services
+export const getBookingById = async (id) => {
+  const populateParams =
+    "populate[space][populate]=*&populate[payment]=true&populate[equipments][populate]=*&populate[services][populate]=*";
+
+  try {
+    // Strapi v5: numeric IDs use /bookings/:id, documentId strings use filters
+    const isNumeric = !isNaN(Number(id)) && String(id).trim() !== "";
+
+    if (isNumeric) {
+      const response = await api.get(`/bookings/${id}?${populateParams}`);
+      return response.data;
+    } else {
+      // documentId is a string — use filters endpoint
+      const response = await api.get(
+        `/bookings?filters[documentId][$eq]=${id}&${populateParams}`,
+      );
+      const items = response.data?.data;
+      if (!items || items.length === 0) {
+        throw new Error(`Booking with documentId "${id}" not found`);
+      }
+      // Return in same shape as single-item response
+      return { data: items[0], meta: response.data?.meta };
+    }
+  } catch (error) {
+    console.error(`Error fetching booking ${id}:`, error);
+    throw error;
+  }
+};
+
 export const createPayment = async (data) => {
   try {
     const response = await api.post("/payments", {

@@ -751,6 +751,88 @@ export default {
         }
       }
       console.log("✅ [BOOTSTRAP] Subscription plans seeded and cleaned");
+
+      // 5. Grant permissions for Enrollments
+      try {
+        const authRole = await strapi.db
+          .query("plugin::users-permissions.role")
+          .findOne({
+            where: { type: "authenticated" },
+          });
+
+        if (authRole) {
+          const permissions = [
+            { action: "api::enrollment.enrollment.enroll" },
+            { action: "api::enrollment.enrollment.myCourses" },
+            { action: "api::enrollment.enrollment.find" },
+            { action: "api::enrollment.enrollment.findOne" },
+            { action: "api::course.course.find" },
+            { action: "api::course.course.findOne" },
+            { action: "api::course.course.create" },
+            { action: "api::course.course.update" },
+            { action: "api::course.course.delete" },
+            { action: "api::course-category.course-category.find" },
+            { action: "api::course-category.course-category.findOne" },
+            { action: "api::course-category.course-category.create" },
+          ];
+
+
+          for (const perm of permissions) {
+            const existing = await strapi.db
+              .query("plugin::users-permissions.permission")
+              .findOne({
+                where: {
+                  action: perm.action,
+                  role: authRole.id,
+                },
+              });
+
+            if (!existing) {
+              await strapi.db
+                .query("plugin::users-permissions.permission")
+                .create({
+                  data: {
+                    action: perm.action,
+                    role: authRole.id,
+                  },
+                });
+              console.log(
+                `🔓 Granted permission: ${perm.action} to Authenticated role`,
+              );
+            }
+          }
+        }
+      } catch (err) {
+        console.error("❌ Failed to grant enrollment permissions:", err);
+      }
+
+      // 6. Seed Course Categories
+      try {
+        const categories = [
+          "Design",
+          "Code",
+          "Management",
+          "Marketing",
+          "Langues",
+        ];
+        for (const name of categories) {
+          const existing = await strapi
+            .documents("api::course-category.course-category" as any)
+            .findFirst({
+              filters: { name },
+            });
+          if (!existing) {
+            await strapi
+              .documents("api::course-category.course-category" as any)
+              .create({
+                data: { name, status: "published" },
+              });
+            console.log(`✅ Seeded Category: ${name}`);
+          }
+        }
+      } catch (err) {
+        console.error("❌ Failed to seed categories:", err);
+      }
     } catch (error) {
       console.error("❌ Bootstrap error:", error);
     }

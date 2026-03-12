@@ -33,6 +33,8 @@ import ExplorationScene from "./components/3d/ExplorationScene";
 import { GoogleCallback, GithubCallback, VerifyEmailPage } from "./pages/auth";
 import RoleSelection from "./pages/auth/RoleSelection";
 
+import CourseCatalog from "./pages/public/CourseCatalog";
+import CourseDetail from "./pages/public/CourseDetail";
 import SpaceManagement from "./admin/components/layout/pages/SpaceManagement";
 import SpaceCatalog from "./pages/public/SpaceCatalog";
 import AssociationDashboard from "./pages/dashboards/AssociationDashboard";
@@ -116,6 +118,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/courses" element={<CourseCatalog />} />
+        <Route path="/courses/:id" element={<CourseDetail />} />
         <Route path="/spaces" element={<SpaceCatalog />} />
         <Route path="/explore/:spaceId" element={<ExplorationScene />} />
         <Route
@@ -290,10 +294,7 @@ function App() {
                   path="reservations"
                   element={<ReservationManagement />}
                 />
-                <Route
-                  path="subscriptions"
-                  element={<Subscriptions />}
-                />
+                <Route path="subscriptions" element={<Subscriptions />} />
                 <Route
                   path="user-subscriptions"
                   element={<UserSubscriptionsManagement />}

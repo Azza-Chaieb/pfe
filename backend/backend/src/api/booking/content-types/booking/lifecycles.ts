@@ -428,9 +428,20 @@ async function handleBookingLogic(event: any) {
           const pt: string = srv.price_type || "one-time";
 
           entries.forEach((entry: any) => {
-            const entryQty = parseFloat(
-              String(entry.pages || entry.copies || entry.quantite || 1),
-            );
+            const p = parseFloat(String(entry.pages || 0));
+            const c = parseFloat(String(entry.copies || 0));
+            const q = parseFloat(String(entry.quantite || 0));
+
+            let entryQty = 1;
+            if (p > 0 && c > 0) {
+              entryQty = p * c;
+            } else if (p > 0) {
+              entryQty = p;
+            } else if (c > 0) {
+              entryQty = c;
+            } else if (q > 0) {
+              entryQty = q;
+            }
             let subtotal = 0;
             if (pt === "hourly") subtotal = durationHours * srvPrice * entryQty;
             else if (pt === "daily")
@@ -457,9 +468,20 @@ async function handleBookingLogic(event: any) {
           if (qty > 0) {
             const entries = srvParams[fId] || [{ quantite: qty }];
             entries.forEach((entry: any) => {
-              const entryQty = parseFloat(
-                String(entry.pages || entry.copies || entry.quantite || 1),
-              );
+              const p = parseFloat(String(entry.pages || 0));
+              const c = parseFloat(String(entry.copies || 0));
+              const q = parseFloat(String(entry.quantite || 0));
+
+              let entryQty = 1;
+              if (p > 0 && c > 0) {
+                entryQty = p * c;
+              } else if (p > 0) {
+                entryQty = p;
+              } else if (c > 0) {
+                entryQty = c;
+              } else if (q > 0) {
+                entryQty = q;
+              }
               const subtotal = fInfo.price * entryQty;
               console.log(
                 `[Booking Lifecycle] Added Fallback Service: ${fInfo.name}, subtotal=${subtotal}`,

@@ -76,9 +76,9 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
             const totalPrice = (() => {
               const storedPrice = Number(
                 data.total_price ||
-                data.totalPrice ||
-                data.payment?.data?.attributes?.amount ||
-                data.payment?.amount,
+                  data.totalPrice ||
+                  data.payment?.data?.attributes?.amount ||
+                  data.payment?.amount,
               );
               if (storedPrice > 0) return storedPrice;
 
@@ -89,16 +89,27 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
                 if (pHourly === 0 && space.type) {
                   if (space.type === "meeting-room") pHourly = 15;
                   else if (space.type === "event-space") pHourly = 20;
-                  else if (space.type === "hot-desk" || space.type === "fixed-desk") pHourly = 5;
+                  else if (
+                    space.type === "hot-desk" ||
+                    space.type === "fixed-desk"
+                  )
+                    pHourly = 5;
                 }
-                if (pHourly > 0) calcPrice += hours * pHourly * (data.participants || 1);
-                (data.equipments?.data || data.equipments || []).forEach((eq) => {
-                  const p = eq.attributes || eq;
-                  if (p.price) calcPrice += p.price_type === "hourly" ? p.price * hours : p.price;
-                });
+                if (pHourly > 0)
+                  calcPrice += hours * pHourly * (data.participants || 1);
+                (data.equipments?.data || data.equipments || []).forEach(
+                  (eq) => {
+                    const p = eq.attributes || eq;
+                    if (p.price)
+                      calcPrice +=
+                        p.price_type === "hourly" ? p.price * hours : p.price;
+                  },
+                );
                 (data.services?.data || data.services || []).forEach((sv) => {
                   const p = sv.attributes || sv;
-                  if (p.price) calcPrice += p.price_type === "hourly" ? p.price * hours : p.price;
+                  if (p.price)
+                    calcPrice +=
+                      p.price_type === "hourly" ? p.price * hours : p.price;
                 });
                 return calcPrice;
               }
@@ -107,6 +118,7 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
 
             return {
               id: item.id,
+              documentId: item.documentId,
               spaceName: getSpaceDisplayName(),
               date: startDate.toLocaleDateString("fr-FR", {
                 weekday: "long",
@@ -130,18 +142,21 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
                   "fallback-it-support": "Support Technique IT",
                   "fallback-coffee": "Cafétérie Premium",
                 };
-                const fallbackServices = Object.keys(data.extras?.serviceQuantities || {})
+                const fallbackServices = Object.keys(
+                  data.extras?.serviceQuantities || {},
+                )
                   .filter((id) => id.startsWith("fallback-"))
                   .map((id) => fallbackMap[id] || id);
                 return [...dbServices, ...fallbackServices].join(", ");
               })(),
-              participants: data.participants || data.extras?.contact?.participants || 1,
+              participants:
+                data.participants || data.extras?.contact?.participants || 1,
               rawEndDate: data.end_time || endDate.toISOString(),
               startTime: data.start_time || startDate.toISOString(),
               payment_method: data.payment_method,
               payment_deadline: data.payment_deadline,
             };
-          })
+          }),
         );
         setSubscription(subData);
       } catch (error) {
@@ -197,8 +212,8 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
           value={
             bookings.length > 0
               ? new Date(
-                bookings[0].attributes?.start_time || bookings[0].start_time,
-              ).toLocaleDateString("fr-FR")
+                  bookings[0].attributes?.start_time || bookings[0].start_time,
+                ).toLocaleDateString("fr-FR")
               : "-"
           }
           icon="📅"
@@ -290,8 +305,8 @@ const ProfessionalDashboard = ({ activeTab = "dashboard" }) => {
               <h4 className="text-lg font-black">
                 {subscription
                   ? subscription.attributes?.plan?.data?.attributes?.name ||
-                  subscription.plan?.name ||
-                  "Premium"
+                    subscription.plan?.name ||
+                    "Premium"
                   : "Aucun forfait"}
               </h4>
             </div>
