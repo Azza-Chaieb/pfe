@@ -1,29 +1,20 @@
 const { Client } = require("pg");
-const dotenv = require("dotenv");
-dotenv.config();
 
-const client = new Client({
-    host: process.env.DATABASE_HOST || "127.0.0.1",
-    port: process.env.DATABASE_PORT || 5432,
-    database: process.env.DATABASE_NAME || "sunspace",
-    user: process.env.DATABASE_USERNAME || "postgres",
-    password: process.env.DATABASE_PASSWORD || "postgres",
-});
+const DB_CONFIG = {
+    host: "127.0.0.1",
+    port: 5432,
+    database: "sunspace",
+    user: "postgres",
+    password: "postgres",
+};
 
-async function run() {
+const client = new Client(DB_CONFIG);
+
+async function listTables() {
     try {
         await client.connect();
-        console.log("--- DATABASE TABLES ---");
-
-        const res = await client.query(`
-      SELECT table_name 
-      FROM information_schema.tables 
-      WHERE table_schema = 'public'
-      ORDER BY table_name
-    `);
-
-        res.rows.forEach(r => console.log(r.table_name));
-
+        const res = await client.query("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_name");
+        console.log("TABLES_LIST:" + JSON.stringify(res.rows.map(r => r.table_name)));
     } catch (err) {
         console.error("Error:", err.message);
     } finally {
@@ -31,4 +22,4 @@ async function run() {
     }
 }
 
-run();
+listTables();

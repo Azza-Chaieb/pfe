@@ -1080,12 +1080,12 @@ const BookingModal = ({
         status: "pending",
         total_price: parseFloat(calculateTotalPrice()),
         equipments: {
-          connect: filteredEquipments.map((id) =>
+          set: filteredEquipments.map((id) =>
             isNaN(parseInt(id)) ? id : parseInt(id),
           ),
         },
         services: {
-          connect: filteredServices.map((id) =>
+          set: filteredServices.map((id) =>
             isNaN(parseInt(id)) ? id : parseInt(id),
           ),
         },

@@ -37,5 +37,27 @@ export default factories.createCoreController(
         .getMyEnrolledCourses(user.id);
       return ctx.send({ data: enrollments });
     },
+
+    async updateProgress(ctx) {
+      const { user } = ctx.state;
+      const { courseId, progress, lesson_progress } = ctx.request.body;
+
+      if (!user) {
+        return ctx.unauthorized("You must be logged in");
+      }
+      if (!courseId) {
+        return ctx.badRequest("Course ID is required");
+      }
+
+      try {
+        const updated = await strapi
+          .service("api::enrollment.enrollment")
+          .updateProgress(user.id, courseId, progress, lesson_progress);
+        
+        return ctx.send({ data: updated });
+      } catch (error) {
+        return ctx.badRequest(error.message);
+      }
+    }
   }),
 );

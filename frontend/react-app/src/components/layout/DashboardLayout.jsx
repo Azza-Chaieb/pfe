@@ -61,6 +61,12 @@ const Sidebar = ({ role, activeTab, onTabChange }) => {
           path: "/trainer/students",
         },
         {
+          id: "groups",
+          label: "Mes Groupes",
+          icon: "📁",
+          path: "/trainer/groups",
+        },
+        {
           id: "bookings",
           label: "Mes Réservations",
           icon: "📅",

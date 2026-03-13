@@ -25,6 +25,7 @@ import UserDashboard from "./pages/dashboards/UserDashboard";
 import RegisterPage from "./pages/auth/RegisterPage";
 import StudentDashboard from "./pages/dashboards/StudentDashboard";
 import TrainerDashboard from "./pages/dashboards/TrainerDashboard";
+import CoursePlayer from "./pages/dashboards/CoursePlayer";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 import ProfessionalDashboard from "./pages/dashboards/ProfessionalDashboard";
@@ -204,6 +205,14 @@ function App() {
           }
         />
         <Route
+          path="/student/courses/:courseId/play"
+          element={
+            <UserRoute>
+              <CoursePlayer />
+            </UserRoute>
+          }
+        />
+        <Route
           path="/trainer/dashboard"
           element={
             <UserRoute>
@@ -224,6 +233,14 @@ function App() {
           element={
             <UserRoute>
               <TrainerDashboard activeTab="students" />
+            </UserRoute>
+          }
+        />
+        <Route
+          path="/trainer/groups"
+          element={
+            <UserRoute>
+              <TrainerDashboard activeTab="groups" />
             </UserRoute>
           }
         />

@@ -35,18 +35,25 @@ export default factories.createCoreService(
       }
 
       // 3. Check for active subscription
-      const subscriptionService = strapi.service(
-        "api::user-subscription.user-subscription",
-      );
-      const activeSub = await (subscriptionService as any).findActiveByUser(
-        userId,
-      );
-
-      if (!activeSub) {
-        console.warn(`[Enrollment] User ${userId} has no active subscription`);
-        throw new Error(
-          "Un abonnement actif est requis pour s'inscrire à une formation.",
+      // Bypass check in development mode to facilitate testing
+      if (process.env.NODE_ENV === "development") {
+        console.log(
+          `[Enrollment] Skipping subscription check for user ${userId} in development mode`,
         );
+      } else {
+        const subscriptionService = strapi.service(
+          "api::user-subscription.user-subscription",
+        );
+        const activeSub = await (subscriptionService as any).findActiveByUser(
+          userId,
+        );
+  
+        if (!activeSub) {
+          console.warn(`[Enrollment] User ${userId} has no active subscription`);
+          throw new Error(
+            "Un abonnement actif est requis pour s'inscrire à une formation.",
+          );
+        }
       }
 
       // 4. Create enrollment
@@ -82,5 +89,37 @@ export default factories.createCoreService(
           },
         });
     },
+
+    async updateProgress(userId, courseId, progress, lessonProgress) {
+      console.log(`[Enrollment] Updating progress for user ${userId} in course ${courseId}`);
+      
+      const enrollments = await (strapi as any)
+        .documents("api::enrollment.enrollment")
+        .findMany({
+          filters: {
+            student: { id: userId },
+            course: { documentId: courseId } // Or id depending on how frontend sends it
+          }
+        });
+
+      if (!enrollments || enrollments.length === 0) {
+        throw new Error("Inscription non trouvée pour ce cours");
+      }
+
+      const enrollmentId = enrollments[0].documentId;
+
+      const updated = await (strapi as any)
+        .documents("api::enrollment.enrollment")
+        .update({
+          documentId: enrollmentId,
+          data: {
+            progress: progress,
+            lesson_progress: lessonProgress,
+            status: progress === 100 ? 'completed' : 'active'
+          }
+        });
+
+      return updated;
+    }
   }),
 );

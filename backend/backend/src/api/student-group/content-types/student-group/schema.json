@@ -1,0 +1,46 @@
+{
+  "kind": "collectionType",
+  "collectionName": "student_groups",
+  "info": {
+    "singularName": "student-group",
+    "pluralName": "groups",
+    "displayName": "Student Group",
+    "description": "Manage groups of students for classes"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "capacity": {
+      "type": "integer"
+    },
+    "teacher": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "students": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::users-permissions.user"
+    },
+    "assignments_tracking": {
+      "type": "json"
+    },
+    "messaging_enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "room_id": {
+      "type": "string"
+    }
+  }
+}

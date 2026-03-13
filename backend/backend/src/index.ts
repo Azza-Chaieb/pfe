@@ -754,36 +754,42 @@ export default {
 
       // 5. Grant permissions for Enrollments
       try {
-        const authRole = await strapi.db
+        const permissions = [
+          { action: "api::enrollment.enrollment.enroll" },
+          { action: "api::enrollment.enrollment.myCourses" },
+          { action: "api::enrollment.enrollment.find" },
+          { action: "api::enrollment.enrollment.findOne" },
+          { action: "api::course.course.find" },
+          { action: "api::course.course.findOne" },
+          { action: "api::course.course.create" },
+          { action: "api::course.course.update" },
+          { action: "api::course.course.delete" },
+          { action: "api::course-category.course-category.find" },
+          { action: "api::course-category.course-category.findOne" },
+          { action: "api::course-category.course-category.create" },
+          { action: "plugin::upload.content-api.upload" },
+          { action: "plugin::users-permissions.user.me" },
+        ];
+
+        const roles = await strapi.db
           .query("plugin::users-permissions.role")
-          .findOne({
-            where: { type: "authenticated" },
+          .findMany({
+            where: {
+              type: { $ne: "public" }
+            },
           });
 
-        if (authRole) {
-          const permissions = [
-            { action: "api::enrollment.enrollment.enroll" },
-            { action: "api::enrollment.enrollment.myCourses" },
-            { action: "api::enrollment.enrollment.find" },
-            { action: "api::enrollment.enrollment.findOne" },
-            { action: "api::course.course.find" },
-            { action: "api::course.course.findOne" },
-            { action: "api::course.course.create" },
-            { action: "api::course.course.update" },
-            { action: "api::course.course.delete" },
-            { action: "api::course-category.course-category.find" },
-            { action: "api::course-category.course-category.findOne" },
-            { action: "api::course-category.course-category.create" },
-          ];
+        console.log(`🔍 Found ${roles.length} roles to process: ${roles.map(r => r.name).join(", ")}`);
 
-
+        for (const role of roles) {
+          console.log(`🛠️ Processing permissions for role: ${role.name} (${role.type})`);
           for (const perm of permissions) {
             const existing = await strapi.db
               .query("plugin::users-permissions.permission")
               .findOne({
                 where: {
                   action: perm.action,
-                  role: authRole.id,
+                  role: role.id,
                 },
               });
 
@@ -793,12 +799,15 @@ export default {
                 .create({
                   data: {
                     action: perm.action,
-                    role: authRole.id,
+                    role: role.id,
                   },
                 });
               console.log(
-                `🔓 Granted permission: ${perm.action} to Authenticated role`,
+                `   🔓 GRANTED: ${perm.action}`,
               );
+            } else {
+              // Optionally log that it's already there
+              // console.log(`   ✅ EXISTS: ${perm.action}`);
             }
           }
         }

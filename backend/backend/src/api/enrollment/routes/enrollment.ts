@@ -10,6 +10,15 @@ export default {
       },
     },
     {
+      method: "POST",
+      path: "/enrollments/update-progress",
+      handler: "api::enrollment.enrollment.updateProgress",
+      config: {
+        policies: [],
+        middlewares: [],
+      },
+    },
+    {
       method: "GET",
       path: "/enrollments/my-courses",
       handler: "enrollment.myCourses",

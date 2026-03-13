@@ -649,6 +649,7 @@ export interface ApiEnrollmentEnrollment extends Struct.CollectionTypeSchema {
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
     enrolled_at: Schema.Attribute.DateTime;
+    lesson_progress: Schema.Attribute.JSON;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       "oneToMany",
@@ -983,11 +984,13 @@ export interface ApiSessionSession extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    attendance: Schema.Attribute.JSON;
     course: Schema.Attribute.Relation<"manyToOne", "api::course.course">;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
     date: Schema.Attribute.Date & Schema.Attribute.Required;
+    duration: Schema.Attribute.Integer;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       "oneToMany",
@@ -995,9 +998,28 @@ export interface ApiSessionSession extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     location: Schema.Attribute.String;
+    maxCapacity: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<100>;
+    meetingUrl: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
+    sessionType: Schema.Attribute.Enumeration<["live_webinar", "workshop"]> &
+      Schema.Attribute.DefaultTo<"live_webinar">;
+    students: Schema.Attribute.Relation<
+      "manyToMany",
+      "plugin::users-permissions.user"
+    >;
     time: Schema.Attribute.String;
     title: Schema.Attribute.String & Schema.Attribute.Required;
+    trainer: Schema.Attribute.Relation<
+      "manyToOne",
+      "plugin::users-permissions.user"
+    >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
@@ -1101,6 +1123,50 @@ export interface ApiSpaceSpace extends Struct.CollectionTypeSchema {
       ["hot-desk", "fixed-desk", "meeting-room", "event-space"]
     > &
       Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiStudentGroupStudentGroup
+  extends Struct.CollectionTypeSchema {
+  collectionName: "student_groups";
+  info: {
+    description: "Manage groups of students for classes";
+    displayName: "Student Group";
+    pluralName: "groups";
+    singularName: "student-group";
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    assignments_tracking: Schema.Attribute.JSON;
+    capacity: Schema.Attribute.Integer;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      "oneToMany",
+      "api::student-group.student-group"
+    > &
+      Schema.Attribute.Private;
+    messaging_enabled: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<true>;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    room_id: Schema.Attribute.String;
+    students: Schema.Attribute.Relation<
+      "manyToMany",
+      "plugin::users-permissions.user"
+    >;
+    teacher: Schema.Attribute.Relation<
+      "manyToOne",
+      "plugin::users-permissions.user"
+    >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<"oneToOne", "admin::user"> &
       Schema.Attribute.Private;
@@ -1820,6 +1886,7 @@ declare module "@strapi/strapi" {
       "api::session.session": ApiSessionSession;
       "api::space-schedule.space-schedule": ApiSpaceScheduleSpaceSchedule;
       "api::space.space": ApiSpaceSpace;
+      "api::student-group.student-group": ApiStudentGroupStudentGroup;
       "api::subscription-plan.subscription-plan": ApiSubscriptionPlanSubscriptionPlan;
       "api::subscription.subscription": ApiSubscriptionSubscription;
       "api::user-subscription.user-subscription": ApiUserSubscriptionUserSubscription;

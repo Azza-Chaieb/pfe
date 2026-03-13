@@ -22,6 +22,11 @@
         "time": {
             "type": "string"
         },
+        "maxCapacity": {
+            "type": "integer",
+            "default": 100,
+            "min": 1
+        },
         "location": {
             "type": "string"
         },
@@ -29,6 +34,33 @@
             "type": "relation",
             "relation": "manyToOne",
             "target": "api::course.course"
+        },
+        "duration": {
+            "type": "integer"
+        },
+        "sessionType": {
+            "type": "enumeration",
+            "enum": [
+                "live_webinar",
+                "workshop"
+            ],
+            "default": "live_webinar"
+        },
+        "meetingUrl": {
+            "type": "string"
+        },
+        "students": {
+            "type": "relation",
+            "relation": "manyToMany",
+            "target": "plugin::users-permissions.user"
+        },
+        "attendance": {
+            "type": "json"
+        },
+        "trainer": {
+            "type": "relation",
+            "relation": "manyToOne",
+            "target": "plugin::users-permissions.user"
         }
     }
 }

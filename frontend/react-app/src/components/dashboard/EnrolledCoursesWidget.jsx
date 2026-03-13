@@ -34,7 +34,7 @@ const EnrolledCoursesWidget = ({
             <div
               key={course.id}
               onClick={() =>
-                navigate(`/courses/${course.documentId || course.id}`)
+                navigate(`/student/courses/${course.documentId || course.id}/play`)
               }
               className="p-4 bg-white/50 rounded-xl border border-gray-100 transition-all hover:scale-[1.02] cursor-pointer hover:bg-white hover:shadow-md group"
             >

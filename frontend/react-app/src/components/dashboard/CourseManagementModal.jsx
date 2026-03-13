@@ -2,6 +2,15 @@ import React, { useState, useRef, useEffect } from "react";
 import { uploadFile, deleteFile } from "../../services/uploadService";
 import { updateCourse, deleteCourse } from "../../services/courseService";
 
+const formatBytes = (bytes, decimals = 2) => {
+  if (!+bytes) return '0 Bytes';
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+};
+
 const CourseManagementModal = ({ isOpen, onClose, course, onUpdate }) => {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -14,6 +23,7 @@ const CourseManagementModal = ({ isOpen, onClose, course, onUpdate }) => {
   const [editDescription, setEditDescription] = useState("");
 
   const fileInputRef = useRef(null);
+  const coverInputRef = useRef(null);
 
   useEffect(() => {
     if (course) {
@@ -96,6 +106,28 @@ const CourseManagementModal = ({ isOpen, onClose, course, onUpdate }) => {
       setUploading(false);
       setUploadProgress(0);
       if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const handleCoverUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const uploadedFile = await uploadFile(file);
+      if (uploadedFile && uploadedFile.id) {
+        await updateCourse(course.documentId || course.id, {
+          cover: uploadedFile.id,
+        });
+        if (onUpdate) onUpdate();
+      }
+    } catch (error) {
+      console.error("Failed to upload cover:", error);
+      alert("Erreur lors de l'upload de la photo.");
+    } finally {
+      setUploading(false);
+      if (coverInputRef.current) coverInputRef.current.value = "";
     }
   };
 
@@ -361,6 +393,44 @@ const CourseManagementModal = ({ isOpen, onClose, course, onUpdate }) => {
                     required
                   />
                 </div>
+                <div>
+                  <label className="block text-xs font-black uppercase text-slate-500 mb-2">Image de couverture</label>
+                  <div className="flex items-center gap-4 p-4 bg-white border border-slate-200 rounded-xl">
+                    {course.coverUrl ? (
+                      <div className="relative w-24 h-16 rounded-lg overflow-hidden border border-slate-100 shrink-0">
+                        <img 
+                          src={`http://localhost:1337${course.coverUrl}`} 
+                          alt="Cover" 
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-24 h-16 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400 text-xs shrink-0">
+                        Pas d'image
+                      </div>
+                    )}
+                    <div className="flex-grow">
+                      <p className="text-[10px] text-slate-400 font-medium mb-2">Changer l'image de couverture du cours</p>
+                      <button
+                        type="button"
+                        onClick={() => coverInputRef.current?.click()}
+                        disabled={uploading}
+                        className="px-3 py-1.5 bg-slate-100 text-slate-700 rounded-lg text-xs font-bold hover:bg-slate-200 transition-colors disabled:opacity-50"
+                      >
+                        {uploading ? "Upload..." : "Choisir une image"}
+                      </button>
+                      <input
+                        type="file"
+                        ref={coverInputRef}
+                        className="hidden"
+                        accept="image/*"
+                        onChange={handleCoverUpload}
+                        disabled={uploading}
+                      />
+                    </div>
+                  </div>
+                </div>
+
                 <div>
                   <label className="block text-xs font-black uppercase text-slate-500 mb-2">Description</label>
                   <textarea
